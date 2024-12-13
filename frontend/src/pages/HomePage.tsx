@@ -9,11 +9,13 @@ const posts = [
         id: 1,
         title: "My first Lego Block",
         content: "I love Lego",
+        category: "Rant",
     },
     {
         id: 2,
         title: "I stubbed my toe",
-        content: "I banged it against the table :("
+        content: "I banged it against the table :(",
+        category: "Daily",
     }
 ]
 

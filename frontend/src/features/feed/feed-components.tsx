@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, Stack } from "@mui/material";
+import { Box, Card, CardActionArea, CardHeader, Link, Stack } from "@mui/material";
 import Post from "../../types/Post";
 
 /**
@@ -22,16 +22,24 @@ function CategoryHeader(): JSX.Element {
  * @param {string} props.content - Post content.
  * @returns {JSX.Element} A component displaying a Post.
  */
-function PostCard({ id, title, content}: { id: number, title: string, content: string }): JSX.Element {
-    const handleClick = () => {
-        console.log("clicked", id); // "clicked, undefined"
-    }
+function PostCardTitle({ post }: { post: Post, }): JSX.Element {
+    const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
 
     return (
         <Card>
-            <CardActionArea onClick={handleClick}>
-                Card
-            </CardActionArea>
+            <CardHeader
+            avatar="Avatar"
+            title={
+                <Link 
+                href={linkUrl} 
+                color="inherit" 
+                sx={{ fontWeight: "bold" }}
+                >
+                    {post.title}
+                </Link>
+            }
+            subheader={post.category}
+            />
         </Card>
     )
 }
@@ -46,7 +54,7 @@ function Posts({ posts }: { posts: Post[] }): JSX.Element {
     return (
         <Box bgcolor="green" flex={3} >
             {posts.map(post => (
-                <PostCard key={post.id} id={post.id} title={post.title} content={post.content}/>
+                <PostCardTitle key={post.id} post={post}/>
             ))}
         </Box>
     )

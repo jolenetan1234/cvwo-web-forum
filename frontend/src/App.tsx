@@ -12,11 +12,16 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from "react-router-dom";
+import { PostCardDetails } from './features/crud/crud-components';
 
+/**
+ * App router
+ */
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<MainLayout />}>
-      <Route index element={<HomePage />} />)
+      <Route index element={<HomePage />} />
+      <Route path="/post/:id" element={<PostCardDetails />} />
     </Route>
   )
 )
