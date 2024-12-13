@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, CardHeader, Link, Stack } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, CardHeader, Chip, Link, Stack, Typography } from "@mui/material";
 import Post from "../../types/Post";
 
 /**
@@ -28,18 +28,33 @@ function PostCardTitle({ post }: { post: Post, }): JSX.Element {
     return (
         <Card>
             <CardHeader
-            avatar="Avatar"
             title={
-                <Link 
-                href={linkUrl} 
-                color="inherit" 
-                sx={{ fontWeight: "bold" }}
-                >
-                    {post.title}
-                </Link>
+                <Stack direction="row" alignItems="center">
+                    <Link 
+                    variant="h6"
+                    sx={{ fontWeight: "bold" }}
+                    href={linkUrl}
+                    color="inherit"
+                    >
+                        {post.title}
+                    </Link>
+                    
+                    <Chip
+                    label={post.category}
+                    size="small"
+                    color="primary"
+                    sx={{ ml: 1 }} // Add some margin to the left
+                    />
+                </Stack>
             }
-            subheader={post.category}
             />
+
+            <CardContent sx={{ mt: -3 }}>
+                <Typography>
+                    {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
+                    : post.content}
+                </Typography>
+            </CardContent>
         </Card>
     )
 }
@@ -87,7 +102,6 @@ export default function Feed({ posts }: { posts: Post[] }): JSX.Element {
                 <Posts posts={posts}/>
                 <RightBar />
             </Stack>
-        </Stack>
-       
+        </Stack> 
     )
 }

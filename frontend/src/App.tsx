@@ -1,9 +1,5 @@
 import HomePage from './pages/HomePage';
 import MainLayout from "./layouts/MainLayout"
-
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 import {
@@ -14,14 +10,24 @@ import {
 } from "react-router-dom";
 import { PostCardDetails } from './features/crud/crud-components';
 
+// API calls here
+import { getAllPosts, getPostById } from './features/crud/crud-api';
+
+// HARDCODED
+const ErrorComponent = ({ message }: { message: string}): JSX.Element => {
+  return <>Error: {message}</>
+}
+
 /**
  * App router
  */
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<MainLayout />}>
-      <Route index element={<HomePage />} />
-      <Route path="/post/:id" element={<PostCardDetails />} />
+      <Route index element={<HomePage getAllPosts={getAllPosts}/>} />
+      <Route 
+      path="/post/:id" 
+      element={<PostCardDetails getPostById={getPostById} ErrorComponent={ErrorComponent}/> } />
     </Route>
   )
 )

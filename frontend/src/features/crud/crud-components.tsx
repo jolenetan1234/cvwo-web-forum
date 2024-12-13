@@ -1,25 +1,59 @@
 import { useParams } from "react-router-dom";
 import Post from "../../types/Post";
-import React from "react";
+import { Box, Card, CardContent, CardHeader, Chip, Stack, Typography } from "@mui/material";
 
 // contains Card, and all the id-related stuff for one user only.
-export function PostCardDetails({ getPostById, Error }: { 
+export function PostCardDetails({ getPostById, ErrorComponent }: { 
     getPostById: (postId: number) => Post,
-    Error: React.FC }): JSX.Element {
-    /**
-     * Post = fetchPost();
-     */
+    ErrorComponent: ({ message }: { message: string }) => JSX.Element }): JSX.Element {
     const params = useParams<{ id : string }>();
     const postId = params.id;
 
     // Handle case where postId is undefined
     if (!postId) {
-        return <Error />;
+        return <ErrorComponent message="undefined postID in params"/>;
     }
 
-    const post = getPostById(parseInt(postId));
+    try {
+        const post = getPostById(parseInt(postId));
 
-    return (
-        <>PostCardDetail for post {postId}</>
-    )
+        // Return a Card representation of the post.
+        return (
+            <Box>
+                <Card sx={{ mt: 1 }}>
+                    {/* Post Title */}
+                    <CardHeader
+                    title={
+                        <Stack direction="row" alignItems="center">
+
+                            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                                {post.title}
+                            </Typography>
+
+                            <Chip
+                                label={post.category}
+                                size="small"
+                                color="primary"
+                                sx={{ ml: 1 }} // Add some margin to the left
+                            />
+                        </Stack>
+                    }
+                    />
+
+                    {/* Post Content */}
+                    <CardContent sx={{ mt: -3 }}>
+                        <Typography>
+                            {post.content}
+                        </Typography>
+                    </CardContent>
+                </Card>
+
+                {/* Comments section */}
+                
+        </Box>
+        );
+
+    } catch (err) {
+        return <ErrorComponent message={err.toString()}/>
+    }
 }
