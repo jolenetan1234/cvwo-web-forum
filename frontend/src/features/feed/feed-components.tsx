@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, CardContent, CardHeader, Chip, Link, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Chip, Link, Stack, Typography } from "@mui/material";
 import Post from "../../types/Post";
 
 /**
@@ -22,7 +22,7 @@ function CategoryHeader(): JSX.Element {
  * @param {string} props.content - Post content.
  * @returns {JSX.Element} A component displaying a Post.
  */
-function PostCardTitle({ post }: { post: Post, }): JSX.Element {
+function PostCard({ post }: { post: Post, }): JSX.Element {
     const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
 
     return (
@@ -69,7 +69,7 @@ function Posts({ posts }: { posts: Post[] }): JSX.Element {
     return (
         <Box bgcolor="green" flex={3} >
             {posts.map(post => (
-                <PostCardTitle key={post.id} post={post}/>
+                <PostCard key={post.id} post={post}/>
             ))}
         </Box>
     )

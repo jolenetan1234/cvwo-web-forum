@@ -1,4 +1,5 @@
-import Post from "../../types/Post"
+import NotFoundError from "../common/errors/NotFoundError";
+import Post from "../types/Post"
 
 // HARD CODED
 const posts = [
@@ -7,12 +8,14 @@ const posts = [
         title: "My first Lego Block",
         content: "I love Lego",
         category: "Rant",
+        userId: 1,
     },
     {
         id: 2,
         title: "I stubbed my toe",
         content: "I banged it against the table :(",
         category: "Daily", 
+        userId: 1,
     }
 ]
 
@@ -35,7 +38,7 @@ export const getPostById = (postId: number): Post => {
 
     // if not found, throw error
     if (!post) {
-        throw new Error(`Post with ID ${postId} not found.`);
+        throw new NotFoundError("Post");
     } else {
         return post;
     }

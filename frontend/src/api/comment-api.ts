@@ -1,4 +1,5 @@
-import Comment from "../../types/Comment";
+import Comment from "../types/Comment";
+import NotFoundError from "../common/errors/NotFoundError";
 
 // HARDCODED
 const COMMENTS = [
@@ -6,16 +7,19 @@ const COMMENTS = [
         id: 1,
         content: "Who even likes lego nowadays",
         postId: 1,
+        userId: 2,
     },
     {
         id: 2,
         content: "haha loser",
         postId: 2,
+        userId: 2,
     },
     {
         id: 3,
         content: "hope u step on legos",
         postId: 1,
+        userId: 3,
     }
 ]
 
@@ -42,7 +46,7 @@ export const getCommentById = (commentId: number): Comment => {
 
     // if not found, throw error
     if (!comment) {
-        throw new Error(`Comment with ID ${commentId} not found.`);
+        throw new NotFoundError("Comment");
     } else {
         return comment;
     }
