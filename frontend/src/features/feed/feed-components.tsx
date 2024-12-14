@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, CardHeader, Link, Stack } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Chip, Link, Stack, Typography } from "@mui/material";
 import Post from "../../types/Post";
 
 /**
@@ -22,24 +22,39 @@ function CategoryHeader(): JSX.Element {
  * @param {string} props.content - Post content.
  * @returns {JSX.Element} A component displaying a Post.
  */
-function PostCardTitle({ post }: { post: Post, }): JSX.Element {
+function PostCard({ post }: { post: Post, }): JSX.Element {
     const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
 
     return (
         <Card>
             <CardHeader
-            avatar="Avatar"
             title={
-                <Link 
-                href={linkUrl} 
-                color="inherit" 
-                sx={{ fontWeight: "bold" }}
-                >
-                    {post.title}
-                </Link>
+                <Stack direction="row" alignItems="center">
+                    <Link 
+                    variant="h6"
+                    sx={{ fontWeight: "bold" }}
+                    href={linkUrl}
+                    color="inherit"
+                    >
+                        {post.title}
+                    </Link>
+                    
+                    <Chip
+                    label={post.category}
+                    size="small"
+                    color="primary"
+                    sx={{ ml: 1 }} // Add some margin to the left
+                    />
+                </Stack>
             }
-            subheader={post.category}
             />
+
+            <CardContent sx={{ mt: -3 }}>
+                <Typography>
+                    {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
+                    : post.content}
+                </Typography>
+            </CardContent>
         </Card>
     )
 }
@@ -54,7 +69,7 @@ function Posts({ posts }: { posts: Post[] }): JSX.Element {
     return (
         <Box bgcolor="green" flex={3} >
             {posts.map(post => (
-                <PostCardTitle key={post.id} post={post}/>
+                <PostCard key={post.id} post={post}/>
             ))}
         </Box>
     )
@@ -87,7 +102,6 @@ export default function Feed({ posts }: { posts: Post[] }): JSX.Element {
                 <Posts posts={posts}/>
                 <RightBar />
             </Stack>
-        </Stack>
-       
+        </Stack> 
     )
 }

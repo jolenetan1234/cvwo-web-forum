@@ -30,10 +30,12 @@ interface NavbarProps {
 export default function Navbar({ title, buttonText }: NavbarProps): JSX.Element {
     return (
         <Box sx={{ flexGrow: 1 }} color="primary">
+            {/* static so that the components below Navbar will show */}
             <AppBar position="static">
                 <StyledToolbar>
                     <Typography variant="h6">{title}</Typography>
-                    {/* Made width 30% so the Login + Search makes up 30% of the navbar horizontally */}
+                    {/* Made width 50% of StyledToolbar so the Login + Search + Light/Dark mode 
+                    makes up 50% of the navbar horizontally */}
                     <Stack direction="row" alignItems="center" width="50%">
                         {/* Light/Dark mode toggle */}
                         <IconButton>
