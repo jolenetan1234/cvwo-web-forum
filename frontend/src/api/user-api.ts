@@ -1,3 +1,6 @@
+// NOTE: this is only for development purposes.
+// USELESS once backend is set up.
+
 import User from "../types/User"
 import NotFoundError from "../common/errors/NotFoundError";
 

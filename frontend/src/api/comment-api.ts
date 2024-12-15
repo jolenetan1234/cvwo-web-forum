@@ -1,3 +1,6 @@
+// NOTE: this is only for development purposes.
+// USELESS once backend is set up.
+
 import Comment from "../types/Comment";
 import NotFoundError from "../common/errors/NotFoundError";
 
@@ -40,7 +43,7 @@ export const getCommentsByPostId = (postId: number): Comment[] => {
  * @param {number} commentId - ID of the Comment.
  * @returns {Comment} The Comment with ID == `commentID`.
  */
-export const getCommentById = (commentId: number): Comment => {
+export const getCommentById = (commentId: number): Comment[] => {
     // TODO: replace with API call
     const comment = COMMENTS.find(c => c.id === commentId);
 
@@ -48,6 +51,6 @@ export const getCommentById = (commentId: number): Comment => {
     if (!comment) {
         throw new NotFoundError("Comment");
     } else {
-        return comment;
+        return [comment];
     }
 }

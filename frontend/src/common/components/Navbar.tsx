@@ -1,6 +1,9 @@
 import { AppBar, Box, Button, Stack, styled, Toolbar, alpha, InputBase, Typography, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
+// hooks
+import useToggle from "../hooks/useToggle";
+
 /**
  * Can use MUI's style() utility, 
  * instead of nesting a <Stack> within <Toolbar> that contains Logo, Login and Search.
@@ -22,18 +25,27 @@ const Search = styled("div")(({ theme }) => ({
     flexGrow: "1", // so Search fills the right gap within the <Stack> (See below)
 }));
 
-interface NavbarProps {
-    title: string;
-    buttonText: string;
-}
 
-export default function Navbar({ title, buttonText }: NavbarProps): JSX.Element {
+export default function Navbar(): JSX.Element {
+
+    // use hooks
+    const loginForm = useToggle();
+
+    // Constant variables
+    const TITLE = "WEB FORUM";
+    const BUTTONTEXT = "Login";
+    const ONCLICK = (): void => {
+        // if not yet logged in and login button is pressed,
+        // set `loginForm.isOpen` to be true.
+        loginForm.open();
+    };
+
     return (
         <Box sx={{ flexGrow: 1 }} color="primary">
             {/* static so that the components below Navbar will show */}
             <AppBar position="static">
                 <StyledToolbar>
-                    <Typography variant="h6">{title}</Typography>
+                    <Typography variant="h6">{TITLE}</Typography>
                     {/* Made width 50% of StyledToolbar so the Login + Search + Light/Dark mode 
                     makes up 50% of the navbar horizontally */}
                     <Stack direction="row" alignItems="center" width="50%">
@@ -43,8 +55,8 @@ export default function Navbar({ title, buttonText }: NavbarProps): JSX.Element 
                         </IconButton>
 
                         {/* Login/Logout button */}
-                        <Button color="inherit">
-                            {buttonText}
+                        <Button color="inherit" onClick={ONCLICK}>
+                            {BUTTONTEXT}
                         </Button> 
 
                         {/* Search bar */}
