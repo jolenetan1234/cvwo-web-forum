@@ -2,7 +2,7 @@ import { AppBar, Box, Button, Stack, styled, Toolbar, alpha, InputBase, Typograp
 import SearchIcon from "@mui/icons-material/Search";
 
 // hooks
-import useToggle from "../hooks/useToggle";
+import useToggle from "../hooks/useToggle.ts";
 
 /**
  * Can use MUI's style() utility, 

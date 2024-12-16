@@ -1,6 +1,12 @@
 import { Box, Card, CardContent, CardHeader, Chip, Link, Stack, Typography } from "@mui/material";
 import Post from "../../types/Post";
 
+// hooks
+import useFetch from "../../common/hooks/useFetch.ts";
+import Loading from "../../common/components/Loading";
+import ErrorMessage from "../../common/components/ErrorMessage";
+import { useEffect } from "react";
+
 /**
  * A subheader containing the options for categories.
  * @returns The subheader above Cards.
@@ -94,12 +100,22 @@ function RightBar(): JSX.Element {
  * @param {Post[]} props.posts - Array of Post to be displayed.
  * @returns {JSX.Element} A component that displays the Feed.
  */
-export default function Feed({ posts }: { posts: Post[] }): JSX.Element {
+export default function Feed(): JSX.Element {
+    // API calls
+    // const posts = getAllPosts(); 
+    const { data, error, loading } = useFetch<Post[]>('/api/posts');
+
+    if (loading) {
+        return <Loading />
+    } else if (error) {
+        return <ErrorMessage message={error.toString()} />;
+    }
+
     return (
         <Stack>
             <CategoryHeader />
             <Stack direction="row" justifyContent="space-between">
-                <Posts posts={posts}/>
+                <Posts posts={data}/>
                 <RightBar />
             </Stack>
         </Stack> 

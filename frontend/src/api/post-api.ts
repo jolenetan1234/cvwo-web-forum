@@ -35,7 +35,7 @@ export const getAllPosts = (): Post[] => {
  * @param {number} postId - ID of the Post.
  * @returns {Post} - The Post with ID == `postID`.
  */
-export const getPostById = (postId: number): Post[] => {
+export const getPostById = (postId: number): Post => {
     // Responsibility of error handling should fall on the caller.
     const post = posts.find(p => p.id === postId);
 
@@ -43,6 +43,6 @@ export const getPostById = (postId: number): Post[] => {
     if (!post) {
         throw new NotFoundError("Post");
     } else {
-        return [post];
+        return post;
     }
 }
