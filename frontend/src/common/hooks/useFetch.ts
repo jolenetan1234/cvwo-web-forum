@@ -1,9 +1,76 @@
 import { useEffect, useState } from "react"
 
+// types
+import { ApiClientResponse } from "../../api/ApiClient";
+
 // MOCK APIs
 import { getAllPosts, getPostById } from "../../api/post-api";
 import { getCommentsByPostId, getCommentById } from "../../api/comment-api";
 
+interface useFetchResponse<T> {
+    data: T | null, // data will only be null in the case of an error. Empty arrays will still be here.
+    error: string,
+    loading: boolean,
+}
+
+// calls eg. APIClient.get() => returns Promise<>
+function useFetch<T>(
+    fetchFunction: () => Promise<ApiClientResponse<T>> 
+): useFetchResponse<T> {
+    // if error !="" && data != null => then populate the response.
+    // else, return { data: null, error: error, loading, false }
+    const [data, setData] = useState<T | null>(null);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    // useEffect() so that fetchData() is called whenever its dependencies change.
+    // Ie. whenever `fetchFunction` changes.
+    useEffect(() => {
+        const fetchData = async (): Promise<void> => {
+            console.log("fetchData()");
+            setLoading(true);
+
+            try {
+                // Wait for the Promise<ApiClientResponse<T>> to resolve
+                const res = await fetchFunction();
+                console.log("fetched", res);
+
+                if (res.type === "success") {
+                    setData(res.data); 
+                } else {
+                    setError(res.error);
+                }
+            } catch (err) {
+                setError("An unknown error occured.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+        console.log("LOADING", loading)
+
+        /*
+        // fetch the data, or setError should it throw an error.
+        // Using try-catch here won't ensure asynchronous errors from fetchData() are caught.
+        try {
+            fetchData();
+        } catch (err) {
+            setError("An unknown error occurred.");
+        }
+        */
+    }, [fetchFunction])
+
+    return {
+        data,
+        error,
+        loading,
+    };
+}
+
+export default useFetch;
+
+/*
 function useFetch<T>(url: string): {
     data: T,
     error: Error | null,
@@ -30,7 +97,7 @@ function useFetch<T>(url: string): {
             // For now, it's hardcoded.
             if (url === '/api/posts') {
                 try {
-                    const res = getAllPosts();
+                    const res = await getAllPosts();
                     setData(res as T);
                 } catch (err) {
                     setError(err as Error);
@@ -38,7 +105,7 @@ function useFetch<T>(url: string): {
             } else if (url.includes('/api/posts')) {
                 try {
                     const id = getIdFromParams(url);
-                    const res = getPostById(id);
+                    const res = await getPostById(id);
                     setData(res as T);
                 } catch (err) {
                     setError(err as Error);
@@ -77,3 +144,4 @@ function useFetch<T>(url: string): {
 }
 
 export default useFetch;
+*/

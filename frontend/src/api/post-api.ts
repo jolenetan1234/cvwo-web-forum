@@ -1,7 +1,7 @@
 // NOTE: this is only for development purposes.
 // USELESS once backend is set up.
 
-import NotFoundError from "../common/errors/NotFoundError";
+import MockError from "../common/errors/MockError";
 import Post from "../types/Post"
 
 // HARD CODED
@@ -26,7 +26,7 @@ const posts = [
  * Returns all posts in the database. 
  * @returns {Post[]} An array of Post.
  */
-export const getAllPosts = (): Post[] => {
+export const getAllPosts = async (): Promise<Post[]> => {
     return posts;
 }
 
@@ -35,14 +35,18 @@ export const getAllPosts = (): Post[] => {
  * @param {number} postId - ID of the Post.
  * @returns {Post} - The Post with ID == `postID`.
  */
-export const getPostById = (postId: number): Post => {
+export const getPostById = async (postId: number): Promise<Post> => {
     // Responsibility of error handling should fall on the caller.
     const post = posts.find(p => p.id === postId);
 
-    // if not found, throw error
+    // mock 404 error
     if (!post) {
-        throw new NotFoundError("Post");
+        throw new MockError("404: Post Not Found");
     } else {
         return post;
     }
 }
+
+export const getPostByCategory = async (category: string): Promise<Post[]> => {
+    return posts.filter(post => post.category === category);
+} 

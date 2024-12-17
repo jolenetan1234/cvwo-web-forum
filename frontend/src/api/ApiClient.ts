@@ -1,18 +1,18 @@
+export interface ApiClientResponse<T> {
+    type: "success" | "error",
+    data: T | null,
+    error: string,
+}
+
 abstract class ApiClient<T> {
-    protected token: string;
+    private token: string;
 
     constructor(token: string) {
         this.token = token;
     }
 
-    abstract get(id: any): Promise<ApiModel<T>>
-    abstract getAll(): Promise<ApiModel<T[]>>
+    abstract getAll(): Promise<ApiClientResponse<T[]>>
+    abstract getById(id: any): Promise<ApiClientResponse<T>>
 }
 
-export interface ApiModel<T> {
-    type: "error" | "success",
-    data: T,
-    error: string
-}
-
-export default ApiClient
+export default ApiClient;

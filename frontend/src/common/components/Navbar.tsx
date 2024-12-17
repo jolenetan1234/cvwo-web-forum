@@ -1,4 +1,5 @@
 import { AppBar, Box, Button, Stack, styled, Toolbar, alpha, InputBase, Typography, IconButton } from "@mui/material";
+import StyledButton from "./StyledButton.tsx";
 import SearchIcon from "@mui/icons-material/Search";
 
 // hooks
@@ -55,9 +56,7 @@ export default function Navbar(): JSX.Element {
                         </IconButton>
 
                         {/* Login/Logout button */}
-                        <Button color="inherit" onClick={ONCLICK}>
-                            {BUTTONTEXT}
-                        </Button> 
+                        <StyledButton text={BUTTONTEXT} onClick={ONCLICK} />
 
                         {/* Search bar */}
                         <Search>

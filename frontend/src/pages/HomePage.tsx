@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import Feed from "../features/feed/feed-components";
+import { Feed } from "../features/post/post-components";
 
 export default function HomePage(): JSX.Element {
     return (
