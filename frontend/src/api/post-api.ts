@@ -47,6 +47,7 @@ export const getPostById = async (postId: number): Promise<Post> => {
     }
 }
 
-export const getPostByCategory = async (category: string): Promise<Post[]> => {
-    return posts.filter(post => post.category === category);
+export const getPostByCategories = async (categories: string[]): Promise<Post[]> => {
+    
+    return posts.filter(post => categories.includes(post.category));
 } 

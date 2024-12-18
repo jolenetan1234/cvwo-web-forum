@@ -22,7 +22,15 @@ import { useCallback, useState } from "react";
  * A subheader containing the options for categories.
  * @returns The subheader above Cards.
  */
-function CategoryHeader(): JSX.Element {
+function CategoryHeader({ categories, selectedCategories, setSelectedCategories }: {
+    categories: {
+        label: string,
+        db_value: string,
+    }[],
+    selectedCategories: string[],
+    setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>,
+}): JSX.Element {
+    /*
     // HARD-CODED, REMOVE LATER
     const categories = [
         {
@@ -42,17 +50,9 @@ function CategoryHeader(): JSX.Element {
     /*
     // set states
     const [selectedCategories, setSelectedCategories] = useState<{ label: string, db_value: string }[]>([]);
-    
-    const handleChange = (
-        event: SelectChangeEvent<{ label: string, db_value: string }[]>
-    ): void => {
-        console.log(event.target.value);
-        
-        setSelectedCategories(event.target.value);
-    }
-    */
+    */    
 
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     const handleChange = (
         event: SelectChangeEvent<string[]>
@@ -82,7 +82,7 @@ function CategoryHeader(): JSX.Element {
 
     return (
        <Box sx={{ display: "flex" }}>
-                <FormControl sx={{ m: 1, width: 500 }}>
+                <FormControl sx={{ m: 2, width: 500 }}>
       <InputLabel>Categories</InputLabel>
       <Select
         multiple
@@ -222,6 +222,38 @@ function Feed(): JSX.Element {
         () => forumPostClient.getAll()
     );
 
+    // categories
+    // HARD-CODED, REMOVE LATER
+    const CATEGORIES = [
+        {
+            label: "School",
+            db_value: "school",
+        },
+        {
+            label: "Rant",
+            db_value: "rant",
+        },
+        {
+            label: "Off-Topic",
+            db_value: "off_topic",
+        }
+    ];
+
+    const [categories, setCategories] = useState(CATEGORIES);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [filteredPostList, setFilteredPostList] = useState([]);
+
+    
+
+    // const { data, error, loading } = { filteredPostList, }
+    // const [filteredPostList, setFilteredPostList] = useState([]);
+    // const [selectedCategories, setSelectedCategories] = useState([]);
+    // 
+    /*
+    useEffect(() => {
+    if selectedCategories}) 
+    */
+
     if (loading) {
         return <Loading />
     } else if (error != "") {
@@ -230,7 +262,11 @@ function Feed(): JSX.Element {
 
     return (
         <Stack>
-            <CategoryHeader />
+            <CategoryHeader 
+            categories={categories} 
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+            />
             <Stack direction="row" justifyContent="space-between">
                 <Posts posts={data as Post[]}/>
                 <RightBar />
@@ -264,18 +300,6 @@ function PostDetails(): JSX.Element {
 
     const post = data;
     console.log(post);
-
-    /*
-    const post =      {
-        id: 2,
-        title: "I stubbed my toe",
-        content: "I banged it against the table :(",
-        category: "Daily", 
-        userId: 1,
-    };
-
-    const [error, loading] = ["", false];
-    */
 
     if (loading) {
         return <Loading />;

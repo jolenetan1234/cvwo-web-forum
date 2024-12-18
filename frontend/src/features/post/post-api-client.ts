@@ -2,7 +2,7 @@ import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 import Post from "../../types/Post";
 
 // MOCK API ENDPOINTS
-import { getAllPosts, getPostById, getPostByCategory } from "../../api/post-api";
+import { getAllPosts, getPostById, getPostByCategories } from "../../api/post-api";
 import MockError from "../../common/errors/MockError";
 
 class ForumPostClient extends ApiClient<Post> {
@@ -67,10 +67,10 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async getByCategory(category: string) {
+    async getByCategories(categories: string[]) {
         try {
             // TODO: replace with axios
-            const data = await getPostByCategory(category);
+            const data = await getPostByCategories(categories);
             
             return {
                 type: "success",
