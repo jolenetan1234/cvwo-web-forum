@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 
 // components
-import { Box, Card, CardContent, CardHeader, Chip, Divider, Link, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
 import CommentSection from "../comment/comment-components.tsx";
 
 // types
@@ -15,7 +16,7 @@ import SelectBox from "../../common/components/SelectBox.tsx";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * A subheader containing the options for categories.
@@ -26,25 +27,98 @@ function CategoryHeader(): JSX.Element {
     const categories = [
         {
             label: "School",
-            value: "school",
+            db_value: "school",
         },
         {
             label: "Rant",
-            value: "rant",
+            db_value: "rant",
         },
         {
             label: "Off-Topic",
-            value: "off_topic",
+            db_value: "off_topic",
         }
     ];
 
-    const onChange = () => {
-        // 
+    /*
+    // set states
+    const [selectedCategories, setSelectedCategories] = useState<{ label: string, db_value: string }[]>([]);
+    
+    const handleChange = (
+        event: SelectChangeEvent<{ label: string, db_value: string }[]>
+    ): void => {
+        console.log(event.target.value);
+        
+        setSelectedCategories(event.target.value);
     }
+    */
+
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+    const handleChange = (
+        event: SelectChangeEvent<string[]>
+    ): void => {
+        setSelectedCategories(event.target.value);
+        console.log("handleChange", selectedCategories);
+    }
+
+    const handleDelete = (item: string): void => {
+       setSelectedCategories(selectedCategories.filter(
+        val => val != item
+       )) ;
+       console.log("handleDelete", selectedCategories);
+    }
+    
+    /**
+     * Removes `item` from `selectedCategories`.
+     * @param item - A Category item.
+     */
+    /*
+    const handleDelete = (item: { label: string, db_value: string }): void => {
+        setSelectedCategories(selectedCategories.filter(
+            cat => cat.db_value != item.db_value
+        ));
+    }
+        */
 
     return (
        <Box sx={{ display: "flex" }}>
-            <SelectBox label="Category" options={categories}/>
+                <FormControl sx={{ m: 1, width: 500 }}>
+      <InputLabel>Categories</InputLabel>
+      <Select
+        multiple
+        value={selectedCategories}
+        onChange={handleChange}
+        input={<OutlinedInput label="Categories" />}
+            renderValue={(selected) => (
+                <Stack gap={1} direction="row" flexWrap="wrap">
+
+                {selected.map((item) => {
+                    // `item` refers to the db_value of a category item.
+                    // and we want to access the label of that item.
+                    const category = categories.find(cat => cat.db_value === item);
+                    return (
+                    <Chip 
+                    key={item} 
+                    label={category?.label}
+                    onDelete = {() => handleDelete(item)}
+                    deleteIcon={
+                        <CancelIcon
+                    onMouseDown={e => e.stopPropagation()}
+                    />
+                    }
+                />
+                    );
+            })}
+            </Stack>
+        )}
+      >
+        {categories.map((cat) => (
+          <MenuItem key={cat.db_value} value={cat.db_value}>
+            {cat.label}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
        </Box>
     )
 }

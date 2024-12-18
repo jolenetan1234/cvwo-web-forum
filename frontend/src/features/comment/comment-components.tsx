@@ -37,12 +37,21 @@ function PostCommentBar(): JSX.Element {
  * @returns {JSX.Element} A component displaying the Comment.
  */
 function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
+    const fetchUser = useCallback(
+        () => userClient.getById(comment.userId),
+        [comment]
+    )
+
+    const { data, error, loading } = useFetch(fetchUser);
     /*
     const { data, error, loading } = useFetch(
         () => userClient.getById(comment.userId)
     );
     */
 
+    const user = data;
+
+    /*
     let user;
 
     try {
@@ -59,13 +68,14 @@ function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
             return <ErrorMessage message="An unknown error occured." />
         }
     }
+    */
 
     return (
         <StyledCommentBox>
             {/* Username and content */}
             <Box>
             <Typography variant="subtitle2">
-                {user.username}
+                {user?.username}
             </Typography>
             <Typography variant="body1">
                 {comment.content}
