@@ -8,7 +8,9 @@ import { getAllPosts, getPostById } from "../../api/post-api";
 import { getCommentsByPostId, getCommentById } from "../../api/comment-api";
 
 interface useFetchResponse<T> {
-    data: T | null, // data will only be null in the case of an error. Empty arrays will still be here.
+    // data will only be null in the case of an error. 
+    // Empty arrays will still be here.
+    data: T | null,     
     error: string,
     loading: boolean,
 }
@@ -40,6 +42,7 @@ function useFetch<T>(
                 } else {
                     setError(res.error);
                 }
+            // catch unknown errors (NOT AXIOS ERRORS! Those already caught in APIClient)
             } catch (err) {
                 setError("An unknown error occured.");
             } finally {

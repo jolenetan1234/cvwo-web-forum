@@ -9,7 +9,10 @@ import { ApiClientResponse } from "../../api/ApiClient";
 import forumPostClient from "./post-api-client";
 
 interface useFilterResponse {
-    filteredList: Post[],
+    // data will only be null in the case of an error,
+    // in which error message will be displayed.
+    // Empty arrays will still be here.
+    filteredList: Post[] | null,     
     error: string,
     loading: boolean,
 }
@@ -27,25 +30,43 @@ function useFilter(selectedCategories: string[]): useFilterResponse{
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const filterData = async () => {
-            let res: ApiClientResponse<Post[]>
+        const filterData = async (): Promise<void> => {
+            setLoading(true);
+            console.log("filterData");
 
-            if (selectedCategories.length == 0) {
-                res = await forumPostClient.getAll(); 
-            } else {
-                res = await forumPostClient.getByCategories(selectedCategories);
+            try {
+                let res: ApiClientResponse<Post[]>;
+
+                if (selectedCategories.length == 0) {
+                    res = await forumPostClient.getAll(); 
+                } else {
+                    res = await forumPostClient.getByCategories(selectedCategories);
+                }
+                
+                console.log("useFilter: filterData()", res);
+
+                // set states based on response status
+                if (res.type === "success") {
+                    setFilteredList(res.data);
+                } else {
+                    setError(res.error);
+                }
+
+            // catch unknown errors (NOT AXIOS ERRORS! Those already caught in APIClient)
+            } catch (err) {
+                setError("An unknown error occurred.");
+            } finally {
+                setLoading(false);
             }
-
-            console.log("useFilter: filterData()", res);
         }
-    })
 
-    if (selectedCategories.length == 0) {
-        // data = APIClient.getAll()
-    } else {
-        // data = APIClient.fetchByCategory
+        filterData();
+    }, [selectedCategories, ]);
 
-        ))
-    }
+    return {
+        filteredList,
+        error,
+        loading
+    };
 }
 
