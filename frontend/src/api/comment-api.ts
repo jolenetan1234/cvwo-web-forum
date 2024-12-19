@@ -1,5 +1,8 @@
+// NOTE: this is only for development purposes.
+// USELESS once backend is set up.
+
 import Comment from "../types/Comment";
-import NotFoundError from "../common/errors/NotFoundError";
+import NotFoundError from "../common/errors/MockError";
 
 // HARDCODED
 const COMMENTS = [
@@ -23,12 +26,17 @@ const COMMENTS = [
     }
 ]
 
+export const getAllComments = async (): Promise<Comment[]> => {
+    // TODO: replace with API call
+    return COMMENTS;
+}
+
 /**
  * Filters and returns an array of comments belonging to a post. 
  * @param {number} postId - ID of the Post.
  * @returns {Comment[]} An array of comments belonging to the post.
  */
-export const getCommentsByPostId = (postId: number): Comment[] => {
+export const getCommentsByPostId = async (postId: number): Promise<Comment[]> => {
     // TODO: replace with API call
     const comments = COMMENTS.filter(c => c.postId === postId);
 
@@ -40,13 +48,13 @@ export const getCommentsByPostId = (postId: number): Comment[] => {
  * @param {number} commentId - ID of the Comment.
  * @returns {Comment} The Comment with ID == `commentID`.
  */
-export const getCommentById = (commentId: number): Comment => {
+export const getCommentById = async (commentId: number): Promise<Comment> => {
     // TODO: replace with API call
     const comment = COMMENTS.find(c => c.id === commentId);
 
     // if not found, throw error
     if (!comment) {
-        throw new NotFoundError("Comment");
+        throw new NotFoundError("404: Comment Not Found");
     } else {
         return comment;
     }

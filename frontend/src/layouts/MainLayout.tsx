@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 export default function MainLayout(): JSX.Element {
     return (
         <Box>
-            <Navbar title="WEB FORUM" buttonText="Login"/>
+            <Navbar />
             <Outlet />
         </Box>
     )

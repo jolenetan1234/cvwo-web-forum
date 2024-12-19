@@ -1,5 +1,8 @@
+// NOTE: this is only for development purposes.
+// USELESS once backend is set up.
+
 import User from "../types/User"
-import NotFoundError from "../common/errors/NotFoundError";
+import NotFoundError from "../common/errors/MockError";
 
 // HARDCODED
 const USERS = [
@@ -20,7 +23,7 @@ const USERS = [
     },
 ]
 
-export const getUserById = (userId: number): User => {
+export const getUserById = async (userId: number): Promise<User> => {
     // TODO: replace with actual API call
     const user = USERS.find(u => u.id === userId);
 

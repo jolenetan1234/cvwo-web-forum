@@ -1,13 +1,19 @@
 import { Box, Divider, Stack, styled, Typography } from "@mui/material";
 import ErrorMessage from "../../common/components/ErrorMessage";
+import Loading from "../../common/components/Loading.tsx";
 
 // types
 import Comment from "../../types/Comment";
-import NotFoundError from "../../common/errors/NotFoundError";
+import NotFoundError from "../../common/errors/MockError";
 
 // API calls
-import { getCommentsByPostId } from "../../api/comment-api";
 import { getUserById } from "../../api/user-api";
+import useFetch from "../../common/hooks/useFetch";
+
+// API clients
+import commentClient from "./comment-api-client.ts";
+import userClient from "../user/user-api-client.ts";
+import { useCallback } from "react";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -31,10 +37,30 @@ function PostCommentBar(): JSX.Element {
  * @returns {JSX.Element} A component displaying the Comment.
  */
 function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
+    const fetchUser = useCallback(
+        () => userClient.getById(comment.userId),
+        [comment]
+    )
+
+    const { data, error, loading } = useFetch(fetchUser);
+    /*
+    const { data, error, loading } = useFetch(
+        () => userClient.getById(comment.userId)
+    );
+    */
+
+    const user = data;
+
+    /*
     let user;
 
     try {
-        user = getUserById(comment.userId);
+        // user = getUserById(comment.userId);
+        user = {
+        id: 2,
+        username: "meowmeowmeowmeow",
+        password: "pw",
+        }
     } catch (err) {
         if (err instanceof NotFoundError) {
             return <ErrorMessage message={err.toString()}/>
@@ -42,20 +68,21 @@ function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
             return <ErrorMessage message="An unknown error occured." />
         }
     }
+    */
 
     return (
         <StyledCommentBox>
             {/* Username and content */}
             <Box>
             <Typography variant="subtitle2">
-                {user.username}
+                {user?.username}
             </Typography>
             <Typography variant="body1">
                 {comment.content}
             </Typography>
             </Box>
 
-            {/* createdat */}
+            {/* created_at */}
             <Typography fontSize="small">00000</Typography>
         </StyledCommentBox>
     )
@@ -74,8 +101,29 @@ function Comments({ comments }: { comments: Comment[] }): JSX.Element {
 }
 
 export default function CommentSection({ postId }: { postId: number }): JSX.Element {
+    // memoize the callback
+    const fetchComments = useCallback(
+        () => commentClient.getByPostId(postId),
+        [postId]
+    );
+
     // Fetch comments
-    const comments = getCommentsByPostId(postId);
+    // const comments = await getCommentsByPostId(postId);
+    /*
+    const { data, error, loading } = useFetch<Comment[]>(
+        () => commentClient.getByPostId(postId)
+    )
+        */
+
+    const { data, error, loading } = useFetch(fetchComments);
+
+    const comments = data;
+
+    if (loading) {
+        return <Loading />
+    } else if (error != "") {
+        return <ErrorMessage message={error} />
+    }
 
     // "POST comment" bar
     // comments list
@@ -87,7 +135,7 @@ export default function CommentSection({ postId }: { postId: number }): JSX.Elem
             {/* "POST comment" bar */}
             
             {/* Comments list */}
-            <Comments comments={comments}/>
+            <Comments comments={comments as Comment[]} />
         </Stack>
     )
 }
