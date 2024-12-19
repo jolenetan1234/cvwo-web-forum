@@ -9,7 +9,6 @@ import Loading from "../../common/components/Loading.tsx";
 
 // types
 import Post from "../../types/Post.ts";
-import Category from "../../types/Category.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
@@ -28,30 +27,6 @@ function CategoryHeader({ selectedCategories, setSelectedCategories }: {
     selectedCategories: number[],
     setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>,
 }): JSX.Element {
-    /*
-    // HARD-CODED, REMOVE LATER
-    const categories = [
-        {
-            label: "School",
-            db_value: "school",
-        },
-        {
-            label: "Rant",
-            db_value: "rant",
-        },
-        {
-            label: "Off-Topic",
-            db_value: "off_topic",
-        }
-    ];
-
-    /*
-    // set states
-    const [selectedCategories, setSelectedCategories] = useState<{ label: string, db_value: string }[]>([]);
-    */    
-
-    // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
     const handleChange = (
         event: SelectChangeEvent<number[]>
     ): void => {
@@ -66,23 +41,12 @@ function CategoryHeader({ selectedCategories, setSelectedCategories }: {
        console.log("handleDelete", selectedCategories);
     }
 
+    // fetch all categories
     const { data, error, loading } = useFetch(
         () => categoryClient.getAll()
     );
     const categories = data;
     
-    /**
-     * Removes `item` from `selectedCategories`.
-     * @param item - A Category item.
-     */
-    /*
-    const handleDelete = (item: { label: string, db_value: string }): void => {
-        setSelectedCategories(selectedCategories.filter(
-            cat => cat.db_value != item.db_value
-        ));
-    }
-        */
-
     return (
        <Box sx={{ display: "flex" }}>
                 <FormControl sx={{ m: 2, width: 500 }}>
@@ -125,6 +89,50 @@ function CategoryHeader({ selectedCategories, setSelectedCategories }: {
     )
 }
 
+function PostCardHeader({ post, linkUrl }: 
+    { 
+        post: Post,
+        linkUrl?: string,
+    }
+): JSX.Element {
+
+    // access `category` of the Post
+    const { data } = useFetch(
+        () => categoryClient.getById(post.category_id)
+    );
+    const category = data;
+
+    return (
+        <CardHeader
+        title={
+            <Stack direction="row" alignItems="center">
+                {linkUrl ? (
+                    <Link 
+                    variant="h6"
+                    sx={{ fontWeight: "bold" }}
+                    href={linkUrl}
+                    color="inherit"
+                    >
+                        {post.title}
+                    </Link>
+                ) : (
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        {post.title}
+                    </Typography>
+                )}
+                
+                <Chip
+                label={category?.label}
+                size="small"
+                color="primary"
+                sx={{ ml: 1 }} // Add some margin to the left
+                />
+            </Stack>
+        }
+        />
+    )
+}
+
 /**
  * Card view of a Post.
  * When clicked, redirects to the Post details.
@@ -138,35 +146,9 @@ function PostCard({ post }: { post: Post, }): JSX.Element {
     // link to another URL to show post details
     const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
 
-    // access Category of the Post
-    const { data } = useFetch(
-        () => categoryClient.getById(post.category_id)
-    );
-    const category = data;
-
     return (
         <Card>
-            <CardHeader
-            title={
-                <Stack direction="row" alignItems="center">
-                    <Link 
-                    variant="h6"
-                    sx={{ fontWeight: "bold" }}
-                    href={linkUrl}
-                    color="inherit"
-                    >
-                        {post.title}
-                    </Link>
-                    
-                    <Chip
-                    label={category?.label}
-                    size="small"
-                    color="primary"
-                    sx={{ ml: 1 }} // Add some margin to the left
-                    />
-                </Stack>
-            }
-            />
+            <PostCardHeader post={post} linkUrl={linkUrl} />
 
             <CardContent sx={{ mt: -3 }}>
                 <Typography>
@@ -216,24 +198,6 @@ function RightBar(): JSX.Element {
  * @returns {JSX.Element} A component that displays the Feed.
  */
 function Feed(): JSX.Element {
-    // API calls
-    // const posts = getAllPosts();
-    // fetch using the API client like ForumPostClient.getAll(); 
-    // const { data, error, loading } = ForumPostClient.getAll();
-    // have a [selectedCategories, setSelectedCategories] state. Then make the page rerender when this state changes.
-    // using useCategoryFilter(category[]) => returns `{ selectedCategories, addCategory, removeCategory, resetCategory, isEmpty: boolean }
-
-    // BUT HOW DO I PASS THE ABOVE INTO `CategoryHeader`?
-    // so during render, if selectedCategories.isEmpty(), 
-    // then { data, error, loading } = ForumPostClient.getAll();
-
-    // else, { data, error, loading } = ForumPostClient.getPostsByCategory();
-
-    /*
-    const { data, error, loading } = useFetch<Post[]>(
-        () => forumPostClient.getAll()
-    );
-    */
 
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
@@ -241,23 +205,6 @@ function Feed(): JSX.Element {
     const data = filteredList; 
 
     console.log("[post-components: Feed] data", data);
-
-    // useFilter(postList, selectedCategories)<Post> => returns { data, error, loading }
-    /*
-    useFilter()
-    useEffect
-    const [filteredPostList, setFilteredPostList] = useState([]);
-
-     
-
-    // const { data, error, loading } = { filteredPostList, }
-    // const [filteredPostList, setFilteredPostList] = useState([]);
-    // const [selectedCategories, setSelectedCategories] = useState([]);
-    // 
-    /*
-    useEffect(() => {
-    if selectedCategories}) 
-    */
 
     if (loading) {
         return <Loading />
@@ -293,13 +240,6 @@ function PostDetails(): JSX.Element {
         [postId]
     );
 
-    // const { data, error, loading } = useFetch<Post>()
-    // const { data, error, loading } = useFetch<Post>(`/api/posts/${postId}`);
-    /*
-    const { data, error, loading } = useFetch<Post>(
-        () => forumPostClient.getById(postId)
-    );
-    */
    const { data, error, loading } = useFetch(fetchPostDetails);
 
     const post = data;
@@ -312,24 +252,7 @@ function PostDetails(): JSX.Element {
     } else {
         return (
             <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                {/* Post Title */}
-                <CardHeader
-                title={
-                    <Stack direction="row" alignItems="center">
-
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                            {post?.title}
-                        </Typography>
-
-                        <Chip
-                            label={post?.category}
-                            size="small"
-                            color="primary"
-                            sx={{ ml: 1 }} // Add some margin to the left
-                        />
-                    </Stack>
-                }
-                />
+                <PostCardHeader post={post as Post} />
 
                 {/* Post Content */}
                 <CardContent sx={{ mt: -3 }}>
