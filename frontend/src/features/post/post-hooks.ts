@@ -8,11 +8,11 @@ import { ApiClientResponse } from "../../api/ApiClient";
 // API client
 import forumPostClient from "./post-api-client";
 
-interface useFilterResponse {
+interface useFilterResponse<T> {
     // data will only be null in the case of an error,
     // in which error message will be displayed.
     // Empty arrays will still be here.
-    filteredList: Post[] | null,     
+    filteredList: T[] | null,     
     error: string,
     loading: boolean,
 }
@@ -24,7 +24,7 @@ interface useFilterResponse {
  */
 // set type argument as T, because the expected behaviour of this is an array
 // sort of like Stream<T>
-function useFilter(selectedCategories: string[]): useFilterResponse{
+function useFilter(selectedCategories: number[]): useFilterResponse<Post>{
     const [filteredList, setFilteredList] = useState<Post[]>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
@@ -32,7 +32,6 @@ function useFilter(selectedCategories: string[]): useFilterResponse{
     useEffect(() => {
         const filterData = async (): Promise<void> => {
             setLoading(true);
-            console.log("filterData");
 
             try {
                 let res: ApiClientResponse<Post[]>;
@@ -43,7 +42,8 @@ function useFilter(selectedCategories: string[]): useFilterResponse{
                     res = await forumPostClient.getByCategories(selectedCategories);
                 }
                 
-                console.log("useFilter: filterData()", res);
+                console.log("[useFilter] selectedCategories", selectedCategories);
+                console.log("[useFilter]: filterData()", res);
 
                 // set states based on response status
                 if (res.type === "success") {
@@ -70,3 +70,4 @@ function useFilter(selectedCategories: string[]): useFilterResponse{
     };
 }
 
+export default useFilter;

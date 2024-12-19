@@ -10,15 +10,15 @@ const posts = [
         id: 1,
         title: "My first Lego Block",
         content: "I love Lego",
-        category: "Rant",
-        userId: 1,
+        category_id: 1,
+        user_id: 1,
     },
     {
         id: 2,
         title: "I stubbed my toe",
         content: "I banged it against the table :(",
-        category: "Daily", 
-        userId: 1,
+        category_id: 2,
+        user_id: 1,
     }
 ]
 
@@ -47,7 +47,13 @@ export const getPostById = async (postId: number): Promise<Post> => {
     }
 }
 
+/*
 export const getPostByCategories = async (categories: string[]): Promise<Post[]> => {
-    
-    return posts.filter(post => categories.includes(post.category));
+    const res = posts.filter(post => categories.includes(post.category));
+    return res;
 } 
+*/
+export const getPostByCategories = async (categories: number[]): Promise<Post[]> => {
+    const res = posts.filter(post => categories.includes(post.category_id));
+    return res;
+}

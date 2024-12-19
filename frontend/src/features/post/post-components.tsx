@@ -4,31 +4,29 @@ import { useParams } from "react-router-dom";
 import { Box, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CommentSection from "../comment/comment-components.tsx";
+import ErrorMessage from "../../common/components/ErrorMessage.tsx";
+import Loading from "../../common/components/Loading.tsx";
 
 // types
 import Post from "../../types/Post.ts";
+import Category from "../../types/Category.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
-import Loading from "../../common/components/Loading.tsx";
-import ErrorMessage from "../../common/components/ErrorMessage.tsx";
-import SelectBox from "../../common/components/SelectBox.tsx";
+import useFilter from "./post-hooks.ts";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
 import { useCallback, useState } from "react";
+import categoryClient from "../category/category-api-client.ts";
 
 /**
  * A subheader containing the options for categories.
  * @returns The subheader above Cards.
  */
-function CategoryHeader({ categories, selectedCategories, setSelectedCategories }: {
-    categories: {
-        label: string,
-        db_value: string,
-    }[],
-    selectedCategories: string[],
-    setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>,
+function CategoryHeader({ selectedCategories, setSelectedCategories }: {
+    selectedCategories: number[],
+    setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>,
 }): JSX.Element {
     /*
     // HARD-CODED, REMOVE LATER
@@ -55,18 +53,23 @@ function CategoryHeader({ categories, selectedCategories, setSelectedCategories 
     // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     const handleChange = (
-        event: SelectChangeEvent<string[]>
+        event: SelectChangeEvent<number[]>
     ): void => {
         setSelectedCategories(event.target.value);
         console.log("handleChange", selectedCategories);
     }
 
-    const handleDelete = (item: string): void => {
+    const handleDelete = (item: number): void => {
        setSelectedCategories(selectedCategories.filter(
-        val => val != item
+        catId => catId != item
        )) ;
        console.log("handleDelete", selectedCategories);
     }
+
+    const { data, error, loading } = useFetch(
+        () => categoryClient.getAll()
+    );
+    const categories = data;
     
     /**
      * Removes `item` from `selectedCategories`.
@@ -92,15 +95,14 @@ function CategoryHeader({ categories, selectedCategories, setSelectedCategories 
             renderValue={(selected) => (
                 <Stack gap={1} direction="row" flexWrap="wrap">
 
-                {selected.map((item) => {
-                    // `item` refers to the db_value of a category item.
-                    // and we want to access the label of that item.
-                    const category = categories.find(cat => cat.db_value === item);
+                {selected.map((catId) => {
+                    // we do this to access the label of each category
+                    const category = categories?.find(cat => cat.id === catId);
                     return (
                     <Chip 
-                    key={item} 
+                    key={catId} 
                     label={category?.label}
-                    onDelete = {() => handleDelete(item)}
+                    onDelete = {() => handleDelete(catId)}
                     deleteIcon={
                         <CancelIcon
                     onMouseDown={e => e.stopPropagation()}
@@ -112,8 +114,8 @@ function CategoryHeader({ categories, selectedCategories, setSelectedCategories 
             </Stack>
         )}
       >
-        {categories.map((cat) => (
-          <MenuItem key={cat.db_value} value={cat.db_value}>
+        {categories?.map((cat) => (
+          <MenuItem key={cat.id} value={cat.id}>
             {cat.label}
           </MenuItem>
         ))}
@@ -133,7 +135,14 @@ function CategoryHeader({ categories, selectedCategories, setSelectedCategories 
  * @returns {JSX.Element} A component displaying a Post.
  */
 function PostCard({ post }: { post: Post, }): JSX.Element {
+    // link to another URL to show post details
     const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
+
+    // access Category of the Post
+    const { data } = useFetch(
+        () => categoryClient.getById(post.category_id)
+    );
+    const category = data;
 
     return (
         <Card>
@@ -150,7 +159,7 @@ function PostCard({ post }: { post: Post, }): JSX.Element {
                     </Link>
                     
                     <Chip
-                    label={post.category}
+                    label={category?.label}
                     size="small"
                     color="primary"
                     sx={{ ml: 1 }} // Add some margin to the left
@@ -177,9 +186,11 @@ function PostCard({ post }: { post: Post, }): JSX.Element {
  */
 function Posts({ posts }: { posts: Post[] }): JSX.Element {
     return (
-        <Box bgcolor="green" flex={3} >
-            {posts.map(post => (
-                <PostCard key={post.id} post={post}/>
+        <Box flex={3} >
+            { posts.length == 0 ? 
+            <Typography>"No posts :(</Typography>
+            : posts.map(post => (
+                <PostCard key={post.id} post={post} />
             ))}
         </Box>
     )
@@ -218,32 +229,26 @@ function Feed(): JSX.Element {
 
     // else, { data, error, loading } = ForumPostClient.getPostsByCategory();
 
+    /*
     const { data, error, loading } = useFetch<Post[]>(
         () => forumPostClient.getAll()
     );
+    */
 
-    // categories
-    // HARD-CODED, REMOVE LATER
-    const CATEGORIES = [
-        {
-            label: "School",
-            db_value: "school",
-        },
-        {
-            label: "Rant",
-            db_value: "rant",
-        },
-        {
-            label: "Off-Topic",
-            db_value: "off_topic",
-        }
-    ];
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
-    const [categories, setCategories] = useState(CATEGORIES);
-    const [selectedCategories, setSelectedCategories] = useState([]);
+    const { filteredList, error, loading } = useFilter(selectedCategories);
+    const data = filteredList; 
+
+    console.log("[post-components: Feed] data", data);
+
+    // useFilter(postList, selectedCategories)<Post> => returns { data, error, loading }
+    /*
+    useFilter()
+    useEffect
     const [filteredPostList, setFilteredPostList] = useState([]);
 
-    
+     
 
     // const { data, error, loading } = { filteredPostList, }
     // const [filteredPostList, setFilteredPostList] = useState([]);
@@ -263,7 +268,6 @@ function Feed(): JSX.Element {
     return (
         <Stack>
             <CategoryHeader 
-            categories={categories} 
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}
             />
@@ -342,49 +346,6 @@ function PostDetails(): JSX.Element {
             </Card> 
         );
     }
-
-    /*
-    if () {
-        // Return post details.
-        return (
-            <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                {/* Post Title */ /*}
-                <CardHeader
-                title={
-                    <Stack direction="row" alignItems="center">
-
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                            {post?.title}
-                        </Typography>
-
-                        <Chip
-                            label={post?.category}
-                            size="small"
-                            color="primary"
-                            sx={{ ml: 1 }} // Add some margin to the left
-                        />
-                    </Stack>
-                }
-                />
-
-                {/* Post Content */ /*}
-                <CardContent sx={{ mt: -3 }}>
-                    <Typography>
-                        {post?.content}
-                    </Typography>
-                </CardContent>
-
-                <Divider />
-                {/* Comment Section */ /*}
-                <CardContent>
-                    <CommentSection postId={parseInt(postId)}/>
-                </CardContent>
-            </Card> 
-        );
-    } else {
-        return <ErrorMessage message={error.message}/>;
-    };
-    */
 }
 
 export { Feed, PostDetails };

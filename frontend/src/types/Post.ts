@@ -2,6 +2,6 @@ export default interface Post {
     id: number;
     title: string;
     content: string;
-    category: string;
-    userId: number;
+    category_id: number;
+    user_id: number;
 }

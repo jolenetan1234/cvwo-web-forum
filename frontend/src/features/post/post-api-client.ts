@@ -1,12 +1,12 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 import Post from "../../types/Post";
+import MockError from "../../common/errors/MockError";
 
 // MOCK API ENDPOINTS
 import { getAllPosts, getPostById, getPostByCategories } from "../../api/post-api";
-import MockError from "../../common/errors/MockError";
 
 class ForumPostClient extends ApiClient<Post> {
-    async getAll() {
+    async getAll(): Promise<ApiClientResponse<Post[]>> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get(")
@@ -16,7 +16,7 @@ class ForumPostClient extends ApiClient<Post> {
                 type: "success",
                 data: data,
                 error: "",
-            } as ApiClientResponse<Post[]>;
+            };
 
         } catch (err: any) {
             let message;
@@ -31,11 +31,11 @@ class ForumPostClient extends ApiClient<Post> {
                 type: "error",
                 data: null,
                 error: message,
-            } as ApiClientResponse<Post[]>;
+            };
         }
     }
 
-    async getById(postId: number) {
+    async getById(postId: number): Promise<ApiClientResponse<Post>> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("API_BASE_URL/post/postId")
@@ -47,7 +47,7 @@ class ForumPostClient extends ApiClient<Post> {
                 type: "success",
                 data: data,
                 error: "",
-            } as ApiClientResponse<Post>;
+            };
 
         } catch (err: any) {
             let message;
@@ -63,20 +63,21 @@ class ForumPostClient extends ApiClient<Post> {
                 type: "error",
                 data: null,
                 error: message,
-            } as ApiClientResponse<Post>;
+            };
         }
     }
 
-    async getByCategories(categories: string[]) {
+    async getByCategories(categories: number[]): Promise<ApiClientResponse<Post[]>> {
         try {
             // TODO: replace with axios
             const data = await getPostByCategories(categories);
+            console.log("[forumPostClient.getPostByCategories", data);
             
             return {
                 type: "success",
                 data: data,
                 error: "",
-            } as ApiClientResponse<Post[]>;
+            };
             
         } catch (err: any) {
             let message;
@@ -91,7 +92,7 @@ class ForumPostClient extends ApiClient<Post> {
                 type: "error",
                 data: null,
                 error: message,
-            } as ApiClientResponse<Post[]>;
+            };
         }
     }
 }
