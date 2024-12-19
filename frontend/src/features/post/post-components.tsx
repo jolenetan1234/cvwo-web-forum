@@ -12,7 +12,7 @@ import Post from "../../types/Post.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
-import useFilter from "./post-hooks.ts";
+import useFilter from "../../common/hooks/useFilter.ts";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
@@ -89,6 +89,12 @@ function CategoryHeader({ selectedCategories, setSelectedCategories }: {
     )
 }
 
+/**
+ * Header for a single PostCard.
+ * Dynamic, based on whether the title needs to be a Link or not. 
+ * @param param0 
+ * @returns 
+ */
 function PostCardHeader({ post, linkUrl }: 
     { 
         post: Post,
@@ -201,7 +207,11 @@ function Feed(): JSX.Element {
 
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
-    const { filteredList, error, loading } = useFilter(selectedCategories);
+    const { filteredList, error, loading } = useFilter<Post>(
+        selectedCategories,
+        forumPostClient,
+        () => forumPostClient.getByCategories(selectedCategories)
+    );
     const data = filteredList; 
 
     console.log("[post-components: Feed] data", data);

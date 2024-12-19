@@ -2,12 +2,7 @@ import { useEffect } from "react";
 
 // types
 import { useState } from "react";
-import Post from "../../types/Post";
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
-
-// DELETE LATER. BY RIGHT NO NEED PASS IN API CLIENT.
-// API client
-import forumPostClient from "../../features/post/post-api-client";
 
 interface useFilterResponse<T> {
     // data will only be null in the case of an error,
