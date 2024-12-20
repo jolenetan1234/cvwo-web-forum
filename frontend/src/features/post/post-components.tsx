@@ -13,6 +13,7 @@ import Post from "../../types/Post.ts";
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
 import useFilter from "../../common/hooks/useFilter.ts";
+import { useCategory } from "./post-hooks.ts";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
@@ -23,24 +24,13 @@ import categoryClient from "../category/category-api-client.ts";
  * A subheader containing the options for categories.
  * @returns The subheader above Cards.
  */
-function CategoryHeader({ selectedCategories, setSelectedCategories }: {
-    selectedCategories: number[],
-    setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>,
+function CategoryHeader({ handleCategoryChange, handleCategoryDelete, selectedCategories }: {
+   handleCategoryChange: (event: SelectChangeEvent<number[]>) => void,
+   handleCategoryDelete: (catId: number) => void,
+   selectedCategories: number[],
 }): JSX.Element {
-    const handleChange = (
-        event: SelectChangeEvent<number[]>
-    ): void => {
-        setSelectedCategories(event.target.value);
-        console.log("handleChange", selectedCategories);
-    }
 
-    const handleDelete = (item: number): void => {
-       setSelectedCategories(selectedCategories.filter(
-        catId => catId != item
-       )) ;
-       console.log("handleDelete", selectedCategories);
-    }
-
+    // hooks
     // fetch all categories
     const { data, error, loading } = useFetch(
         () => categoryClient.getAll()
@@ -54,7 +44,7 @@ function CategoryHeader({ selectedCategories, setSelectedCategories }: {
       <Select
         multiple
         value={selectedCategories}
-        onChange={handleChange}
+        onChange={handleCategoryChange}
         input={<OutlinedInput label="Categories" />}
             renderValue={(selected) => (
                 <Stack gap={1} direction="row" flexWrap="wrap">
@@ -66,7 +56,7 @@ function CategoryHeader({ selectedCategories, setSelectedCategories }: {
                     <Chip 
                     key={catId} 
                     label={category?.label}
-                    onDelete = {() => handleDelete(catId)}
+                    onDelete = {() => handleCategoryDelete(catId)}
                     deleteIcon={
                         <CancelIcon
                     onMouseDown={e => e.stopPropagation()}
@@ -205,7 +195,8 @@ function RightBar(): JSX.Element {
  */
 function Feed(): JSX.Element {
 
-    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    // hooks
+    const { selectedCategories, handleCategoryChange, handleCategoryDelete } = useCategory<number>();
 
     const { filteredList, error, loading } = useFilter<Post>(
         selectedCategories,
@@ -216,6 +207,8 @@ function Feed(): JSX.Element {
 
     console.log("[post-components: Feed] data", data);
 
+    // const { handleCategoryChange, handleCategoryDelete } = useCategory();
+
     if (loading) {
         return <Loading />
     } else if (error != "") {
@@ -225,8 +218,9 @@ function Feed(): JSX.Element {
     return (
         <Stack>
             <CategoryHeader 
+            handleCategoryChange={handleCategoryChange}
+            handleCategoryDelete={handleCategoryDelete}
             selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
             />
             <Stack direction="row" justifyContent="space-between">
                 <Posts posts={data as Post[]}/>

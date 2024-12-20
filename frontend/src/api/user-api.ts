@@ -9,16 +9,19 @@ const USERS = [
     {
         id: 1,
         username: "peanutman",
+        email: "peanutman@gmail.com",
         password: "pw",
     },
     {
         id: 2,
         username: "meowmeowmeowmeow",
+        email: "meowmeowmeow@gmail.com",
         password: "pw",
     },
     {
         id: 3,
         username: "boing",
+        email: "boing@gmail.com",
         password: "pw",
     },
 ]
