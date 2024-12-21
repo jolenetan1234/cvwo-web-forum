@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
 
 // components
-import { Box, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Box, Card, CardContent, CardHeader, Chip, Divider, Link, Stack, Typography } from "@mui/material";
 import CommentSection from "../comment/comment-components.tsx";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
@@ -13,71 +12,11 @@ import Post from "../../types/Post.ts";
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
 import useFilter from "../../common/hooks/useFilter.ts";
-import { useCategory } from "./post-hooks.ts";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import categoryClient from "../category/category-api-client.ts";
-
-/**
- * A subheader containing the options for categories.
- * @returns The subheader above Cards.
- */
-function CategoryHeader({ handleCategoryChange, handleCategoryDelete, selectedCategories }: {
-   handleCategoryChange: (event: SelectChangeEvent<number[]>) => void,
-   handleCategoryDelete: (catId: number) => void,
-   selectedCategories: number[],
-}): JSX.Element {
-
-    // hooks
-    // fetch all categories
-    const { data, error, loading } = useFetch(
-        () => categoryClient.getAll()
-    );
-    const categories = data;
-    
-    return (
-       <Box sx={{ display: "flex" }}>
-                <FormControl sx={{ m: 2, width: 500 }}>
-      <InputLabel>Categories</InputLabel>
-      <Select
-        multiple
-        value={selectedCategories}
-        onChange={handleCategoryChange}
-        input={<OutlinedInput label="Categories" />}
-            renderValue={(selected) => (
-                <Stack gap={1} direction="row" flexWrap="wrap">
-
-                {selected.map((catId) => {
-                    // we do this to access the label of each category
-                    const category = categories?.find(cat => cat.id === catId);
-                    return (
-                    <Chip 
-                    key={catId} 
-                    label={category?.label}
-                    onDelete = {() => handleCategoryDelete(catId)}
-                    deleteIcon={
-                        <CancelIcon
-                    onMouseDown={e => e.stopPropagation()}
-                    />
-                    }
-                />
-                    );
-            })}
-            </Stack>
-        )}
-      >
-        {categories?.map((cat) => (
-          <MenuItem key={cat.id} value={cat.id}>
-            {cat.label}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-       </Box>
-    )
-}
 
 /**
  * Header for a single PostCard.
@@ -193,11 +132,11 @@ function RightBar(): JSX.Element {
  * @param {Post[]} props.posts - Array of Post to be displayed.
  * @returns {JSX.Element} A component that displays the Feed.
  */
-function Feed(): JSX.Element {
+function Feed({ selectedCategories }: {
+    selectedCategories: number[],
+}): JSX.Element {
 
     // hooks
-    const { selectedCategories, handleCategoryChange, handleCategoryDelete } = useCategory<number>();
-
     const { filteredList, error, loading } = useFilter<Post>(
         selectedCategories,
         forumPostClient,
@@ -217,11 +156,6 @@ function Feed(): JSX.Element {
 
     return (
         <Stack>
-            <CategoryHeader 
-            handleCategoryChange={handleCategoryChange}
-            handleCategoryDelete={handleCategoryDelete}
-            selectedCategories={selectedCategories}
-            />
             <Stack direction="row" justifyContent="space-between">
                 <Posts posts={data as Post[]}/>
                 <RightBar />

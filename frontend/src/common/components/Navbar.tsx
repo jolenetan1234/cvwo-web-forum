@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 
 // hooks
 import useToggle from "../hooks/useToggle.ts";
+import { useIsOpen } from "../contexts/IsOpenContext.tsx";
 
 /**
  * Can use MUI's style() utility, 
@@ -31,6 +32,7 @@ export default function Navbar(): JSX.Element {
 
     // use hooks
     const loginForm = useToggle();
+    const { isOpen, toggleOpen } = useIsOpen();
 
     // Constant variables
     const TITLE = "WEB FORUM";
@@ -38,7 +40,8 @@ export default function Navbar(): JSX.Element {
     const ONCLICK = (): void => {
         // if not yet logged in and login button is pressed,
         // set `loginForm.isOpen` to be true.
-        loginForm.open();
+        // loginForm.open();
+        toggleOpen();
     };
 
     return (

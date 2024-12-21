@@ -1,5 +1,9 @@
+// components
 import HomePage from './pages/HomePage';
 import MainLayout from "./layouts/MainLayout"
+import PostDetailsPage from './pages/PostDetailsPage';
+
+// styles
 import './App.css'
 
 import {
@@ -9,7 +13,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import PostDetailsPage from './pages/PostDetailsPage';
+// contexts
+import { IsOpenProvider } from './common/contexts/IsOpenContext';
 
 /**
  * App router
@@ -26,7 +31,11 @@ const router = createBrowserRouter(
 )
 
 function App() {
-  return <RouterProvider router={router} />
+  return (
+    <IsOpenProvider>
+      <RouterProvider router={router} />
+    </IsOpenProvider>
+  );
 }
 
 export default App
