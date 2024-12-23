@@ -1,14 +1,16 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
-import User from "../../types/User";
 
 // MOCK API ENDPOINTS
-import { getUserById } from "../../api/user-api";
+import userApi from "../../api/user-api";
 import MockError from "../../common/errors/MockError";
+
+// types
+import { User, LoginData, LoginResponse } from "./user-types";
 
 class UserClient extends ApiClient<User> {
     // unauthorised users should NOT have access to this. 
     // Hence, for now I'm having this simply return an empty array.
-    async getAll() {
+    async getAll(): Promise<ApiClientResponse<User[]>> {
         try {
             const data: User[] = [];
 
@@ -35,12 +37,11 @@ class UserClient extends ApiClient<User> {
         }
     }
 
-    async getById(userId: number) {
+    async getById(userId: number): Promise<ApiClientResponse<User>> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("API_BASE_URL/user/userId")
-
-            const data = await getUserById(userId);
+            const data = await userApi.getUserById(userId);
 
             return {
                 type: "success",
@@ -62,6 +63,68 @@ class UserClient extends ApiClient<User> {
                 data: null,
                 error: message,
             } as ApiClientResponse<User>;
+        }
+    }
+
+    /*
+    async post(content: UserPostReq): Promise<ApiClientResponse<User>> {
+        try {
+            // TODO: replace with axios POST call
+            // POST API_/BASE_URL/user
+            const data = await userApi.createUser(content);
+
+            return {
+                type: "success",
+                data: data,
+                error: "",
+            } as ApiClientResponse<User>;
+
+        } catch (err: any) {
+            let message;
+            // TODO: replace MockError with AxiosError or something
+            if (err instanceof MockError) {
+                message = err.message;
+            } else {
+                message = "An unknown error occurred.";
+            }
+
+            return {
+                type: "error",
+                data: null,
+                error: message,
+            } as ApiClientResponse<User>;
+        }
+    }
+    UserPostReq)
+    */
+    
+    async login(credentials: LoginData): Promise<ApiClientResponse<LoginResponse>> {
+        try {
+            // TODO: replace with axios POST call
+            // POST API_BASE_URL/user/login)
+            // for now, userApi.login is the MOCK CONTROLLER for that endpoint.
+            const loginResponse = await userApi.login(credentials);
+
+            return {
+                type: "success",
+                data: loginResponse,
+                error: "",
+            };
+
+        } catch (err: any) {
+            let message;
+            // TODO: replace MockError with AxiosError or something
+            if (err instanceof MockError) {
+                message = err.message;
+            } else {
+                message = "An unknown error occurred.";
+            }
+
+            return {
+                type: "error",
+                data: null,
+                error: message,
+            };
         }
     }
 }

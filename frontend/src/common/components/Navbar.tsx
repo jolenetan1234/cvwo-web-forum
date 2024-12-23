@@ -38,9 +38,6 @@ export default function Navbar(): JSX.Element {
     const TITLE = "WEB FORUM";
     const BUTTONTEXT = "Login";
     const ONCLICK = (): void => {
-        // if not yet logged in and login button is pressed,
-        // set `loginForm.isOpen` to be true.
-        // loginForm.open();
         toggleOpen();
     };
 
@@ -59,7 +56,7 @@ export default function Navbar(): JSX.Element {
                         </IconButton>
 
                         {/* Login/Logout button */}
-                        <StyledButton text={BUTTONTEXT} onClick={ONCLICK} />
+                        <StyledButton content={BUTTONTEXT} onClick={ONCLICK} />
 
                         {/* Search bar */}
                         <Search>

@@ -16,6 +16,7 @@ abstract class ApiClient<T> {
 
     abstract getAll(): Promise<ApiClientResponse<T[]>>
     abstract getById(id: any): Promise<ApiClientResponse<T>>
+    abstract post(content: any): Promise<ApiClientResponse<T>>
 }
 
 export default ApiClient;
