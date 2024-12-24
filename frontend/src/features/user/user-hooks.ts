@@ -50,6 +50,7 @@ export function useLoginForm(handleClose: () => void): useUserFormResponse<Login
                     
                    // Cache the token in a cookie
                    Cookies.set("jwt_token", token, { expires: 7, secure: true });
+                   console.log("BELLO", Cookies.get())
                 } else {
                     setError(res.error);
                     console.log("[useLoginForm.handleSubmit] LOGIN ERROR", res.error);
