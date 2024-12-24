@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-interface useFormResponse<S> {
-    data: S,
+interface useFormResponse<T> {
+    data: T,
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void,
     resetForm: () => void,
 }

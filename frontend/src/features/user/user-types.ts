@@ -4,12 +4,12 @@
  * @interface User 
  * @property {number} id - UUID of a user.
  * @property {string} usernamme - The username of a user.
- * @property {string} hashedPassword - the hashed password of a user.
+ * @property {string} password - the password of a user.
  */
 export interface User {
     id: number;
     username: string;
-    hashedPassword: string;
+    password: string;
 }
 
 /**
@@ -35,7 +35,20 @@ export interface LoginData {
 
 // TODO: replace with the ACTUAL type of the backend login response.
 // Including wtv cookies and stuff
+/**
+ * Interface representing the data returned by the API client following a login request.
+ * 
+ * @interface LoginResponse
+ * @property {string} token - JWT token to authenticate subsequent
+ * requests.
+ * @property {User} user - The object representing the logged in user.
+ */
 export interface LoginResponse {
     token: string;
     user: User;
+}
+
+export interface SignUpData {
+    username: string,
+    password: string,
 }

@@ -4,7 +4,7 @@ import { Feed } from "../features/post/post-components";
 
 // hooks
 import { useCategory } from "../features/category/category-hooks";
-import LoginForm from "../features/user/user-components";
+import { LoginForm } from "../features/user/user-components";
 import { useIsOpen } from "../common/contexts/IsOpenContext";
 import { Login } from "@mui/icons-material";
 

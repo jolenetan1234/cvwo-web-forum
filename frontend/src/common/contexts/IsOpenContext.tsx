@@ -17,6 +17,7 @@ const IsOpenContext = createContext<IsOpenContextType>(
 export const IsOpenProvider = ({ children }: {
     children: ReactNode
 }) => {
+    // initial values
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleOpen = (): void => {

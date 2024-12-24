@@ -5,7 +5,7 @@ import userApi from "../../api/user-api";
 import MockError from "../../common/errors/MockError";
 
 // types
-import { User, LoginData, LoginResponse } from "./user-types";
+import { User, LoginData, LoginResponse, SignUpData } from "./user-types";
 
 class UserClient extends ApiClient<User> {
     // unauthorised users should NOT have access to this. 
@@ -66,16 +66,15 @@ class UserClient extends ApiClient<User> {
         }
     }
 
-    /*
-    async post(content: UserPostReq): Promise<ApiClientResponse<User>> {
+    async post(content: SignUpData): Promise<ApiClientResponse<User>> {
         try {
             // TODO: replace with axios POST call
             // POST API_/BASE_URL/user
-            const data = await userApi.createUser(content);
+            const user = await userApi.createUser(content);
 
             return {
                 type: "success",
-                data: data,
+                data: user,
                 error: "",
             } as ApiClientResponse<User>;
 
@@ -95,8 +94,6 @@ class UserClient extends ApiClient<User> {
             } as ApiClientResponse<User>;
         }
     }
-    UserPostReq)
-    */
     
     async login(credentials: LoginData): Promise<ApiClientResponse<LoginResponse>> {
         try {
@@ -112,6 +109,7 @@ class UserClient extends ApiClient<User> {
             };
 
         } catch (err: any) {
+            /*
             let message;
             // TODO: replace MockError with AxiosError or something
             if (err instanceof MockError) {
@@ -119,6 +117,14 @@ class UserClient extends ApiClient<User> {
             } else {
                 message = "An unknown error occurred.";
             }
+            */
+            let message;
+           
+            if (err.status === 401) {
+                message = err.message;
+            } else {
+                message = "An unknown error occurred.";
+            };
 
             return {
                 type: "error",
