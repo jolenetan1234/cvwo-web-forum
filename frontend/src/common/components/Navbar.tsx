@@ -3,9 +3,12 @@ import StyledButton from "./StyledButton.tsx";
 import SearchIcon from "@mui/icons-material/Search";
 
 // hooks
-import useToggle from "../hooks/useToggle.ts";
-import { useIsOpen } from "../contexts/IsOpenContext.tsx";
+import { useIsLoginOpen } from "../contexts/IsLoginOpenContext.tsx";
 import { useIsCreateOpen } from "../contexts/IsCreateOpenContext.tsx";
+import { useDispatch, useSelector } from "react-redux";
+
+// types
+import { logout, selectIsLoggedIn } from "../../features/user/user-slice.ts";
 
 /**
  * Can use MUI's style() utility, 
@@ -29,9 +32,9 @@ const Search = styled("div")(({ theme }) => ({
 }));
 
 function LoginButton(): JSX.Element {
-    const { isOpen, toggleOpen } = useIsOpen();
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const onClick = () => {
-        toggleOpen();
+        toggleLoginOpen();
     }
 
     return  (
@@ -40,8 +43,10 @@ function LoginButton(): JSX.Element {
 }
 
 function LogoutButton(): JSX.Element {
+    const dispatch = useDispatch();;
     const onClick = () => {
         // TODO: implement logout functionality (basically just remove the user from redux)
+        dispatch(logout());
     }
 
     return (
@@ -52,7 +57,7 @@ function LogoutButton(): JSX.Element {
 export default function Navbar(): JSX.Element {
 
     // use hooks
-    const loginForm = useToggle();
+    const isLoggedIn = useSelector(selectIsLoggedIn);
 
     // Constant variables
     const TITLE = "WEB FORUM";
@@ -73,9 +78,7 @@ export default function Navbar(): JSX.Element {
                         </IconButton>
 
                         {/* Login/Logout button */}
-                        {/* TODO: check if logged in, then show login/logout button
-                        based on that. */}
-                        <LoginButton />
+                        {isLoggedIn ? <LogoutButton /> : <LoginButton />}
 
                         {/* Search bar */}
                         <Search>

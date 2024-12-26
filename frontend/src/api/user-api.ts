@@ -5,8 +5,14 @@
 import NotFoundError from "../common/errors/MockError";
 import { User, LoginData, LoginResponse, SignUpData} from "../features/user/user-types";
 
+interface backendUser {
+    id: number;
+    username: string;
+    password: string;
+};
+
 // HARDCODED
-const USERS: User[] = [
+const USERS: backendUser[] = [
     {
         id: 1,
         username: "peanutman",
@@ -48,9 +54,12 @@ const createUser = async (content: SignUpData): Promise<User> => {
     } 
 
     USERS.push(newUser);
-    console.log("CREATE USER", USERS);
 
-    return newUser;
+    return {
+        id: newUser.id,
+        username: newUser.username,
+        token: "",
+    }
 }
 
 // mock controller for POST API_BASE_URL/user/login
@@ -59,7 +68,7 @@ const login = async (credentials: LoginData): Promise<LoginResponse> => {
 
     if (user) {
         return {
-            user: user,
+            user: { id: user.id, username: user.username, token: "mock-jwt-token" },
             token: "mock-jwt-token",
         }
     } else {

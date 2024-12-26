@@ -5,14 +5,14 @@ import { Feed } from "../features/post/post-components";
 // hooks
 import { useCategory } from "../features/category/category-hooks";
 import { LoginForm } from "../features/user/user-components";
-import { useIsOpen } from "../common/contexts/IsOpenContext";
+import { useIsLoginOpen } from "../common/contexts/IsLoginOpenContext";
 import { Login } from "@mui/icons-material";
 import { useIsCreateOpen } from "../common/contexts/IsCreateOpenContext";
 
 export default function HomePage(): JSX.Element {
     // hooks
     const { selectedCategories, handleCategoryChange, handleCategoryDelete } = useCategory<number>();
-    const { isOpen, toggleOpen } = useIsOpen();
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
             
     return (
@@ -26,7 +26,7 @@ export default function HomePage(): JSX.Element {
             <Feed
             selectedCategories={selectedCategories}
             />
-            { isOpen ? <LoginForm /> : <></> }
+            { isLoginOpen ? <LoginForm /> : <></> }
         </Box>
    )
 }

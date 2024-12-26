@@ -95,7 +95,7 @@ export function SubmitButton({ submitButtonText, loading}: {
 export default function Form(): JSX.Element {
     return (
         // dialog box
-        <Dialog open={isOpen} maxWidth="xs" onClose={handleClose}>
+        <Dialog open={isLoginOpen} maxWidth="xs" onClose={handleClose}>
 
                 <Paper elevation={8} sx={{p: 2}}>
                     {/* "Sign In" and close button */}

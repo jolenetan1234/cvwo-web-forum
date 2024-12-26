@@ -14,7 +14,7 @@ import {
 } from "react-router-dom";
 
 // contexts
-import { IsOpenProvider } from './common/contexts/IsOpenContext';
+import { IsLoginOpenProvider } from './common/contexts/IsLoginOpenContext';
 import SignUpPage from './pages/SignUpPage';
 import { IsCreateOpenProvider } from './common/contexts/IsCreateOpenContext';
 
@@ -37,11 +37,11 @@ const router = createBrowserRouter(
 
 function App() {
   return (
-    <IsOpenProvider>
+    <IsLoginOpenProvider>
       <IsCreateOpenProvider>      
         <RouterProvider router={router} />
       </IsCreateOpenProvider>
-    </IsOpenProvider>
+    </IsLoginOpenProvider>
   );
 }
 

@@ -3,13 +3,13 @@
  * 
  * @interface User 
  * @property {number} id - UUID of a user.
- * @property {string} usernamme - The username of a user.
- * @property {string} password - the password of a user.
+ * @property {string} username - The username of a user.
+ * @property {string} token - The JWT token for auth.
  */
 export interface User {
     id: number;
     username: string;
-    password: string;
+    token: string;
 }
 
 /**

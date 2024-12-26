@@ -19,12 +19,17 @@ import { useCallback } from "react";
 import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../user/user-slice.ts";
+import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 
 function CreatePostButton(): JSX.Element {
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+    const isLoggedIn = useSelector(selectIsLoggedIn);
 
     const handleClick = () => {
-        toggleCreateOpen();
+        isLoggedIn ? toggleCreateOpen() : toggleLoginOpen();
     };
 
     return (

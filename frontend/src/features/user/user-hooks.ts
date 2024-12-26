@@ -10,6 +10,12 @@ import React, { useState } from "react";
 // API client
 import userClient from "./user-api-client";
 
+// redux
+import { useDispatch, useSelector } from "react-redux";
+// userActions
+import { login, logout } from "./user-slice";
+
+
 /**
  * @type T - The type of data for the form.
  */
@@ -29,6 +35,7 @@ export function useLoginForm(handleClose: () => void): useUserFormResponse<Login
 
     // hooks
     const { data, handleChange, resetForm } = useForm<LoginData>(initialData);
+    const dispatch = useDispatch();
 
     // initialise states
     const [loading, setLoading] = useState(false);
@@ -38,19 +45,26 @@ export function useLoginForm(handleClose: () => void): useUserFormResponse<Login
         e.preventDefault();
         setLoading(true);
 
-        const login = async () => {
+        const loginUser = async () => {
             try {
                 const res = await userClient.login(data);
 
                 if (res.type === "success" && res.data?.user) {
                     const user = res.data.user;
                     const token = res.data.token;
-                   // TODO: store the session and stuff
-                   console.log("[useLoginForm.handleSubmit] LOGIN SUCCESS", user);
-                    
-                   // Cache the token in a cookie
-                   Cookies.set("jwt_token", token, { expires: 7, secure: true });
-                   console.log("BELLO", Cookies.get())
+                    // TODO: store the session and stuff
+                   
+                    console.log("[useLoginForm.handleSubmit] LOGIN SUCCESS", user);
+                  
+                    console.log("HELLO")
+                    // dispatch login
+                    dispatch(login({
+                        user: user,
+                        token: token,
+                    }));
+
+                    console.log("HELLO");
+
                 } else {
                     setError(res.error);
                     console.log("[useLoginForm.handleSubmit] LOGIN ERROR", res.error);
@@ -65,7 +79,7 @@ export function useLoginForm(handleClose: () => void): useUserFormResponse<Login
             }
         }
 
-        login();
+        loginUser();
     }
 
     return {

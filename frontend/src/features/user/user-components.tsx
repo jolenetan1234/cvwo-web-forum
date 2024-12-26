@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Checkbox, Container, Dialog, FormControl, FormCont
 import { SubmitButton } from "../../common/components/Form";
 
 // contexts
-import { useIsOpen } from "../../common/contexts/IsOpenContext";
+import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext";
 
 // hooks
 import { useLoginForm, useSignUpForm } from "./user-hooks";
@@ -14,74 +14,13 @@ import { FormField } from "../../common/components/Form";
 
 export function LoginForm(): JSX.Element {
     // hooks
-    const { isOpen, toggleOpen } = useIsOpen();
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
 
     const handleClose = (): void => {
-        toggleOpen();
+        toggleLoginOpen();
     }
 
     const { data, loading, error, handleChange, handleSubmit } = useLoginForm(handleClose);
-
-    // TODO: abstract into hook
-    // <U> : data format for the form (eg. LoginData in this case)
-    // <T> : Type of the expected ApiClientResponse of `submitFunction`. (Eg. User in this case)
-    // useForm<T, U>(init: U, submitFunction: () => ApiClientResponse<T>) => 
-    // { data: U, loading: boolean, error: string, handleChange, handleSubmit }
-    /*
-    const [ data, setData ] = useState<LoginData>({
-        username: "",
-        password: "",
-    });
-
-    const [ error, setError ] = useState("");
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setData(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value
-        }));
-        console.log("[LoginForm.handleChange] data", data);
-    };
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-        // call the API endpoint and send the response.
-        // Set error message also if any.
-        // userClient.login(data);
-        e.preventDefault();
-
-        const login = async (): Promise<void> => {
-            try {
-                const res = await userClient.login(data);
-
-                if (res.type === "success") {
-                    const user = res.data;
-                        console.log("submitted");
-                        resetForm();
-                        handleClose();
-                } else {
-                    setError(res.error);
-                }
-
-            } catch (err: any) {
-               setError("An unexpected error occurred.");
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        login();
-    };
-
-    const resetForm = (): void => {
-        // reset form to initial state
-        setData({
-            username: "",
-            password: "",
-        });
-
-        // 
-    };
-    */
 
     const fields: FormField[] = [
         {
@@ -100,7 +39,7 @@ export function LoginForm(): JSX.Element {
 
     return (
         // dialog box
-        <Dialog open={isOpen} maxWidth="xs" onClose={handleClose}>
+        <Dialog open={isLoginOpen} maxWidth="xs" onClose={handleClose}>
 
                 <Paper elevation={8} sx={{p: 2}}>
                     {/* "Sign In" and close button */}
