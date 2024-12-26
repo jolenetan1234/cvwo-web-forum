@@ -17,6 +17,23 @@ import useFilter from "../../common/hooks/useFilter.ts";
 import forumPostClient from "./post-api-client.ts";
 import { useCallback } from "react";
 import categoryClient from "../category/category-api-client.ts";
+import StyledButton from "../../common/components/StyledButton.tsx";
+import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
+
+function CreatePostButton(): JSX.Element {
+    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+
+    const handleClick = () => {
+        toggleCreateOpen();
+    };
+
+    return (
+        <StyledButton
+        content="Create post"
+        onClick={handleClick}
+        />
+    );
+}
 
 /**
  * Header for a single PostCard.
@@ -209,4 +226,4 @@ function PostDetails(): JSX.Element {
     }
 }
 
-export { Feed, PostDetails };
+export { Feed, PostDetails, CreatePostButton };

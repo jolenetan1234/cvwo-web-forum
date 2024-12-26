@@ -16,6 +16,7 @@ import {
 // contexts
 import { IsOpenProvider } from './common/contexts/IsOpenContext';
 import SignUpPage from './pages/SignUpPage';
+import { IsCreateOpenProvider } from './common/contexts/IsCreateOpenContext';
 
 /**
  * App router
@@ -37,7 +38,9 @@ const router = createBrowserRouter(
 function App() {
   return (
     <IsOpenProvider>
-      <RouterProvider router={router} />
+      <IsCreateOpenProvider>      
+        <RouterProvider router={router} />
+      </IsCreateOpenProvider>
     </IsOpenProvider>
   );
 }

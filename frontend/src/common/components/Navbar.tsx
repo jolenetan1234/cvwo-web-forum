@@ -5,6 +5,7 @@ import SearchIcon from "@mui/icons-material/Search";
 // hooks
 import useToggle from "../hooks/useToggle.ts";
 import { useIsOpen } from "../contexts/IsOpenContext.tsx";
+import { useIsCreateOpen } from "../contexts/IsCreateOpenContext.tsx";
 
 /**
  * Can use MUI's style() utility, 
@@ -27,19 +28,34 @@ const Search = styled("div")(({ theme }) => ({
     flexGrow: "1", // so Search fills the right gap within the <Stack> (See below)
 }));
 
+function LoginButton(): JSX.Element {
+    const { isOpen, toggleOpen } = useIsOpen();
+    const onClick = () => {
+        toggleOpen();
+    }
+
+    return  (
+        <StyledButton content="Login" onClick={onClick} />
+    );
+}
+
+function LogoutButton(): JSX.Element {
+    const onClick = () => {
+        // TODO: implement logout functionality (basically just remove the user from redux)
+    }
+
+    return (
+        <StyledButton content="Logout" onClick = {onClick} />
+    );
+}
 
 export default function Navbar(): JSX.Element {
 
     // use hooks
     const loginForm = useToggle();
-    const { isOpen, toggleOpen } = useIsOpen();
 
     // Constant variables
     const TITLE = "WEB FORUM";
-    const BUTTONTEXT = "Login";
-    const ONCLICK = (): void => {
-        toggleOpen();
-    };
 
     return (
         <Box sx={{ flexGrow: 1 }} color="primary">
@@ -50,13 +66,16 @@ export default function Navbar(): JSX.Element {
                     {/* Made width 50% of StyledToolbar so the Login + Search + Light/Dark mode 
                     makes up 50% of the navbar horizontally */}
                     <Stack direction="row" alignItems="center" width="50%">
+
                         {/* Light/Dark mode toggle */}
                         <IconButton>
                             Light/Dark Mode
                         </IconButton>
 
                         {/* Login/Logout button */}
-                        <StyledButton content={BUTTONTEXT} onClick={ONCLICK} />
+                        {/* TODO: check if logged in, then show login/logout button
+                        based on that. */}
+                        <LoginButton />
 
                         {/* Search bar */}
                         <Search>

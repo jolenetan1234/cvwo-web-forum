@@ -1,12 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-interface IsOpenContextType {
-    isOpen: boolean;
-    toggleOpen: () => void;
-}
-
 // Define context
-const IsOpenContext = createContext<IsOpenContextType>(
+const IsOpenContext = createContext(
     {
         isOpen: false,
         toggleOpen: () => {}
@@ -17,7 +12,7 @@ const IsOpenContext = createContext<IsOpenContextType>(
 export const IsOpenProvider = ({ children }: {
     children: ReactNode
 }) => {
-    // initial values
+    // set context values for consumers (components wrapped by this provider)
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleOpen = (): void => {
@@ -35,7 +30,7 @@ export const IsOpenProvider = ({ children }: {
     );
 }
 
-// Custom hook for accessing the context
-export const useIsOpen = (): IsOpenContextType => {
+// Custom hook to access (consume) content
+export const useIsOpen = () => {
     return useContext(IsOpenContext);
 }
