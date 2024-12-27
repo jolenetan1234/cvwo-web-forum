@@ -2,7 +2,7 @@
 // USELESS once backend is set up.
 
 import MockError from "../common/errors/MockError";
-import Post from "../types/Post"
+import Post from "../../public/types/Post"
 
 // HARD CODED
 const posts = [

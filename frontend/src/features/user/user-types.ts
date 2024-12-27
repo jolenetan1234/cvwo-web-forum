@@ -2,14 +2,12 @@
  * Interface representing the data for a User.
  * 
  * @interface User 
- * @property {number} id - UUID of a user.
+ * @property {string} id - UUID of a user.
  * @property {string} username - The username of a user.
- * @property {string} token - The JWT token for auth.
  */
-export interface User {
-    id: number;
+export default interface User {
+    id: string;
     username: string;
-    token: string;
 }
 
 /**

@@ -29,7 +29,7 @@ function useFetch<T>(
     // Ie. whenever `fetchFunction` changes.
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            console.log("fetchData()");
+            console.log("[useFetch.fetchData()]");
             setLoading(true);
 
             try {

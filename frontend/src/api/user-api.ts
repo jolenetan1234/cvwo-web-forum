@@ -33,12 +33,16 @@ const USERS: backendUser[] = [
 // mock controller for GET API_BASE_URL/user/:userId
 const getUserById = async (userId: number): Promise<User> => {
     // TODO: replace with actual API call
-    const user = USERS.find(u => u.id === userId);
+    const res = USERS.find(u => u.id === userId);
 
     // throw error if user doesn't exist.
-    if (!user) {
+    if (!res) {
         throw new NotFoundError("User");
     } else {
+        const user = {
+            id: res?.id.toString(),
+            username: res?.username,
+        }
         return user;
     }
 }
@@ -68,7 +72,7 @@ const login = async (credentials: LoginData): Promise<LoginResponse> => {
 
     if (user) {
         return {
-            user: { id: user.id, username: user.username, token: "mock-jwt-token" },
+            user: { id: user.id.toString(), username: user.username },
             token: "mock-jwt-token",
         }
     } else {

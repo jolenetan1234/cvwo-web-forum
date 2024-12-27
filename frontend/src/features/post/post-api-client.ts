@@ -1,5 +1,6 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
-import Post from "../../types/Post";
+// import Post from "../../types/Post";
+import Post from "./post-types";
 import MockError from "../../common/errors/MockError";
 
 // MOCK API ENDPOINTS
@@ -10,7 +11,12 @@ class ForumPostClient extends ApiClient<Post> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get(")
-            const data = await getAllPosts();
+            const res = await getAllPosts();
+            
+            const data = res.map(post => ({
+                ...post,
+                id: post.id.toString()
+            }));
 
             return {
                 type: "success",
@@ -35,13 +41,13 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async getById(postId: number): Promise<ApiClientResponse<Post>> {
+    async getById(postId: string): Promise<ApiClientResponse<Post>> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("API_BASE_URL/post/postId")
 
             console.log("forumPostClient.getById(id)", postId);
-            const data = await getPostById(postId);
+            const data = await getPostById(parseInt(postId));
 
             return {
                 type: "success",
@@ -67,11 +73,16 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async getByCategories(categories: number[]): Promise<ApiClientResponse<Post[]>> {
+    async getByCategories(categories: string[]): Promise<ApiClientResponse<Post[]>> {
         try {
             // TODO: replace with axios
-            const data = await getPostByCategories(categories);
-            console.log("[forumPostClient.getPostByCategories", data);
+            const res = await getPostByCategories(categories.map(cat => parseInt(cat)));
+            
+            const data = res.map(post => ({
+                ...post,
+                id: post.id.toString(),
+            }))
+                
             
             return {
                 type: "success",

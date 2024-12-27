@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // types
-import { User } from "./user-types";
+import User from "./user-types";
 import { RootState } from "../../store/store"
 
 // `userReducer` of `userSlice` will only be responsible for these states.

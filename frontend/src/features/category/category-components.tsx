@@ -8,22 +8,32 @@ import useFetch from "../../common/hooks/useFetch";
 // API clients
 import categoryClient from "./category-api-client";
 import { CreatePostButton } from "../post/post-components";
+import { useCallback } from "react";
 
 /**
  * A subheader containing the options for categories.
  * @returns The subheader above Cards.
  */
 export function CategoryHeader({ handleCategoryChange, handleCategoryDelete, selectedCategories }: {
-   handleCategoryChange: (event: SelectChangeEvent<number[]>) => void,
-   handleCategoryDelete: (catId: number) => void,
-   selectedCategories: number[],
+   handleCategoryChange: (event: SelectChangeEvent<string[]>) => void,
+   handleCategoryDelete: (catId: string) => void,
+   selectedCategories: string[],
 }): JSX.Element {
 
     // hooks
     // fetch all categories
+
+    // memoise the callback
+    const fetchAllCategories = useCallback(
+      () => categoryClient.getAll(), []
+    );
+
+    /*
     const { data, error, loading } = useFetch(
         () => categoryClient.getAll()
     );
+    */
+   const { data, error, loading } = useFetch(fetchAllCategories);
     const categories = data;
     
     return (

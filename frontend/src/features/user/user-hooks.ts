@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
+import { useFeatureFormResponse } from "../../common/types/common-types";
 
 // hooks
 import useForm from "../../common/hooks/useForm";
@@ -19,6 +20,7 @@ import { login, logout } from "./user-slice";
 /**
  * @type T - The type of data for the form.
  */
+/*
 interface useUserFormResponse<T> {
     data: T,
     loading: boolean,
@@ -26,8 +28,9 @@ interface useUserFormResponse<T> {
     handleChange: (e: React.ChangeEvent<HTMLInputElement>)  => void,
     handleSubmit: (e: React.FormEvent) => void,
 }
+    */
 
-export function useLoginForm(handleClose: () => void): useUserFormResponse<LoginData> {
+export function useLoginForm(handleClose: () => void): useFeatureFormResponse<LoginData> {
     const initialData: LoginData = {
         username: "",
         password: "",
@@ -56,14 +59,13 @@ export function useLoginForm(handleClose: () => void): useUserFormResponse<Login
                    
                     console.log("[useLoginForm.handleSubmit] LOGIN SUCCESS", user);
                   
-                    console.log("HELLO")
                     // dispatch login
                     dispatch(login({
                         user: user,
                         token: token,
                     }));
 
-                    console.log("HELLO");
+                    console.log("HELLO", );
 
                 } else {
                     setError(res.error);

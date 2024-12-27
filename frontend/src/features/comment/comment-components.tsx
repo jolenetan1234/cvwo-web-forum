@@ -3,11 +3,9 @@ import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
 
 // types
-import Comment from "../../types/Comment";
-import NotFoundError from "../../common/errors/MockError";
+import Comment from "../comment/comment-types.ts";
 
-// API calls
-import { getUserById } from "../../api/user-api";
+// hooks
 import useFetch from "../../common/hooks/useFetch";
 
 // API clients
@@ -38,7 +36,7 @@ function PostCommentBar(): JSX.Element {
  */
 function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
     const fetchUser = useCallback(
-        () => userClient.getById(comment.userId),
+        () => userClient.getById(comment.user_id),
         [comment]
     )
 

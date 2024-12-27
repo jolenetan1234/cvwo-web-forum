@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { CategoryHeader } from "../features/category/category-components";
-import { Feed } from "../features/post/post-components";
+import { CreatePostForm, Feed } from "../features/post/post-components";
 
 // hooks
 import { useCategory } from "../features/category/category-hooks";
@@ -11,7 +11,7 @@ import { useIsCreateOpen } from "../common/contexts/IsCreateOpenContext";
 
 export default function HomePage(): JSX.Element {
     // hooks
-    const { selectedCategories, handleCategoryChange, handleCategoryDelete } = useCategory<number>();
+    const { selectedCategories, handleCategoryChange, handleCategoryDelete } = useCategory<string>();
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
             
@@ -27,6 +27,7 @@ export default function HomePage(): JSX.Element {
             selectedCategories={selectedCategories}
             />
             { isLoginOpen ? <LoginForm /> : <></> }
+            { isCreateOpen ? <CreatePostForm /> : <></>}
         </Box>
    )
 }

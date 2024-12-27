@@ -10,7 +10,7 @@ import { useLoginForm, useSignUpForm } from "./user-hooks";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
-import { FormField } from "../../common/components/Form";
+import { FormField } from "../../common/types/common-types";
 
 export function LoginForm(): JSX.Element {
     // hooks

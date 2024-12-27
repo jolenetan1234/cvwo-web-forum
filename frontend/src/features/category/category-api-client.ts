@@ -1,5 +1,6 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient"; 
-import Category from "../../types/Category";
+// import Category from "../../types/Category";
+import Category from "./category-types";
 import MockError from "../../common/errors/MockError";
 
 // MOCK API ENDPOINTS
@@ -11,7 +12,12 @@ class CategoryClient extends ApiClient<Category> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("")
-            const data = await getAllCategories();
+            const res = await getAllCategories();
+           
+            const data = res.map(cat => ({
+                ...cat,
+                id: cat.id.toString(),
+            }))
 
             return {
                 type: "success",
@@ -42,7 +48,12 @@ class CategoryClient extends ApiClient<Category> {
             // const data = await axios.get("API_BASE_URL/category/categoryId")
 
             console.log("categoryClient.getById(id)", categoryId);
-            const data = await getCategorybyId(categoryId);
+            const res = await getCategorybyId(categoryId);
+           
+            const data = {
+                ...res,
+                id: res.id.toString()
+            }
 
             return {
                 type: "success",

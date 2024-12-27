@@ -14,6 +14,7 @@ import { Cancel, LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Button, Dialog, Paper, Stack, TextField, Typography } from "@mui/material"
 import React from "react";
 
+/*
 export interface FormField {
     fieldType: "input" | "select",
     placeholder: string,
@@ -21,6 +22,7 @@ export interface FormField {
     required?: boolean,
     type?: string,
 }
+    */
 
 /**
  * Component contatining form fields and submit button. 
@@ -92,20 +94,22 @@ export function SubmitButton({ submitButtonText, loading}: {
             </Button>
     );
 }
-export default function Form(): JSX.Element {
-    return (
-        // dialog box
-        <Dialog open={isLoginOpen} maxWidth="xs" onClose={handleClose}>
 
-                <Paper elevation={8} sx={{p: 2}}>
-                    {/* "Sign In" and close button */}
+export function StyledFormHeader({ avatar, formTitle, handleClose }: {
+    avatar: React.ReactElement,
+    formTitle: string,
+    handleClose: () => void,
+}
+) {
+    return (
+        <Box>
                     <Stack 
                     direction="row"
                     alignItems="center"
                     width="100%"
                     >
                         {/* Spacer for Avatar */}
-                        <Box
+                        <Box 
                         flexGrow={5}
                         display="flex"
                         justifyContent="flex-end" 
@@ -114,7 +118,7 @@ export default function Form(): JSX.Element {
                             <Avatar sx={{ 
                                 bgcolor: "secondary.main",
                             }}>
-                                <LockOutlined />
+                                {avatar}
                             </Avatar>
                         </Box>
 
@@ -130,10 +134,55 @@ export default function Form(): JSX.Element {
                     sx={{
                         textAlign: "center"
                     }}>
+                        {formTitle}
+                    </Typography>
+                    </Box>
+    )
+}
+
+/*
+export default function Form(): JSX.Element {
+    return (
+        // dialog box
+        <Dialog open={isLoginOpen} maxWidth="xs" onClose={handleClose}>
+
+                <Paper elevation={8} sx={{p: 2}}>
+                    {/* "Sign In" and close button */ /*}
+                    <Stack 
+                    direction="row"
+                    alignItems="center"
+                    width="100%"
+                    >
+                        {/* Spacer for Avatar */ /*}
+                        <Box
+                        flexGrow={5}
+                        display="flex"
+                        justifyContent="flex-end" 
+                        >
+                        {/* Avatar */ /*}
+                            <Avatar sx={{ 
+                                bgcolor: "secondary.main",
+                            }}>
+                                <LockOutlined />
+                            </Avatar>
+                        </Box>
+
+                        {/* Cancel button */ /*}
+                        <Button 
+                        onClick={handleClose} 
+                        sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
+                            <Cancel />
+                        </Button>
+                    </Stack>
+                    <Typography 
+                    variant="h6" 
+                    sx={{
+                        textAlign: "center"
+                    }}>
                         Sign In
                     </Typography>
 
-                    {/* form component  */}
+                    {/* form component  */ /*}
                     <Box
                     component="form"
                     onSubmit={handleSubmit}>
@@ -160,7 +209,7 @@ export default function Form(): JSX.Element {
                         control={<Checkbox value="remember" color="secondary"/>}
                         label="Remember me"
                         />
-                        */}
+                        */ /*}
 
                         <SubmitButton 
                         submitButtonText={<>Sign In</>}
@@ -174,7 +223,7 @@ export default function Form(): JSX.Element {
                         >
                             Sign In
                         </Button>
-                        */}
+                        */ /*}
 
                     </Box>
 
@@ -182,10 +231,11 @@ export default function Form(): JSX.Element {
                             <Typography>No account?</Typography>
                             <Link href={`${import.meta.env.VITE_APP_URL}/signup`} color="#0000EE">Create one!</Link>
                         </Stack>
-                    {/* </Box> */}
+                    {/* </Box> */ /*}
 
                 </Paper>
 
         </Dialog>
     )
 }
+    */
