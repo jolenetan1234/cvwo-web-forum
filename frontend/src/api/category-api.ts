@@ -2,10 +2,16 @@
 // USELESS once backend is set up.
 
 import MockError from "../common/errors/MockError";
-import Category from "../types/Category";
+// import Category from "../types/Category";
+
+interface BackendCategory {
+    id: number;
+    value: string;
+    label: string;
+}
 
 // HARD CODED
-const categories = [
+const categories: BackendCategory[] = [
     {
         id: 1,
         value: "rant",
@@ -23,11 +29,11 @@ const categories = [
     }
 ]
 
-export const getAllCategories = async (): Promise<Category[]> => {
+export const getAllCategories = async (): Promise<BackendCategory[]> => {
     return categories;
 }
 
-export const getCategorybyId = async (categoryId: number): Promise<Category> => {
+export const getCategorybyId = async (categoryId: number): Promise<BackendCategory> => {
     // Responsibility of error handling should fall on the caller.
     const category = categories.find(cat => cat.id === categoryId);
 

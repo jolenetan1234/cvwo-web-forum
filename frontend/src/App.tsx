@@ -1,5 +1,9 @@
+// components
 import HomePage from './pages/HomePage';
 import MainLayout from "./layouts/MainLayout"
+import PostDetailsPage from './pages/PostDetailsPage';
+
+// styles
 import './App.css'
 
 import {
@@ -9,7 +13,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import PostDetailsPage from './pages/PostDetailsPage';
+// contexts
+import { IsLoginOpenProvider } from './common/contexts/IsLoginOpenContext';
+import SignUpPage from './pages/SignUpPage';
+import { IsCreateOpenProvider } from './common/contexts/IsCreateOpenContext';
 
 /**
  * App router
@@ -21,12 +28,21 @@ const router = createBrowserRouter(
       <Route 
       path="/post/:id" 
       element={<PostDetailsPage /> } />
+      <Route
+      path="/signup"
+      element={<SignUpPage />} />
     </Route>
   )
 )
 
 function App() {
-  return <RouterProvider router={router} />
+  return (
+    <IsLoginOpenProvider>
+      <IsCreateOpenProvider>      
+        <RouterProvider router={router} />
+      </IsCreateOpenProvider>
+    </IsLoginOpenProvider>
+  );
 }
 
 export default App

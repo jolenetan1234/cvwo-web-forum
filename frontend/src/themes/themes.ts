@@ -1,17 +1,23 @@
 import { createTheme } from "@mui/material";
 
+export const darkTheme = createTheme({
+    palette: {
+        mode: "dark",
+    }
+})
+
 export const theme = createTheme({
     typography: {
         fontFamily: "Robotoo, Arial, sans-serif",
     },
     palette: {
         primary: {
-            main: "#FFDB58",
+            main: "#F8C630",
             light: "skyblue",
             dark: "",
         },
         secondary: {
-            main: "#15c630",
+            main: "#724E91",
             light: "",
             dark: "",
         },

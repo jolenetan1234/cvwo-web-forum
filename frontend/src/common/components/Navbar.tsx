@@ -3,7 +3,12 @@ import StyledButton from "./StyledButton.tsx";
 import SearchIcon from "@mui/icons-material/Search";
 
 // hooks
-import useToggle from "../hooks/useToggle.ts";
+import { useIsLoginOpen } from "../contexts/IsLoginOpenContext.tsx";
+import { useIsCreateOpen } from "../contexts/IsCreateOpenContext.tsx";
+import { useDispatch, useSelector } from "react-redux";
+
+// types
+import { logout, selectIsLoggedIn } from "../../features/user/user-slice.ts";
 
 /**
  * Can use MUI's style() utility, 
@@ -26,20 +31,36 @@ const Search = styled("div")(({ theme }) => ({
     flexGrow: "1", // so Search fills the right gap within the <Stack> (See below)
 }));
 
+function LoginButton(): JSX.Element {
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    const onClick = () => {
+        toggleLoginOpen();
+    }
+
+    return  (
+        <StyledButton content="Login" onClick={onClick} />
+    );
+}
+
+function LogoutButton(): JSX.Element {
+    const dispatch = useDispatch();;
+    const onClick = () => {
+        // TODO: implement logout functionality (basically just remove the user from redux)
+        dispatch(logout());
+    }
+
+    return (
+        <StyledButton content="Logout" onClick = {onClick} />
+    );
+}
 
 export default function Navbar(): JSX.Element {
 
     // use hooks
-    const loginForm = useToggle();
+    const isLoggedIn = useSelector(selectIsLoggedIn);
 
     // Constant variables
     const TITLE = "WEB FORUM";
-    const BUTTONTEXT = "Login";
-    const ONCLICK = (): void => {
-        // if not yet logged in and login button is pressed,
-        // set `loginForm.isOpen` to be true.
-        loginForm.open();
-    };
 
     return (
         <Box sx={{ flexGrow: 1 }} color="primary">
@@ -50,13 +71,14 @@ export default function Navbar(): JSX.Element {
                     {/* Made width 50% of StyledToolbar so the Login + Search + Light/Dark mode 
                     makes up 50% of the navbar horizontally */}
                     <Stack direction="row" alignItems="center" width="50%">
+
                         {/* Light/Dark mode toggle */}
                         <IconButton>
                             Light/Dark Mode
                         </IconButton>
 
                         {/* Login/Logout button */}
-                        <StyledButton text={BUTTONTEXT} onClick={ONCLICK} />
+                        {isLoggedIn ? <LogoutButton /> : <LoginButton />}
 
                         {/* Search bar */}
                         <Search>

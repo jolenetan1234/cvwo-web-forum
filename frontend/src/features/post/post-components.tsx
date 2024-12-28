@@ -1,14 +1,15 @@
 import { useParams } from "react-router-dom";
 
 // components
-import { Box, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Avatar, Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, Link, Paper, Stack, TextField, Typography } from "@mui/material";
 import CommentSection from "../comment/comment-components.tsx";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
 
 // types
-import Post from "../../types/Post.ts";
+// import Post from "../../types/Post.ts";
+import Post, { CreatePostData } from "./post-types.ts";
+import { FormField } from "../../common/types/common-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
@@ -16,78 +17,15 @@ import useFilter from "../../common/hooks/useFilter.ts";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import categoryClient from "../category/category-api-client.ts";
-
-/**
- * A subheader containing the options for categories.
- * @returns The subheader above Cards.
- */
-function CategoryHeader({ selectedCategories, setSelectedCategories }: {
-    selectedCategories: number[],
-    setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>,
-}): JSX.Element {
-    const handleChange = (
-        event: SelectChangeEvent<number[]>
-    ): void => {
-        setSelectedCategories(event.target.value);
-        console.log("handleChange", selectedCategories);
-    }
-
-    const handleDelete = (item: number): void => {
-       setSelectedCategories(selectedCategories.filter(
-        catId => catId != item
-       )) ;
-       console.log("handleDelete", selectedCategories);
-    }
-
-    // fetch all categories
-    const { data, error, loading } = useFetch(
-        () => categoryClient.getAll()
-    );
-    const categories = data;
-    
-    return (
-       <Box sx={{ display: "flex" }}>
-                <FormControl sx={{ m: 2, width: 500 }}>
-      <InputLabel>Categories</InputLabel>
-      <Select
-        multiple
-        value={selectedCategories}
-        onChange={handleChange}
-        input={<OutlinedInput label="Categories" />}
-            renderValue={(selected) => (
-                <Stack gap={1} direction="row" flexWrap="wrap">
-
-                {selected.map((catId) => {
-                    // we do this to access the label of each category
-                    const category = categories?.find(cat => cat.id === catId);
-                    return (
-                    <Chip 
-                    key={catId} 
-                    label={category?.label}
-                    onDelete = {() => handleDelete(catId)}
-                    deleteIcon={
-                        <CancelIcon
-                    onMouseDown={e => e.stopPropagation()}
-                    />
-                    }
-                />
-                    );
-            })}
-            </Stack>
-        )}
-      >
-        {categories?.map((cat) => (
-          <MenuItem key={cat.id} value={cat.id}>
-            {cat.label}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-       </Box>
-    )
-}
+import StyledButton from "../../common/components/StyledButton.tsx";
+import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../user/user-slice.ts";
+import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
+import { StyledFormHeader, StyledFormTitle, SubmitButton } from "../../common/components/Form.tsx";
+import { useCreatePostForm } from "./post-hooks.ts";
 
 /**
  * Header for a single PostCard.
@@ -102,10 +40,22 @@ function PostCardHeader({ post, linkUrl }:
     }
 ): JSX.Element {
 
+    // memoize the callback
+    // otherwise everytime the return value is deemed to be different
+    // (eg. return object is alw a DIFF REFERENCE even tho it's semantically the same)
+    // then useFetch() will keep on being called.
+    const fetchCategory = useCallback(
+        () => categoryClient.getById(post.category_id),
+        []
+    );
+
     // access `category` of the Post
+    /*
     const { data } = useFetch(
         () => categoryClient.getById(post.category_id)
     );
+    */
+   const { data } = useFetch(fetchCategory);
     const category = data;
 
     return (
@@ -203,10 +153,11 @@ function RightBar(): JSX.Element {
  * @param {Post[]} props.posts - Array of Post to be displayed.
  * @returns {JSX.Element} A component that displays the Feed.
  */
-function Feed(): JSX.Element {
+function Feed({ selectedCategories }: {
+    selectedCategories: string[],
+}): JSX.Element {
 
-    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-
+    // hooks
     const { filteredList, error, loading } = useFilter<Post>(
         selectedCategories,
         forumPostClient,
@@ -216,6 +167,8 @@ function Feed(): JSX.Element {
 
     console.log("[post-components: Feed] data", data);
 
+    // const { handleCategoryChange, handleCategoryDelete } = useCategory();
+
     if (loading) {
         return <Loading />
     } else if (error != "") {
@@ -224,10 +177,6 @@ function Feed(): JSX.Element {
 
     return (
         <Stack>
-            <CategoryHeader 
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
-            />
             <Stack direction="row" justifyContent="space-between">
                 <Posts posts={data as Post[]}/>
                 <RightBar />
@@ -242,7 +191,7 @@ function Feed(): JSX.Element {
  */
 function PostDetails(): JSX.Element {
     const params = useParams<{ id : string }>();
-    const postId = parseInt(params.id);
+    const postId = params.id;
 
     // memoize the callback
     const fetchPostDetails = useCallback(
@@ -281,4 +230,134 @@ function PostDetails(): JSX.Element {
     }
 }
 
-export { Feed, PostDetails };
+// FEATURE: CREATE POST
+function CreatePostButton(): JSX.Element {
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+    const isLoggedIn = useSelector(selectIsLoggedIn);
+
+    const handleClick = () => {
+        isLoggedIn ? toggleCreateOpen() : toggleLoginOpen();
+    };
+
+    return (
+        <StyledButton
+        content="Create post"
+        onClick={handleClick}
+        />
+    );
+}
+
+function CreatePostForm(): JSX.Element {
+    // HOOKS
+    // consume IsCreateOpen context
+    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+    const { data, loading, error, handleChange, handleSubmit } = useCreatePostForm();
+
+    const handleClose = () => {
+        toggleCreateOpen();
+    }
+
+    const fields: FormField[] = [
+        {
+            fieldType: "input",
+            placeholder: "Title",
+            name: "title",
+            required: true,
+        }, {
+            fieldType: "input",
+            placeholder: "Type a post!",
+            name: "content",
+            required: true,
+        }
+    ];
+
+    return (
+        // dialog box
+        <Dialog open={isCreateOpen} maxWidth="xs" onClose={handleClose}>
+
+                <Paper elevation={8} sx={{p: 2}}>
+                    <StyledFormHeader
+                    avatar="Hi"
+                    formTitle="Create post"
+                    handleClose={handleClose}
+                    />
+                    {/* "Sign In" and close button */}
+                    {/*
+                    <Stack 
+                    direction="row"
+                    alignItems="center"
+                    width="100%"
+                    >
+                        {/* Spacer for Avatar */}
+
+                        {/*
+                        <Box 
+                        flexGrow={5}
+                        display="flex"
+                        justifyContent="flex-end" 
+                        >
+                        {/* Avatar */}
+                        {/*
+                            <Avatar sx={{ 
+                                bgcolor: "secondary.main",
+                            }}>
+                                <LockOutlined />
+                            </Avatar>
+                        </Box>
+
+                        {/* Cancel button */}
+                        {/*
+                        <Button 
+                        onClick={handleClose} 
+                        sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
+                            <Cancel />
+                        </Button>
+                    </Stack>
+                    <Typography 
+                    variant="h6" 
+                    sx={{
+                        textAlign: "center"
+                    }}>
+                        Sign In
+                    </Typography>
+                    */}
+
+                    {/* form component  */}
+                    
+                    <Box
+                    component="form"
+                    onSubmit={handleSubmit}>
+                        {fields.map(field => {
+
+                            return (
+                            <TextField
+                            key={field.name}
+                            fullWidth
+                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
+                            required={field.required}
+                            sx={{ mb: 2 }}
+                            autoFocus
+                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                            name={field.name}
+                            value={data[field.name as keyof CreatePostData]} // Eg. data[username], data[password]
+                            onChange={handleChange}
+                            />
+                            );
+                    })}
+
+
+                        <SubmitButton
+                        submitButtonText={<>Create post</>}
+                        loading={loading}
+                        />
+                    </Box>
+                        
+
+                </Paper>
+
+        </Dialog>
+    )
+}
+
+export { Feed, PostDetails, CreatePostButton, CreatePostForm };
