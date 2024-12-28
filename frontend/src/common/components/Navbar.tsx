@@ -8,7 +8,7 @@ import { useIsCreateOpen } from "../contexts/IsCreateOpenContext.tsx";
 import { useDispatch, useSelector } from "react-redux";
 
 // types
-import { logout, selectIsLoggedIn } from "../../features/user/user-slice.ts";
+import { logout, selectUserIsLoggedIn } from "../../features/user/user-slice.ts";
 
 /**
  * Can use MUI's style() utility, 
@@ -57,7 +57,7 @@ function LogoutButton(): JSX.Element {
 export default function Navbar(): JSX.Element {
 
     // use hooks
-    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const isLoggedIn = useSelector(selectUserIsLoggedIn);
 
     // Constant variables
     const TITLE = "WEB FORUM";

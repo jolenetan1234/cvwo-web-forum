@@ -93,7 +93,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
     };
 }
 
-export function useSignUpForm(handleClose: () => void): useUserFormResponse<SignUpData> {
+export function useSignUpForm(handleClose: () => void): useFeatureFormResponse<SignUpData> {
     const initialData = {
         username: "",
         password: "",

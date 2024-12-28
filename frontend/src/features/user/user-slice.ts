@@ -5,12 +5,14 @@ import User from "./user-types";
 import { RootState } from "../../store/store"
 
 // `userReducer` of `userSlice` will only be responsible for these states.
+/**
+ * @interface UserState
+ * @property {User | null} user - The object representing the logged in user.
+ * @property {string | null} token - The authentication token given to the user.
+ * @property {boolean} isLoggedIn - The flag indicating whether the user is logged in.
+ */
 interface UserState {
-    user: {
-        id: number;
-        username: string;
-        token: string;
-    } | null;
+    user: User | null;
     token: string | null;
     isLoggedIn: boolean;
 }
@@ -59,4 +61,8 @@ export default userSlice.reducer;
 
 // Export selectors
 export const selectUser = (state: RootState) => state.user.user;
-export const selectIsLoggedIn = (state: RootState) => state.user.isLoggedIn;
+export const selectUserIsLoggedIn = (state: RootState) => state.user.isLoggedIn;
+export const selectUserToken = (state: RootState) => state.user.token;
+
+// Export types
+export type { UserState };

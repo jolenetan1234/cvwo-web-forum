@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
+import { UNSAFE_FetchersContext, useParams } from "react-router-dom";
 
 // components
-import { Avatar, Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, Link, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 import CommentSection from "../comment/comment-components.tsx";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
@@ -22,7 +22,7 @@ import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
 import { useSelector } from "react-redux";
-import { selectIsLoggedIn } from "../user/user-slice.ts";
+import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledFormHeader, StyledFormTitle, SubmitButton } from "../../common/components/Form.tsx";
 import { useCreatePostForm } from "./post-hooks.ts";
@@ -234,7 +234,7 @@ function PostDetails(): JSX.Element {
 function CreatePostButton(): JSX.Element {
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
-    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const isLoggedIn = useSelector(selectUserIsLoggedIn);
 
     const handleClick = () => {
         isLoggedIn ? toggleCreateOpen() : toggleLoginOpen();
@@ -249,11 +249,7 @@ function CreatePostButton(): JSX.Element {
 }
 
 function CreatePostForm(): JSX.Element {
-    // HOOKS
-    // consume IsCreateOpen context
-    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
-    const { data, loading, error, handleChange, handleSubmit } = useCreatePostForm();
-
+    
     const handleClose = () => {
         toggleCreateOpen();
     }
@@ -269,8 +265,26 @@ function CreatePostForm(): JSX.Element {
             placeholder: "Type a post!",
             name: "content",
             required: true,
+        }, {
+            fieldType: "select",
+            placeholder: "Category",
+            name: "category_id",
+            required: true,
         }
     ];
+
+    // HOOKS
+    // consume IsCreateOpen context
+    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+    const { data, loading, error, handleChange, handleSubmit } = useCreatePostForm(handleClose);
+
+    // TODO: replace with REDUX!
+    const fetchAllCategories = useCallback(
+        () => categoryClient.getAll(), []
+    );
+
+    const fetched = useFetch(fetchAllCategories);
+    const categories = fetched.data;
 
     return (
         // dialog box
@@ -282,55 +296,15 @@ function CreatePostForm(): JSX.Element {
                     formTitle="Create post"
                     handleClose={handleClose}
                     />
-                    {/* "Sign In" and close button */}
-                    {/*
-                    <Stack 
-                    direction="row"
-                    alignItems="center"
-                    width="100%"
-                    >
-                        {/* Spacer for Avatar */}
-
-                        {/*
-                        <Box 
-                        flexGrow={5}
-                        display="flex"
-                        justifyContent="flex-end" 
-                        >
-                        {/* Avatar */}
-                        {/*
-                            <Avatar sx={{ 
-                                bgcolor: "secondary.main",
-                            }}>
-                                <LockOutlined />
-                            </Avatar>
-                        </Box>
-
-                        {/* Cancel button */}
-                        {/*
-                        <Button 
-                        onClick={handleClose} 
-                        sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
-                            <Cancel />
-                        </Button>
-                    </Stack>
-                    <Typography 
-                    variant="h6" 
-                    sx={{
-                        textAlign: "center"
-                    }}>
-                        Sign In
-                    </Typography>
-                    */}
-
-                    {/* form component  */}
                     
+                    {/* form component  */}
                     <Box
                     component="form"
                     onSubmit={handleSubmit}>
                         {fields.map(field => {
 
-                            return (
+                            return ( 
+                                field.fieldType === "input" ? 
                             <TextField
                             key={field.name}
                             fullWidth
@@ -343,6 +317,30 @@ function CreatePostForm(): JSX.Element {
                             value={data[field.name as keyof CreatePostData]} // Eg. data[username], data[password]
                             onChange={handleChange}
                             />
+                            :
+                            
+                            <FormControl sx={({ width: 500 })}>
+                                <InputLabel>{field.placeholder}</InputLabel>
+                                <Select
+                                key={field.name}
+                                name={field.name}
+                                value={data[field.name as keyof CreatePostData]}
+                                onChange={handleChange}
+                                input={<OutlinedInput label={field.placeholder} />}
+                                required={field.required}
+                                renderValue={selected => {
+                                    const category = categories?.find(cat => cat.id === selected.id);
+                                    return <>{category?.label}</>;
+                                }}
+                                >
+                                    {categories?.map(cat => (
+                                        <MenuItem key={cat.id} value={cat.id}>
+                                            {cat.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
                             );
                     })}
 
