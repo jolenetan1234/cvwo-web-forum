@@ -98,7 +98,7 @@ function Comments({ comments }: { comments: Comment[] }): JSX.Element {
     )
 }
 
-export default function CommentSection({ postId }: { postId: number }): JSX.Element {
+export default function CommentSection({ postId }: { postId: string }): JSX.Element {
     // memoize the callback
     const fetchComments = useCallback(
         () => commentClient.getByPostId(postId),

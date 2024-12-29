@@ -7,10 +7,46 @@ import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext";
 
 // hooks
 import { useLoginForm, useSignUpForm } from "./user-hooks";
+import { useDispatch } from "react-redux";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
 import { FormField } from "../../common/types/common-types";
+import StyledButton from "../../common/components/StyledButton";
+
+// utils
+import { clearSessionInCookies } from "./user-utils";
+
+// action creators
+import { logout } from "./user-slice";
+
+export function LoginButton(): JSX.Element {
+    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    const onClick = () => {
+        toggleLoginOpen();
+    }
+
+    return  (
+        <StyledButton content="Login" onClick={onClick} />
+    );
+}
+
+export function LogoutButton(): JSX.Element {
+    const dispatch = useDispatch();
+
+    const onClick = () => {
+        // REMOVE SESSION FROM COOKIES
+        clearSessionInCookies();
+
+        // UPDATE REDUX STORE
+        dispatch(logout());
+    }
+
+    return (
+        <StyledButton content="Logout" onClick = {onClick} />
+    );
+}
+
 
 export function LoginForm(): JSX.Element {
     // hooks

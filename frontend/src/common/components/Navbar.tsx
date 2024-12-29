@@ -1,6 +1,7 @@
 import { AppBar, Box, Button, Stack, styled, Toolbar, alpha, InputBase, Typography, IconButton } from "@mui/material";
 import StyledButton from "./StyledButton.tsx";
 import SearchIcon from "@mui/icons-material/Search";
+import { LoginButton, LogoutButton } from "../../features/user/user-components.tsx";
 
 // hooks
 import { useIsLoginOpen } from "../contexts/IsLoginOpenContext.tsx";
@@ -9,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // types
 import { logout, selectUserIsLoggedIn } from "../../features/user/user-slice.ts";
+import { clearSessionInCookies } from "../../features/user/user-utils.ts";
 
 /**
  * Can use MUI's style() utility, 
@@ -30,29 +32,6 @@ const Search = styled("div")(({ theme }) => ({
     padding: "2px 10px",
     flexGrow: "1", // so Search fills the right gap within the <Stack> (See below)
 }));
-
-function LoginButton(): JSX.Element {
-    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
-    const onClick = () => {
-        toggleLoginOpen();
-    }
-
-    return  (
-        <StyledButton content="Login" onClick={onClick} />
-    );
-}
-
-function LogoutButton(): JSX.Element {
-    const dispatch = useDispatch();;
-    const onClick = () => {
-        // TODO: implement logout functionality (basically just remove the user from redux)
-        dispatch(logout());
-    }
-
-    return (
-        <StyledButton content="Logout" onClick = {onClick} />
-    );
-}
 
 export default function Navbar(): JSX.Element {
 

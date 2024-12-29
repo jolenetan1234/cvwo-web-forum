@@ -15,6 +15,7 @@ import userClient from "./user-api-client";
 import { useDispatch, useSelector } from "react-redux";
 // userActions
 import { login, logout } from "./user-slice";
+import { storeSessionInCookies } from "./user-utils";
 
 
 /**
@@ -59,14 +60,17 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
                    
                     console.log("[useLoginForm.handleSubmit] LOGIN SUCCESS", user);
                   
-                    // dispatch login
+                    // dispatch login, to update redux store
                     dispatch(login({
                         user: user,
                         token: token,
                     }));
 
-                    console.log("HELLO", );
+                    // store session in browser cookies - can be accessed later on
+                    storeSessionInCookies(user, token);
 
+                    // close the form
+                    handleClose();
                 } else {
                     setError(res.error);
                     console.log("[useLoginForm.handleSubmit] LOGIN ERROR", res.error);
@@ -75,8 +79,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
                 setError("An unknown error occurred.");
             } finally {
                 setLoading(false);
-                // close & reset form data
-                handleClose();
+                // reset form data
                 resetForm();
             }
         }

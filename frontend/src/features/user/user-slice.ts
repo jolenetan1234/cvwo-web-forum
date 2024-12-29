@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // types
@@ -32,6 +33,8 @@ const userSlice = createSlice({
         // with (state, action) as arguments
         // then "mutate" the state accordingly.
         // NOTE: this mutation in state is handled and made immutable by Immer.
+        // NOTE: if `action` not passed in as paramter => tkaen to be a simple action
+        // like `{ 'type': 'user/logout' } with no `payload`.
 
         // the name `login` means when we call `login()`,
         // it will return the `LOGIN action = { type: user/LOGIN, payload: { user, token }`
@@ -45,16 +48,26 @@ const userSlice = createSlice({
             state.token = action.payload.token;
             state.isLoggedIn = true;
         },
-        logout: state => {
+        logout: (state) => {
             state.user = null;
             state.token = null; 
             state.isLoggedIn = false;
         },
+        restoreSession: (state) => {
+            // obtain user & token from cookies
+            const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
+            const token = Cookies.get('token') || null;
+            if (user && token) {
+                state.user = user;
+                state.token = token;
+                state.isLoggedIn = true;
+            }
+        }
     },
 });
 
 // Export the generated action creators for use in components
-export const { login, logout } = userSlice.actions;
+export const { login, logout, restoreSession } = userSlice.actions;
 
 // Export the slice reducer for use in store config
 export default userSlice.reducer;

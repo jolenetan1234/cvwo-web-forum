@@ -35,7 +35,7 @@ export function useCreatePostForm(handleClose: () => void): useFeatureFormRespon
                     const newPost = res.data;
                     console.log("[useCreatePostForm.handleSubmit.createPost] SUCCESSFULLY CREATED POST", newPost);
 
-                    // update redux store
+                    // TODO: update redux store
                 } else {
                     setError(res.error);
                     console.log("[useCreatePostForm.handleSubmit.createPost] FAILED TO CREATE POST", res.error);
@@ -60,4 +60,27 @@ export function useCreatePostForm(handleClose: () => void): useFeatureFormRespon
         handleChange,
         handleSubmit
     };
+}
+
+export function useStoreFilter<T>(): {
+    data: T[],
+    error: string,
+    loading: boolean,
+} {
+    // const data = useSelector(filteredListSelector)
+    // only ask redux store to fetch filtered list from backend
+    // and update posts[]
+
+    // const categoryIds = useSelector(filterSelector())
+    // in this case, filterSelector = eg. `() => state.post.categoryIds` 
+
+    // TODO: `dispatch(filterPostsByCategories(categoryIds: string[])) => updates state of `post/filteredPosts`
+    // TODO: fetch posts and return as `data` - const data = useSelector(filteredListSelector()) - eg. () => state.post.filteredPosts
+    // TODO: fetch error from 
+
+    return {
+        data,
+        error,
+        loading,
+    }
 }

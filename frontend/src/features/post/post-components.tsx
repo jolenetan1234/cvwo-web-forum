@@ -26,6 +26,7 @@ import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledFormHeader, StyledFormTitle, SubmitButton } from "../../common/components/Form.tsx";
 import { useCreatePostForm } from "./post-hooks.ts";
+import userClient from "../user/user-api-client.ts";
 
 /**
  * Header for a single PostCard.
@@ -48,41 +49,49 @@ function PostCardHeader({ post, linkUrl }:
         () => categoryClient.getById(post.category_id),
         []
     );
-
-    // access `category` of the Post
-    /*
-    const { data } = useFetch(
-        () => categoryClient.getById(post.category_id)
-    );
-    */
-   const { data } = useFetch(fetchCategory);
+    const { data } = useFetch(fetchCategory);
     const category = data;
+
+    // fetch username
+    const fetchUser = useCallback(
+        () => userClient.getById(post.user_id),
+        []
+    );
+
+    const fetchUserResponse = useFetch(fetchUser);
 
     return (
         <CardHeader
         title={
-            <Stack direction="row" alignItems="center">
-                {linkUrl ? (
-                    <Link 
-                    variant="h6"
-                    sx={{ fontWeight: "bold" }}
-                    href={linkUrl}
-                    color="inherit"
-                    >
-                        {post.title}
-                    </Link>
-                ) : (
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        {post.title}
-                    </Typography>
-                )}
-                
-                <Chip
-                label={category?.label}
-                size="small"
-                color="primary"
-                sx={{ ml: 1 }} // Add some margin to the left
-                />
+            <Stack>
+                <Stack direction="row" alignItems="center">
+                    {linkUrl ? (
+                        <Link 
+                        variant="h6"
+                        sx={{ fontWeight: "bold" }}
+                        href={linkUrl}
+                        color="inherit"
+                        >
+                            {post.title}
+                        </Link>
+                    ) : (
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                            {post.title}
+                        </Typography>
+                    )}
+                    
+                    <Chip
+                    label={category?.label}
+                    size="small"
+                    color="primary"
+                    sx={{ ml: 1 }} // Add some margin to the left
+                    />
+                </Stack>
+
+                {/* display loading */}
+                { fetchUserResponse.loading ? <Loading /> 
+                : 
+                <>{fetchUserResponse.data?.username}</>}
             </Stack>
         }
         />
@@ -158,12 +167,17 @@ function Feed({ selectedCategories }: {
 }): JSX.Element {
 
     // hooks
-    const { filteredList, error, loading } = useFilter<Post>(
+    const { data, error, loading } = useFilter<Post>(
         selectedCategories,
         forumPostClient,
         () => forumPostClient.getByCategories(selectedCategories)
     );
-    const data = filteredList; 
+
+    // const { data, error, loading } = useStoreFilter()
+    // const data = dispatch(getAllPosts())
+    // getAllPosts = () => async () => { posts }
+    // if res.success
+    
 
     console.log("[post-components: Feed] data", data);
 
