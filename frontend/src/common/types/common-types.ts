@@ -25,7 +25,7 @@ export interface FormField {
  * @property {(e: React.FormEvent) => void} handleSubmit - The handler when "submit" is clicked.
  * 
  */
-export interface useFeatureFormResponse<T> {
+export interface UseFeatureFormResponse<T> {
     data: T,
     loading: boolean,
     error: string,

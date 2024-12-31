@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useFeatureFormResponse } from "../../common/types/common-types";
-import Post, { CreatePostData } from "./post-types";
+import { UseFeatureFormResponse } from "../../common/types/common-types";
+import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
 import useForm from "../../common/hooks/useForm";
 import forumPostClient from "./post-api-client";
 import { useSelector } from "react-redux";
 import { selectUser, selectUserToken } from "../user/user-slice";
-import { fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus } from "./post-slice";
+import { addNewPost, fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus, updatePost } from "./post-slice";
 import { useAppDispatch } from "../../store/store-hooks";
 
 /**
@@ -57,32 +57,48 @@ export function useAllPosts(): {
     };
 }
 
-export function useCreatePostForm(handleClose: () => void): useFeatureFormResponse<CreatePostData> {
+export function useCreatePostForm(handleClose: () => void): UseFeatureFormResponse<NewPost> {
 
     // HOOKS
     const userId = useSelector(selectUser)?.id;
+    const token = useSelector(selectUserToken);
+    const dispatch = useAppDispatch();
 
     const initialData = {
         title: "",
         content: "",
         category_id: "",
-        user_id: userId,
+        user_id: userId ?? "",
     }
 
-    const { data, handleChange, resetForm } = useForm<CreatePostData>(initialData)
+    const { data: formData, handleChange, resetForm } = useForm<NewPost>(initialData)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const userToken = useSelector(selectUserToken);
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
 
-        console.log("[useCreatePostForm.handleSubmit()], data", data);
+        console.log("[useCreatePostForm.handleSubmit()], formData", formData);
 
         const createPost = async () => {
             setLoading(true);
 
             try {
+                if (!token) {
+                    setError("401 Unauthorised");
+                } else {
+                    // unwrapping it returns a NEW Promise
+                    // with either the `action.payload` value from a `fulfilled` action
+                    // or throw an error if it's the `rejected ` action.
+                    await dispatch(addNewPost({ newPost: formData, token })).unwrap();
+                    // close and reset form
+                    handleClose();
+                }
+                /*
+                // TODO: do await dispatch(addPost(post, token)) then .unwrap() instead.
+                // unwrap() returns a NEW Promise
+                // contains either `action.payload` from a fulfilled action,
+                // OR throws an error if its a `re
                 const res = await forumPostClient.post(data, userToken);
 
                 // if successfully posted
@@ -104,12 +120,12 @@ export function useCreatePostForm(handleClose: () => void): useFeatureFormRespon
 
                 // tbh idk how to handle the error lol
                 // error = useSelector(selectPostError)
+                */
             } catch (err: any) {
-                setError("An unknown error occurred.") ;
+                setError(err) ;
             } finally {
                 setLoading(false);
-                // close and reset form
-                handleClose();
+                // reset form
                 resetForm();
             }
         }
@@ -118,7 +134,7 @@ export function useCreatePostForm(handleClose: () => void): useFeatureFormRespon
     }
 
     return {
-        data,
+        data: formData,
         loading,
         error,
         handleChange,
@@ -126,6 +142,80 @@ export function useCreatePostForm(handleClose: () => void): useFeatureFormRespon
     };
 }
 
+export function useEditPostForm(postId: string, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
+
+    const dispatch = useAppDispatch();
+    const token = useSelector(selectUserToken);
+
+    // states
+    const { allPosts } = useAllPosts();
+    const [initialData, setInitialData] = useState<UpdatedPost>({
+        title: "",
+        content: "",
+        category_id: "",
+    })
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        // find the original post, and set initial data to be its fields.
+        const originalPost = allPosts.find(post => post.id === postId);
+
+        if (originalPost) {
+            setInitialData({
+                title: originalPost.title,
+                content: originalPost.content,
+                category_id: originalPost.category_id
+            });
+        };
+    }, [allPosts])
+
+    const { data: formData, handleChange, resetForm } = useForm<UpdatedPost>(initialData);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        console.log('[useEditPostForm.handleSubmit()], formData', formData);
+
+        const update = async () => {
+            setLoading(true);
+
+            try {
+                if (!token) {
+                    setError("401 Unauthorised");
+                } else {
+                    // this will definitely succeed. 
+                    // Will throw error if rejected.
+                    await dispatch(updatePost({ 
+                        updatedPost: formData,
+                        postId,
+                        token
+                    })).unwrap();
+
+                    // close the form
+                    handleClose();
+                }
+            } catch (err: any) {
+                setError(err.message ?? "An unexpected error occurred.");
+            } finally {
+                setLoading(false);
+                resetForm();
+            }
+        }
+
+        update();
+    }
+
+    return {
+        data: formData,
+        loading,
+        error,
+        handleChange,
+        handleSubmit
+    }
+}
+
+/*
 export function useStoreFilter<T>(): {
     data: T[],
     error: string,
@@ -148,3 +238,4 @@ export function useStoreFilter<T>(): {
         loading,
     }
 }
+    */

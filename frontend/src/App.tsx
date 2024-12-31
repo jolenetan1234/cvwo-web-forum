@@ -22,6 +22,7 @@ import SignUpPage from './pages/SignUpPage';
 import { IsCreateOpenProvider } from './common/contexts/IsCreateOpenContext';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { IsEditPostOpenProvider } from './common/contexts/IsEditPostOpenContext.tsx';
 
 /**
  * App router
@@ -53,7 +54,9 @@ function App() {
   return (
     <IsLoginOpenProvider>
       <IsCreateOpenProvider>      
-        <RouterProvider router={router} />
+        <IsEditPostOpenProvider>
+          <RouterProvider router={router} />
+        </IsEditPostOpenProvider>
       </IsCreateOpenProvider>
     </IsLoginOpenProvider>
   );

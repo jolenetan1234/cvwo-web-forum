@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Post from "./post-types";
+import Post, { NewPost, UpdatedPost } from "./post-types";
 import { RootState } from "../../store/store";
 import forumPostClient from "./post-api-client";
 
@@ -76,7 +76,7 @@ export const fetchAllPosts = createAsyncThunk<
     { rejectValue: string }
 >(
     'posts/fetchAllPosts', // prefix for `pending`, `fulfilled`, `rejected` actions
-    // PAYLOAD CREATOR
+    // PAYLOAD CREATOR (the thunk)
     async (_, { rejectWithValue }) => {
         const res = await forumPostClient.getAll();
         if (res.type === 'success') {
@@ -87,6 +87,43 @@ export const fetchAllPosts = createAsyncThunk<
     },
 );
 
+export const addNewPost = createAsyncThunk<
+    Post, // Payload type of `fulfilled` action
+    { newPost: NewPost, token: string }, // Argument types
+    { rejectValue: string }
+>(
+    'posts/addNewPost',
+    // PAYLOAD CREATOR (the thunk)
+    async ({ newPost, token }: { newPost: NewPost, token: string }, { rejectWithValue }) => {
+        const res = await forumPostClient.post(newPost, token);
+        if (res.type === 'success') {
+            return res.data as Post;
+        } else {
+            return rejectWithValue(res.error);
+        }
+    }
+)
+
+export const updatePost = createAsyncThunk<
+    Post, // Payload type of `fulfilled` action
+    { updatedPost: UpdatedPost, postId: string, token: string }, // Argument types
+    { rejectValue: string }
+>(
+    'posts/updatePost',
+    // PAYLOAD CREATOR (the thunk)
+    async ({ updatedPost, postId, token }: {
+        updatedPost: UpdatedPost,
+        postId: string
+        token: string,
+    }, { rejectWithValue }) => {
+        const res = await forumPostClient.put(updatedPost, postId, token);
+        if (res.type === 'success') {
+            return res.data as Post;
+        } else {
+            return rejectWithValue(res.error);
+        }
+    }
+)
 /*
 export const getPostById = createAsyncThunk<
     Post, // Payload type of `fulfilled` action
@@ -140,6 +177,24 @@ const postsSlice = createSlice({
         })
         .addCase(fetchAllPosts.rejected, (state, action) => {
             state.status = 'failed';
+        })
+        // `addNewPost(newPost, token)
+        .addCase(addNewPost.fulfilled, (state, action) => {
+            // action.payload is is the new Post
+            state.allPosts.push(action.payload);
+        })
+        // `updatePost(updatedPost, postId, token)
+        .addCase(updatePost.fulfilled, (state, action) => {
+            // action.payload is the updated Post
+            const updatedPost = action.payload;
+            // NOTE: `find` returns the actual object, not a diff reference
+            const originalPost = state.allPosts.find(post => post.id === updatedPost.id);
+            // update the state
+            if (originalPost) {
+                originalPost.title = updatedPost.title;
+                originalPost.content = updatedPost.content;
+                originalPost.category_id = updatedPost.category_id;
+            }
         })
         /*
         .addCase(filterPostsByCategories.pending, (state, action) => {

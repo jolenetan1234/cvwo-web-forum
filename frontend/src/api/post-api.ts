@@ -11,6 +11,13 @@ interface BackendCreatePostData {
     title: string;
     content: string;
     category_id: number;
+    user_id: number;
+}
+
+interface BackendUpdatePostData {
+    title: string;
+    content: string;
+    category_id: number;
 }
 
 interface BackendPost {
@@ -80,7 +87,7 @@ export const getPostByCategories = async (categories: number[]): Promise<Backend
  */
 export const createPost = async (data: BackendCreatePostData): Promise<BackendPost> => {
     // HARDCODED
-    const userId = 3;
+    const userId = data.user_id;
     const newPost = {
         id: posts.length + 1,
         title: data.title,
@@ -89,5 +96,34 @@ export const createPost = async (data: BackendCreatePostData): Promise<BackendPo
         user_id: userId,
     };
 
+    // But in the actual API, I'll manipulate the db
     return newPost;
+}
+
+/**
+ * Mock API endpoint for `PUT API_BASE_URL/posts/:postId
+ * @param data 
+ * @returns 
+ */
+export const updatePost = async (data: BackendUpdatePostData, postId: number): Promise<BackendPost> => {
+    const post = posts.find(p => p.id === postId);
+
+    if (!post) {
+        // mock an error
+        throw {
+            status: 401,
+            message: "Failed to update post: Post does not exist",
+        };
+    } else {
+        const updatedPost = {
+            ...post,
+            title: data.title,
+            content: data.content,
+            category_id: data.category_id,
+        };
+
+        return updatedPost;
+    }
+
+    // But in the actual API, I'll manipulate the db
 }

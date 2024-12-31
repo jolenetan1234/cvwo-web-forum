@@ -8,7 +8,7 @@ import Loading from "../../common/components/Loading.tsx";
 
 // types
 // import Post from "../../types/Post.ts";
-import Post, { CreatePostData } from "./post-types.ts";
+import Post, { CreatePostData, UpdatedPost } from "./post-types.ts";
 import { FormField } from "../../common/types/common-types.ts";
 
 // hooks
@@ -22,13 +22,15 @@ import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
 import { useSelector } from "react-redux";
-import { selectUserIsLoggedIn } from "../user/user-slice.ts";
+import { selectUser, selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledFormHeader, StyledFormTitle, SubmitButton } from "../../common/components/Form.tsx";
-import { useAllPosts, useCreatePostForm } from "./post-hooks.ts";
+import { useAllPosts, useCreatePostForm, useEditPostForm } from "./post-hooks.ts";
 import userClient from "../user/user-api-client.ts";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks.ts";
 import { fetchAllPosts, filteredPostsReset, filterPostsByCategories, selectAllPosts, selectFilteredPosts, selectPostsError, selectPostsStatus } from "./post-slice.ts";
+import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.tsx";
+import { isAuthor } from "./post-utils.ts";
 
 /**
  * Header for a single PostCard.
@@ -36,10 +38,11 @@ import { fetchAllPosts, filteredPostsReset, filterPostsByCategories, selectAllPo
  * @param param0 
  * @returns 
  */
-function PostCardHeader({ post, linkUrl }: 
+function PostCardHeader({ post, linkUrl, editButton }: 
     { 
         post: Post,
         linkUrl?: string,
+        editButton?: React.ReactNode,
     }
 ): JSX.Element {
 
@@ -47,50 +50,60 @@ function PostCardHeader({ post, linkUrl }:
     // otherwise everytime the return value is deemed to be different
     // (eg. return object is alw a DIFF REFERENCE even tho it's semantically the same)
     // then useFetch() will keep on being called.
+    
+    // fetch category
+    console.log('HELLO', post)
     const fetchCategory = useCallback(
         () => categoryClient.getById(post.category_id),
-        []
+        [post]
     );
     const { data } = useFetch(fetchCategory);
     const category = data;
+    console.log("BELLO", category)
 
     // fetch username
     const fetchUser = useCallback(
         () => userClient.getById(post.user_id),
         []
     );
-
     const fetchUserResponse = useFetch(fetchUser);
 
     return (
         <CardHeader
         title={
             <Stack>
-                <Stack direction="row" alignItems="center">
-                    {linkUrl ? (
-                        <Link 
-                        variant="h6"
-                        sx={{ fontWeight: "bold" }}
-                        href={linkUrl}
-                        color="inherit"
-                        >
-                            {post.title}
-                        </Link>
-                    ) : (
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                            {post.title}
-                        </Typography>
-                    )}
-                    
-                    <Chip
-                    label={category?.label}
-                    size="small"
-                    color="primary"
-                    sx={{ ml: 1 }} // Add some margin to the left
-                    />
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+
+                    {/* flexbox for title and category chip */}
+                    <Stack direction="row" alignItems="center">
+                        {linkUrl ? (
+                            <Link 
+                            variant="h6"
+                            sx={{ fontWeight: "bold" }}
+                            href={linkUrl}
+                            color="inherit"
+                            >
+                                {post.title}
+                            </Link>
+                        ) : (
+                            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                                {post.title}
+                            </Typography>
+                        )}
+                        
+                        {/* Category chip */}
+                        <Chip
+                        label={category?.label}
+                        size="small"
+                        color="primary"
+                        sx={{ ml: 1 }} // Add some margin to the left
+                        />
+                    </Stack>
+
+                    {editButton && isAuthor(post) ? editButton : <></>}
                 </Stack>
 
-                {/* display loading */}
+                {/* username */}
                 { fetchUserResponse.loading ? <Loading /> 
                 : 
                 <>{fetchUserResponse.data?.username}</>}
@@ -232,7 +245,10 @@ function PostDetails(): JSX.Element {
     } else {
             return (
             <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                <PostCardHeader post={post as Post} />
+                <PostCardHeader 
+                    post={post as Post}
+                    editButton={<EditPostButton postId={postId}/>}
+                />
 
                 {/* Post Content */}
                 <CardContent sx={{ mt: -3 }}>
@@ -304,8 +320,18 @@ function CreatePostForm(): JSX.Element {
         () => categoryClient.getAll(), []
     );
 
-    const fetched = useFetch(fetchAllCategories);
-    const categories = fetched.data;
+    const { data: categories } = useFetch(fetchAllCategories);
+
+    /*
+    const formData: NewPost()
+
+    initialFormData = {// ADD LATER}
+    const { data: formData, handleChange, resetForm } = useForm<NewPost>(initialFormData);
+    const handleSubmit = () => {
+        dispatch(addPost(formData, token));
+    }
+    on submit, dispatch(addPost(newPost))    
+    */
 
     return (
         // dialog box
@@ -379,4 +405,136 @@ function CreatePostForm(): JSX.Element {
     )
 }
 
-export { Feed, PostDetails, CreatePostButton, CreatePostForm };
+// EDIT POST
+function EditPostButton({ postId }: { postId: string }): JSX.Element {
+    const { isEditPostOpen, toggleEditPostOpen } = useIsEditPostOpen();
+
+    const handleClick = () => {
+        toggleEditPostOpen(postId); 
+    }
+    return (
+        <StyledButton
+        content="Edit"
+        onClick={handleClick}
+        />
+    );
+}
+
+/**
+ * 
+ * @returns The form to edit a post.
+ */
+function EditPostForm(): JSX.Element {
+    const { isEditPostOpen, toggleEditPostOpen, postId } = useIsEditPostOpen();
+
+    const handleClose = () => {
+        toggleEditPostOpen();
+    }
+
+    const { 
+        data: formData, 
+        loading, 
+        error, 
+        handleChange, 
+        handleSubmit 
+    } = useEditPostForm(postId, handleClose);
+
+    // TODO: replace with REDUX!
+    const fetchAllCategories = useCallback(
+        () => categoryClient.getAll(), []
+    );
+    const { data: categories } = useFetch(fetchAllCategories);
+
+    // form fields
+    const fields: FormField[] = [
+        {
+            fieldType: "input",
+            placeholder: "Title",
+            name: "title",
+            required: true,
+        }, {
+            fieldType: "input",
+            placeholder: "Type a post!",
+            name: "content",
+            required: true,
+        }, {
+            fieldType: "select",
+            placeholder: "Category",
+            name: "category_id",
+            required: true,
+        }
+    ];
+    return (
+        // dialog box
+        <Dialog open={isEditPostOpen} maxWidth="xs" onClose={handleClose}>
+
+                <Paper elevation={8} sx={{p: 2}}>
+                    <StyledFormHeader
+                    avatar="Hi"
+                    formTitle="Edit post"
+                    handleClose={handleClose}
+                    />
+                    
+                    {/* form component  */}
+                    <Box
+                    component="form"
+                    onSubmit={handleSubmit}>
+                        {fields.map(field => {
+
+                            return ( 
+                                field.fieldType === "input" ? 
+                            <TextField
+                            key={field.name}
+                            fullWidth
+                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
+                            required={field.required}
+                            sx={{ mb: 2 }}
+                            autoFocus
+                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                            name={field.name}
+                            value={formData[field.name as keyof UpdatedPost]} // Eg. data[username], data[password]
+                            onChange={handleChange}
+                            />
+                            :
+                            
+                            <FormControl sx={({ width: 500 })}>
+                                <InputLabel>{field.placeholder}</InputLabel>
+                                <Select
+                                key={field.name}
+                                name={field.name}
+                                value={formData[field.name as keyof UpdatedPost]}
+                                onChange={handleChange}
+                                input={<OutlinedInput label={field.placeholder} />}
+                                required={field.required}
+                                renderValue={selected => {
+                                    const category = categories?.find(cat => cat.id === selected.id);
+                                    return <>{category?.label}</>;
+                                }}
+                                >
+                                    {categories?.map(cat => (
+                                        <MenuItem key={cat.id} value={cat.id}>
+                                            {cat.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            );
+                    })}
+
+
+                        <SubmitButton
+                        submitButtonText={<>Save</>}
+                        loading={loading}
+                        />
+                    </Box>
+                        
+
+                </Paper>
+
+        </Dialog>
+    )
+}
+
+
+export { Feed, PostDetails, CreatePostButton, CreatePostForm, EditPostForm };

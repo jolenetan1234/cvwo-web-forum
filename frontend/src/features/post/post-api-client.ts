@@ -1,12 +1,12 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 
 // types
-import Post, { CreatePostData } from "./post-types";
+import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
 import MockError from "../../common/errors/MockError";
 import { UserState } from "../user/user-slice";
 
 // MOCK API ENDPOINTS
-import { getAllPosts, getPostById, getPostByCategories, createPost } from "../../api/post-api";
+import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost } from "../../api/post-api";
 import { useSelector } from "react-redux";
 import { selectUserToken } from "../user/user-slice";
 
@@ -126,7 +126,7 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async post(createPostData: CreatePostData, userToken: UserState["token"]): Promise<ApiClientResponse<Post>> {
+    async post(newPost: NewPost, token: UserState["token"]): Promise<ApiClientResponse<Post>> {
         try {
             // reformat data to send to backend
             // TODO: reformat based on actual backend needs (Eg. send token in header,)
@@ -134,8 +134,9 @@ class ForumPostClient extends ApiClient<Post> {
             // console.log("[postApi.post] userToken", userToken);
 
             const sentData = {
-                ...createPostData,
-                category_id: parseInt(createPostData.category_id),
+                ...newPost,
+                category_id: parseInt(newPost.category_id),
+                user_id: parseInt(newPost.user_id),
             };
 
             // TODO: replace with actual API call
@@ -155,9 +156,9 @@ class ForumPostClient extends ApiClient<Post> {
                 error: "",
             }
         } catch (err: any) {
-            let message;
+            const message = err.message || "An unexpected error occurred.";
 
-            message = err;
+            // message = err;
             /*
             if (err.status === 401) {
                 message = err.message;
@@ -173,6 +174,53 @@ class ForumPostClient extends ApiClient<Post> {
             };
         }
     }
+
+    async put(updatedPost: UpdatedPost, postId: string, token: string): Promise<ApiClientResponse<Post>> {
+        // TODO:
+        // After backend is actually implemented,
+        // IN THE TRY BLOCK, check if `res.ok` or smt like that,
+        // and return the respective 'success' / 'error' objects.
+        // IN THE CATCH BLOCK, you can keep it as it is here.
+        try {
+            // TODO: send actual API call,
+            // and include token in headers, for backend authentication.
+            
+            // converting data to match backend requirements
+            const sentData  =  {
+                ...updatedPost,
+                category_id: parseInt(updatedPost.category_id),
+            };
+
+            const res = await updatePost(sentData, parseInt(postId));
+
+            // TODO: check res.ok. If not ok, 
+            // return { type: 'error', data: null, error: res.message, }
+            // Else if ok, just do the same as below.
+
+            // convert to frontend format (where IDs are strings)
+            const data = {
+                ...res,
+                id: res.id.toString(),
+                category_id: res.category_id.toString(),
+                user_id: res.user_id.toString(),
+            }
+
+            return {
+                type: 'success',
+                data: data,
+                error: "",
+            }
+        } catch (err: any) {
+            const message = err.message || "An unexpected error occurred.";
+
+            return {
+                type: 'error',
+                data: null,
+                error: message,
+            }
+        }
+    }
+
 }
 
 const forumPostClient = new ForumPostClient("");

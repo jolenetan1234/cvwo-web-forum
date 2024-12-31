@@ -26,3 +26,23 @@ export interface CreatePostData {
     category_id: string;
     user_id: string;
 }
+
+/**
+ * @interface NewPost - The shape of the data needed to create a new post.
+ * @property {string} title - The title of the post.
+ * @property {string} content - The content of the post.
+ * @property {string} category_id - The category ID of the post.
+ * @property {string} user_id - The user ID of the author.
+ */
+export interface NewPost {
+    title: string;
+    content: string;
+    category_id: string;
+    user_id: string;
+}
+
+export interface UpdatedPost {
+    title: string;
+    content: string;
+    category_id: string;
+}
