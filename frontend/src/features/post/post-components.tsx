@@ -1,4 +1,4 @@
-import { UNSAFE_FetchersContext, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 // components
 import { Avatar, Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
@@ -17,7 +17,7 @@ import useFilter from "../../common/hooks/useFilter.ts";
 
 // API client
 import forumPostClient from "./post-api-client.ts";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
@@ -25,8 +25,10 @@ import { useSelector } from "react-redux";
 import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledFormHeader, StyledFormTitle, SubmitButton } from "../../common/components/Form.tsx";
-import { useCreatePostForm } from "./post-hooks.ts";
+import { useAllPosts, useCreatePostForm } from "./post-hooks.ts";
 import userClient from "../user/user-api-client.ts";
+import { useAppDispatch, useAppSelector } from "../../store/store-hooks.ts";
+import { fetchAllPosts, filteredPostsReset, filterPostsByCategories, selectAllPosts, selectFilteredPosts, selectPostsError, selectPostsStatus } from "./post-slice.ts";
 
 /**
  * Header for a single PostCard.
@@ -165,21 +167,21 @@ function RightBar(): JSX.Element {
 function Feed({ selectedCategories }: {
     selectedCategories: string[],
 }): JSX.Element {
+    // states
+    const { allPosts, loading, error } = useAllPosts();
+    const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
-    // hooks
-    const { data, error, loading } = useFilter<Post>(
-        selectedCategories,
-        forumPostClient,
-        () => forumPostClient.getByCategories(selectedCategories)
-    );
+    // filter posts by categories
+    useEffect(() => {
+        if (selectedCategories.length <= 0) {
+            setFilteredPosts(allPosts);
+        } else {
+            const filtered = allPosts.filter(post => selectedCategories.includes(post.category_id));
+            setFilteredPosts(filtered);
+        }
+    }, [selectedCategories, allPosts]);
 
-    // const { data, error, loading } = useStoreFilter()
-    // const data = dispatch(getAllPosts())
-    // getAllPosts = () => async () => { posts }
-    // if res.success
-    
-
-    console.log("[post-components: Feed] data", data);
+    console.log("[post-components: Feed] allPosts", allPosts);
 
     // const { handleCategoryChange, handleCategoryDelete } = useCategory();
 
@@ -192,7 +194,7 @@ function Feed({ selectedCategories }: {
     return (
         <Stack>
             <Stack direction="row" justifyContent="space-between">
-                <Posts posts={data as Post[]}/>
+                <Posts posts={filteredPosts}/>
                 <RightBar />
             </Stack>
         </Stack> 
@@ -206,24 +208,29 @@ function Feed({ selectedCategories }: {
 function PostDetails(): JSX.Element {
     const params = useParams<{ id : string }>();
     const postId = params.id;
+    
+    // states
+    const [post, setPost] = useState<Post | undefined>(undefined);
 
-    // memoize the callback
-    const fetchPostDetails = useCallback(
-        () => forumPostClient.getById(postId),
-        [postId]
-    );
+   // global states
+   const { allPosts, loading, error } = useAllPosts();
 
-   const { data, error, loading } = useFetch(fetchPostDetails);
-
-    const post = data;
-    console.log(post);
+    useEffect(() => {
+        setPost(allPosts.find(p => p.id === postId));
+    }, [allPosts]);
 
     if (loading) {
-        return <Loading />;
+        return <Loading />
     } else if (error != "") {
-        return <ErrorMessage message={error} />
-    } else {
         return (
+            <ErrorMessage message={error} />
+        );
+    } else if (!post) {
+        return (
+            <ErrorMessage message="Post not found" />
+        );
+    } else {
+            return (
             <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
                 <PostCardHeader post={post as Post} />
 
@@ -241,7 +248,7 @@ function PostDetails(): JSX.Element {
                 </CardContent>
             </Card> 
         );
-    }
+   }
 }
 
 // FEATURE: CREATE POST

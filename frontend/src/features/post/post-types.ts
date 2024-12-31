@@ -24,4 +24,5 @@ export interface CreatePostData {
     title: string;
     content: string;
     category_id: string;
+    user_id: string;
 }

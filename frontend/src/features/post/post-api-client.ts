@@ -56,7 +56,7 @@ class ForumPostClient extends ApiClient<Post> {
             const res = await getPostById(parseInt(postId));
             const data = {
                 ...res,
-                id: res.toString(),
+                id: res.id.toString(),
                 category_id: res.category_id.toString(),
                 user_id: res.user_id.toString(),
             }
@@ -87,16 +87,21 @@ class ForumPostClient extends ApiClient<Post> {
 
     async getByCategories(categories: string[]): Promise<ApiClientResponse<Post[]>> {
         try {
-            // TODO: replace with axios
-            const res = await getPostByCategories(categories.map(cat => parseInt(cat)));
+            // if no categories, simply return everything.
+            let res;
+            if (categories.length <= 0) {
+               res = await getAllPosts();
+            } else {
+                // TODO: replace with axios
+                res = await getPostByCategories(categories.map(cat => parseInt(cat)));
+            }
             
             const data = res.map(post => ({
                 ...post,
-                id: post.toString(),
+                id: post.id.toString(),
                 category_id: post.category_id.toString(),
                 user_id: post.user_id.toString(),
             }))
-                
             
             return {
                 type: "success",

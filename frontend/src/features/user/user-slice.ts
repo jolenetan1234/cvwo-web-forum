@@ -30,9 +30,11 @@ const userSlice = createSlice({
     // defines `userReducer`, ie. (state, action) => state
     reducers: {
         // simply provide the name of the ACTION CREATOR
-        // with (state, action) as arguments
+        // with (state, action) as arguments => 
+        // redux-toolkit will automatically make them into actions like `<name>/<reducer-name>`
         // then "mutate" the state accordingly.
         // NOTE: this mutation in state is handled and made immutable by Immer.
+
         // NOTE: if `action` not passed in as paramter => tkaen to be a simple action
         // like `{ 'type': 'user/logout' } with no `payload`.
 

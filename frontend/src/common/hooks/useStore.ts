@@ -1,5 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 
+
+/*
 // return { data, loading, error }
 function useStore<T>(selectFunction: () => T) {
     const dispatch = useDispatch();
@@ -12,3 +14,4 @@ function useStore<T>(selectFunction: () => T) {
     // by dispatching the thunk
     // dispatch(thunk) 
 }
+    */
