@@ -5,8 +5,8 @@ import useForm from "../../common/hooks/useForm";
 import forumPostClient from "./post-api-client";
 import { useSelector } from "react-redux";
 import { selectUser, selectUserToken } from "../user/user-slice";
-import { addNewPost, fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus, updatePost } from "./post-slice";
-import { useAppDispatch } from "../../store/store-hooks";
+import { addNewPost, deletePost, fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus, updatePost } from "./post-slice";
+import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
 
 /**
  * Fetches API data to populate `posts/allPosts` if necessary.
@@ -212,6 +212,48 @@ export function useEditPostForm(postId: string, handleClose: () => void): UseFea
         error,
         handleChange,
         handleSubmit
+    }
+}
+
+export function usePostDelete(postId: string, handleClose: () => void) {
+
+    const dispatch = useAppDispatch();
+    const token = useAppSelector(selectUserToken);
+
+    // states
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleDelete = () => {
+        const del = async () => {
+            setLoading(true);
+
+            try {
+                if (!token) {
+                    setError('401 Unauthorised');
+                } else {
+                    const deletedPost = await dispatch(deletePost({ postId, token })).unwrap();
+                    console.log(`[usePostDelete.handleDelete] Successfully deleted post ${postId}`, deletedPost);
+                    handleClose();
+                }
+            } catch (err: any) {
+                if (typeof err === 'string') {
+                    setError(err);
+                } else {
+                    setError(err.message ?? 'Failed to DELETE post: An unexpected error occured.');
+                }
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        del();
+    }
+
+    return {
+        loading,
+        error,
+        handleDelete
     }
 }
 

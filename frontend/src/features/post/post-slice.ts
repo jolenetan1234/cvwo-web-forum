@@ -121,8 +121,28 @@ export const updatePost = createAsyncThunk<
             return res.data as Post;
         } else {
             return rejectWithValue(res.error);
-        }
-    }
+        };
+    },
+)
+
+export const deletePost = createAsyncThunk<
+    Post, // Payload type of `fulfilled  action
+    { postId: string, token: string, }, // Argument types
+    { rejectValue: string }
+>(
+    'posts/deletePost',
+    // PAYLOAD CREATOR (the thunk)
+    async ({ postId, token }: {
+        postId: string,
+        token: string,
+    }, { rejectWithValue }) => {
+        const res = await forumPostClient.delete(postId, token);
+        if (res.type === 'success') {
+            return res.data as Post;
+        } else {
+            return rejectWithValue(res.error);
+        };
+    },
 )
 /*
 export const getPostById = createAsyncThunk<
@@ -178,12 +198,12 @@ const postsSlice = createSlice({
         .addCase(fetchAllPosts.rejected, (state, action) => {
             state.status = 'failed';
         })
-        // `addNewPost(newPost, token)
+        // `addNewPost(newPost, token)`
         .addCase(addNewPost.fulfilled, (state, action) => {
             // action.payload is is the new Post
             state.allPosts.push(action.payload);
         })
-        // `updatePost(updatedPost, postId, token)
+        // `updatePost(updatedPost, postId, token)`
         .addCase(updatePost.fulfilled, (state, action) => {
             // action.payload is the updated Post
             const updatedPost = action.payload;
@@ -195,6 +215,11 @@ const postsSlice = createSlice({
                 originalPost.content = updatedPost.content;
                 originalPost.category_id = updatedPost.category_id;
             }
+        })
+        // `deletePost(postId, token)`
+        .addCase(deletePost.fulfilled, (state, action) => {
+            const deletedPost = action.payload;
+            state.allPosts = state.allPosts.filter(post => post.id != deletedPost.id);
         })
         /*
         .addCase(filterPostsByCategories.pending, (state, action) => {

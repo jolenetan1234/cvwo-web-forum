@@ -6,7 +6,7 @@ import MockError from "../../common/errors/MockError";
 import { UserState } from "../user/user-slice";
 
 // MOCK API ENDPOINTS
-import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost } from "../../api/post-api";
+import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost, deletePost } from "../../api/post-api";
 import { useSelector } from "react-redux";
 import { selectUserToken } from "../user/user-slice";
 
@@ -218,6 +218,38 @@ class ForumPostClient extends ApiClient<Post> {
                 data: null,
                 error: message,
             }
+        }
+    }
+
+    async delete(postId: string, token: string): Promise<ApiClientResponse<Post>> {
+        try {
+            // TODO: send actual backend API call.
+            const res = await deletePost(parseInt(postId));
+            // TODO: check is (res.ok) or something like that
+            // If not ok, return failed response
+
+            // mock the extraction of the data we need
+            const backendPost = res;            
+            const data = {
+                ...backendPost,
+                id: backendPost.id.toString(),
+                category_id: backendPost.category_id.toString(),
+                user_id: backendPost.user_id.toString(),
+            };
+
+            return {
+                type: 'success',
+                data: data,
+                error: '',
+            };
+        } catch (err: any) {
+            const message = err.message || 'Failed to DELETE post: An unexpected error occurred.';
+
+            return {
+                type: 'error',
+                data: null,
+                error: message,
+            };
         }
     }
 

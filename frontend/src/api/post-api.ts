@@ -111,7 +111,7 @@ export const updatePost = async (data: BackendUpdatePostData, postId: number): P
     if (!post) {
         // mock an error
         throw {
-            status: 401,
+            status: 404,
             message: "Failed to update post: Post does not exist",
         };
     } else {
@@ -126,4 +126,19 @@ export const updatePost = async (data: BackendUpdatePostData, postId: number): P
     }
 
     // But in the actual API, I'll manipulate the db
+}
+
+export const deletePost = async (postId: number): Promise<BackendPost> => {
+    const post = posts.find(p => p.id === postId);
+
+    if (!post) {
+        // mock an error
+        throw {
+            status: 404,
+            message: "Failed to DELETE post: Post does not exist",
+        };
+    } else {
+        // return the deleted post
+        return post;
+    }
 }

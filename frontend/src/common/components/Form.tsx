@@ -95,10 +95,10 @@ export function SubmitButton({ submitButtonText, loading}: {
     );
 }
 
-export function StyledFormHeader({ avatar, formTitle, handleClose }: {
+export function StyledHeader({ avatar, title, handleClose }: {
     avatar: React.ReactElement,
-    formTitle: string,
-    handleClose: () => void,
+    title: string,
+    handleClose?: () => void,
 }
 ) {
     return (
@@ -123,18 +123,21 @@ export function StyledFormHeader({ avatar, formTitle, handleClose }: {
                         </Box>
 
                         {/* Cancel button */}
-                        <Button 
-                        onClick={handleClose} 
-                        sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
-                            <Cancel />
-                        </Button>
+                        {handleClose ?
+                            <Button 
+                            onClick={handleClose} 
+                            sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
+                                <Cancel />
+                            </Button>
+                        : <Box sx={{ display: "flex", flexGrow: "4", justifyContent: "flex-end"}} />
+                        }
                     </Stack>
                     <Typography 
                     variant="h6" 
                     sx={{
                         textAlign: "center"
                     }}>
-                        {formTitle}
+                        {title}
                     </Typography>
                     </Box>
     )

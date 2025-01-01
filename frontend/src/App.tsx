@@ -23,6 +23,7 @@ import { IsCreateOpenProvider } from './common/contexts/IsCreateOpenContext';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { IsEditPostOpenProvider } from './common/contexts/IsEditPostOpenContext.tsx';
+import { IsDeletePostOpenProvider } from './common/contexts/IsDeletePostOpen.tsx';
 
 /**
  * App router
@@ -55,7 +56,9 @@ function App() {
     <IsLoginOpenProvider>
       <IsCreateOpenProvider>      
         <IsEditPostOpenProvider>
-          <RouterProvider router={router} />
+          <IsDeletePostOpenProvider>
+            <RouterProvider router={router} />
+          </IsDeletePostOpenProvider>
         </IsEditPostOpenProvider>
       </IsCreateOpenProvider>
     </IsLoginOpenProvider>
