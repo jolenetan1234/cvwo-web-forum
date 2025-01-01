@@ -19,6 +19,7 @@ export const IsDeletePostOpenProvider = ({ children }: { children: React.ReactNo
     const [postId, setPostId] = useState('');
 
     const toggleDeletePostOpen = (postId?: string) => {
+        console.log("[IsDeletePostOpenContext: toggleDeletePostOpen] isDeletePostOpen", isDeletePostOpen);
         setIsDeletePostOpen(prev => !prev);
         setPostId(postId ?? '');
     }

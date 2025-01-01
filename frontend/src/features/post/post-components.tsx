@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 
 // components
-import { Avatar, Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 import CommentSection from "../comment/comment-components.tsx";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
@@ -13,26 +13,23 @@ import { FormField } from "../../common/types/common-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
-import useFilter from "../../common/hooks/useFilter.ts";
 
 // API client
-import forumPostClient from "./post-api-client.ts";
 import { useCallback, useEffect, useState } from "react";
 import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
 import { useSelector } from "react-redux";
-import { selectUser, selectUserIsLoggedIn } from "../user/user-slice.ts";
+import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
 import { useAllPosts, useCreatePostForm, useEditPostForm, usePostDelete } from "./post-hooks.ts";
 import userClient from "../user/user-api-client.ts";
-import { useAppDispatch, useAppSelector } from "../../store/store-hooks.ts";
-import { fetchAllPosts, filteredPostsReset, filterPostsByCategories, selectAllPosts, selectFilteredPosts, selectPostsError, selectPostsStatus } from "./post-slice.ts";
 import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.tsx";
 import { isAuthor } from "./post-utils.ts";
-import { Delete } from "@mui/icons-material";
 import { useIsDeletePostOpen } from "../../common/contexts/IsDeletePostOpen.tsx";
+import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
+import { Delete } from "@mui/icons-material";
 
 /**
  * Header for a single PostCard.
@@ -232,12 +229,21 @@ function PostDetails(): JSX.Element {
     // states
     const [post, setPost] = useState<Post | undefined>(undefined);
 
-   // global states
-   const { allPosts, loading, error } = useAllPosts();
-
+    // fetching all posts
+    const { allPosts, loading, error } = useAllPosts();
     useEffect(() => {
         setPost(allPosts.find(p => p.id === postId));
     }, [allPosts]);
+
+    // IsDeletePostOpen context
+    const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
+    /**
+     * @function handleDeleteOpen - handles the event where the "Delete" button is pressed.
+     */
+    const handleDeleteOpen = () => {
+        toggleDeletePostOpen(postId);
+    }
+
 
     if (loading) {
         return <Loading />
@@ -255,7 +261,8 @@ function PostDetails(): JSX.Element {
                 <PostCardHeader 
                     post={post as Post}
                     editButton={<EditPostButton postId={postId}/>}
-                    deleteButton={<DeletePostButton postId={postId} />}
+                    // deleteButton={<DeletePostButton postId={postId} />}
+                    deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
                 />
 
                 {/* Post Content */}
@@ -545,22 +552,6 @@ function EditPostForm(): JSX.Element {
 }
 
 // FEATURE: DELETE
-function DeletePostButton({ postId }: { postId: string }): JSX.Element {
-    const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
-
-    const handleDeleteOpen = () => {
-        toggleDeletePostOpen(postId);
-    }
-
-    return (
-        <StyledButton
-        content={<Delete />}
-        onClick={handleDeleteOpen}
-        contentColor="red"
-        />
-    )
-}
-
 export function ConfirmPostDelete(): JSX.Element {
     const { isDeletePostOpen, toggleDeletePostOpen, postId } = useIsDeletePostOpen();
 
@@ -576,16 +567,14 @@ export function ConfirmPostDelete(): JSX.Element {
     return (
         <Dialog open={isDeletePostOpen} maxWidth="xs" onClose={handleClose}>
             <Paper elevation={8} sx={{p: 2}}>
-                {/* Header */}
+
                 <StyledHeader
                 avatar={<Delete />}
                 title='Delete Post'
                 />
 
-                {/* Confirm delete text */}
                 <Typography>{confirmDeleteText}</Typography>
 
-                {/* Yes and no buttons */}
                 <Stack direction='row' justifyContent='space-between'>
                     <StyledButton
                     content='Cancel'

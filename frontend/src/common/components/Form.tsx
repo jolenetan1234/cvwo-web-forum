@@ -95,8 +95,16 @@ export function SubmitButton({ submitButtonText, loading}: {
     );
 }
 
+/**
+ * StyledHeader Component
+ * 
+ * Contains the title, avatar, and close button (if any) for a component. 
+ * Best to use for dialogs/form components etc.
+ * @param param0 
+ * @returns 
+ */
 export function StyledHeader({ avatar, title, handleClose }: {
-    avatar: React.ReactElement,
+    avatar: React.ReactNode,
     title: string,
     handleClose?: () => void,
 }

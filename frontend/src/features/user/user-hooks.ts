@@ -1,8 +1,9 @@
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
-import { useFeatureFormResponse } from "../../common/types/common-types";
+import { UseFeatureFormResponse } from "../../common/types/common-types";
 
 // hooks
 import useForm from "../../common/hooks/useForm";
@@ -31,7 +32,7 @@ interface useUserFormResponse<T> {
 }
     */
 
-export function useLoginForm(handleClose: () => void): useFeatureFormResponse<LoginData> {
+export function useLoginForm(handleClose: () => void): UseFeatureFormResponse<LoginData> {
     const initialData: LoginData = {
         username: "",
         password: "",
@@ -43,7 +44,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
 
     // initialise states
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
@@ -96,7 +97,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
     };
 }
 
-export function useSignUpForm(handleClose: () => void): useFeatureFormResponse<SignUpData> {
+export function useSignUpForm(handleClose: () => void): UseFeatureFormResponse<SignUpData> {
     const initialData = {
         username: "",
         password: "",
@@ -110,9 +111,11 @@ export function useSignUpForm(handleClose: () => void): useFeatureFormResponse<S
         confirm_password: string;
     }>(initialData);
 
+    const navigate = useNavigate();
+
     // initialise states
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
@@ -123,7 +126,6 @@ export function useSignUpForm(handleClose: () => void): useFeatureFormResponse<S
             if (data.password != data.confirm_password) {
                 alert("Passwords don't match!");
                 resetForm();
-                return;
             }
 
             try {
@@ -138,6 +140,8 @@ export function useSignUpForm(handleClose: () => void): useFeatureFormResponse<S
                 if (res.type === "success") {
                     const user = res.data;
                     console.log("[useSignUpForm.handleSubmit] SUCCESSFULLY CREATED USER", user);
+
+                    navigate('/');
                 } else {
                     setError(res.error);
                 }

@@ -1,6 +1,6 @@
 import { Cancel, LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Button, Checkbox, Container, Dialog, FormControl, FormControlLabel, Grid2, Link, Paper, Stack, TextField, Typography } from "@mui/material";
-import { SubmitButton } from "../../common/components/Form";
+import { StyledHeader, SubmitButton } from "../../common/components/Form";
 
 // contexts
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext";
@@ -78,40 +78,12 @@ export function LoginForm(): JSX.Element {
         <Dialog open={isLoginOpen} maxWidth="xs" onClose={handleClose}>
 
                 <Paper elevation={8} sx={{p: 2}}>
-                    {/* "Sign In" and close button */}
-                    <Stack 
-                    direction="row"
-                    alignItems="center"
-                    width="100%"
-                    >
-                        {/* Spacer for Avatar */}
-                        <Box 
-                        flexGrow={5}
-                        display="flex"
-                        justifyContent="flex-end" 
-                        >
-                        {/* Avatar */}
-                            <Avatar sx={{ 
-                                bgcolor: "secondary.main",
-                            }}>
-                                <LockOutlined />
-                            </Avatar>
-                        </Box>
-
-                        {/* Cancel button */}
-                        <Button 
-                        onClick={handleClose} 
-                        sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
-                            <Cancel />
-                        </Button>
-                    </Stack>
-                    <Typography 
-                    variant="h6" 
-                    sx={{
-                        textAlign: "center"
-                    }}>
-                        Sign In
-                    </Typography>
+                    {/* form header */}
+                    <StyledHeader
+                    avatar={<LockOutlined />}
+                    title='Log In'
+                    handleClose={handleClose}
+                    />
 
                     {/* form component  */}
                     <Box
@@ -135,34 +107,19 @@ export function LoginForm(): JSX.Element {
                             );
                     })}
 
-                        {/*
-                        <FormControlLabel
-                        control={<Checkbox value="remember" color="secondary"/>}
-                        label="Remember me"
-                        />
-                        */}
-
                         <SubmitButton 
                         submitButtonText={<>Sign In</>}
                         loading={loading}
                         />
-                        {/*
-                        <Button
-                        type="submit"
-                        variant="contained"
-                        fullWidth
-                        >
-                            Sign In
-                        </Button>
-                        */}
 
                     </Box>
 
                         <Stack sx={{ mt: 2, textAlign: "center" }}>
                             <Typography>No account?</Typography>
                             <Link href={`${import.meta.env.VITE_APP_URL}/signup`} color="#0000EE">Create one!</Link>
+                            {/* error message */}
+                            {error ? <Typography>{error}</Typography> : <></>}
                         </Stack>
-                    {/* </Box> */}
 
                 </Paper>
 
@@ -266,10 +223,15 @@ export function SignupForm(): JSX.Element {
                         {/* confirm password */}
 
 
-                        <SubmitButton 
-                        submitButtonText={<>Sign Up</>}
-                        loading={loading}
-                        />
+                        <Stack alignItems='center'>
+                            <SubmitButton 
+                            submitButtonText={<>Sign Up</>}
+                            loading={loading}
+                            />
+
+                            {/* Error message */}
+                            { error ? <Typography>{error}</Typography> : <></>}
+                        </Stack>
                     </Box>
 
                 </Paper>

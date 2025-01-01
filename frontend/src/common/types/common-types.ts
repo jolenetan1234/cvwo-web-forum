@@ -28,7 +28,7 @@ export interface FormField {
 export interface UseFeatureFormResponse<T> {
     data: T,
     loading: boolean,
-    error: string,
+    error: string | null,
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void,
     handleSubmit: (e: React.FormEvent) => void,
 }
