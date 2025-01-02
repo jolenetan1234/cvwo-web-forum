@@ -7,11 +7,18 @@ import Comment from "../comment/comment-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch";
+import { useAppDispatch, useAppSelector } from "../../store/store-hooks.ts";
+import { useCallback, useEffect, useState } from "react";
 
 // API clients
 import commentClient from "./comment-api-client.ts";
 import userClient from "../user/user-api-client.ts";
-import { useCallback } from "react";
+
+// thunks/actions
+import { getCommentsByPostId, selectCommentsByAllPostId, selectCommentsByPostIdError, selectCommentsByPostIdStatus } from "./comment-slice.ts";
+
+// selectors
+import { selectCommentsByPostId } from "./comment-slice.ts";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -41,32 +48,10 @@ function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
     )
 
     const { data, error, loading } = useFetch(fetchUser);
-    /*
-    const { data, error, loading } = useFetch(
-        () => userClient.getById(comment.userId)
-    );
-    */
 
     const user = data;
 
-    /*
-    let user;
-
-    try {
-        // user = getUserById(comment.userId);
-        user = {
-        id: 2,
-        username: "meowmeowmeowmeow",
-        password: "pw",
-        }
-    } catch (err) {
-        if (err instanceof NotFoundError) {
-            return <ErrorMessage message={err.toString()}/>
-        } else {
-            return <ErrorMessage message="An unknown error occured." />
-        }
-    }
-    */
+    // dispatch(fetchComments(postId));
 
     return (
         <StyledCommentBox>
@@ -100,26 +85,76 @@ function Comments({ comments }: { comments: Comment[] }): JSX.Element {
 
 export default function CommentSection({ postId }: { postId: string }): JSX.Element {
     // memoize the callback
-    const fetchComments = useCallback(
-        () => commentClient.getByPostId(postId),
-        [postId]
-    );
+    // const fetchComments = useCallback(
+    //     () => commentClient.getByPostId(postId),
+    //     [postId]
+    // );
 
-    // Fetch comments
-    // const comments = await getCommentsByPostId(postId);
+    // const { data, error, loading } = useFetch(fetchComments);
+
+    // const comments = data;
+
+    const dispatch = useAppDispatch();
+    const commentsByPostId = useAppSelector(
+        state => selectCommentsByPostId(state, postId)
+    ); // NOTE:  will be `undefined` if not yet fetched.
+
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
     /*
-    const { data, error, loading } = useFetch<Comment[]>(
-        () => commentClient.getByPostId(postId)
-    )
-        */
+    const comments = useAppSelector(state => selectCommentsByPostId(state, postId));
+    const status = useAppSelector(state => selectCommentsByPostIdStatus(state, postId));
+    const error = useAppSelector(state => selectCommentsByPostIdError(state, postId));
+    */
+    
+    useEffect(() => {
+        // fetch from backend if not yet fetched
+        /*
+        if (comments === undefined) {
+            console.log('HEL')
+            dispatch(getCommentsByPostId(postId));
+        }
+            */
+        // if postId not in the hash map `commentsByPostId`, it has not been fetched yet.
+        if (!(postId in commentsByPostId)) {
 
-    const { data, error, loading } = useFetch(fetchComments);
+            const fetchCommentsByPostId = async () => {
+                console.log('[CommentSectionComponent.fetchCommentsByPostId]');
+                setLoading(true);
+                try {
+                    const res = await dispatch(getCommentsByPostId(postId)).unwrap();
+                    setComments(res);
+                } catch (err: any) {
+                    setError(err);
+                } finally {
+                    setLoading(false);
+                }
+            }
 
-    const comments = data;
+            fetchCommentsByPostId();
+            
+        } else {
+            // If already fetched, just read directly from the store.
+            setComments(commentsByPostId[postId].comments as Comment[]);
+        };
+
+        /*
+            dispatch(getCommentsByPostId(postId)); 
+            // right after this, `commentsByPostId` should NOT be undefined.
+            // nvm it's still undefined??
+            console.log('HELLOOOOO', commentsByPostId[postId]);
+        }
+            */
+    }, [dispatch, postId, commentsByPostId]);
+
+    // const commentsByPostIdStatus = useAppSelector(state => selectCommentsByPostIdStatus(state, postId));
+    const comment = commentsByPostId[postId];
 
     if (loading) {
         return <Loading />
-    } else if (error != "") {
+    } else if (error) {
         return <ErrorMessage message={error} />
     }
 

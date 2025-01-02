@@ -29,7 +29,7 @@ import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.t
 import { isAuthor } from "./post-utils.ts";
 import { useIsDeletePostOpen } from "../../common/contexts/IsDeletePostOpen.tsx";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 
 /**
  * Header for a single PostCard.
@@ -485,7 +485,7 @@ function EditPostForm(): JSX.Element {
 
                 <Paper elevation={8} sx={{p: 2}}>
                     <StyledHeader
-                    avatar="Hi"
+                    avatar={<Edit />}
                     title="Edit post"
                     handleClose={handleClose}
                     />

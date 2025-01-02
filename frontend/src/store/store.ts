@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 // reducers
 import userReducer from "../features/user/user-slice";
 import postsReducer from "../features/post/post-slice";
+import commentsReducer from "../features/comment/comment-slice";
 
 // the redux store.
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     reducer: {
         user: userReducer,
         posts: postsReducer,
+        comments: commentsReducer,
     }
 }
 )

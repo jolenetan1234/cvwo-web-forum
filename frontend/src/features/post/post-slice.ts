@@ -3,11 +3,23 @@ import Post, { NewPost, UpdatedPost } from "./post-types";
 import { RootState } from "../../store/store";
 import forumPostClient from "./post-api-client";
 
+// STATE INTERFACE
 interface PostsState {
     allPosts: Post[],
-    filteredPosts: Post[],
+    // filteredPosts: Post[],
+    postsByCategoryId: {
+        [categoryId: string]: Post[]
+    },
     status: "idle" | "loading" | "success" | "failed",
     error: string | null,
+}
+
+// INITIAL STATE
+const initialState: PostsState = {
+    allPosts: [],
+    postsByCategoryId: {},
+    status: "idle",
+    error: null,
 }
 
 // THUNKS (dispatch, getState): void => { // logic that can DISPATCH ACTIONS or READ STATE }
@@ -75,7 +87,7 @@ export const fetchAllPosts = createAsyncThunk<
     void, // argument types
     { rejectValue: string }
 >(
-    'posts/fetchAllPosts', // prefix for `pending`, `fulfilled`, `rejected` actions
+    'posts/fetchAllPosts',
     // PAYLOAD CREATOR (the thunk)
     async (_, { rejectWithValue }) => {
         const res = await forumPostClient.getAll();
@@ -162,14 +174,7 @@ export const getPostById = createAsyncThunk<
 )
     */
 
-// INITIAL STATE AND SLICE
-const initialState: PostsState = {
-    allPosts: [],
-    filteredPosts: [],
-    status: "idle",
-    error: null,
-}
-
+// SLICE
 const postsSlice = createSlice({
     name: "posts",
     initialState,
@@ -178,15 +183,17 @@ const postsSlice = createSlice({
         postAdded(state, action: PayloadAction<Post>) {
             state.allPosts.push(action.payload);
         },
+        /*
         filteredPostsReset(state) {
             state.filteredPosts = [];
             state.status = 'idle';
         }
+        */
     },
     extraReducers: builder => {
-        // functional programming lol. Each builder.addCase() returns a Builder
         // addCase(actionCreator, reducer)
         builder
+        // for the `fetchAllPosts()` thunk
         .addCase(fetchAllPosts.pending, (state, action) => {
             state.status = 'loading';
         })
@@ -240,12 +247,12 @@ const postsSlice = createSlice({
 })
 
 // Export ACTION CREATORS
-export const { postAdded, filteredPostsReset } = postsSlice.actions;
+export const { postAdded } = postsSlice.actions;
 // Export REDUCER
 export default postsSlice.reducer;
 // Export SELECTORS
 export const selectAllPosts = (state: RootState) => state.posts.allPosts;
-export const selectFilteredPosts = (state: RootState) => state.posts.filteredPosts;
+// export const selectFilteredPosts = (state: RootState) => state.posts.filteredPosts;
 export const selectPostsStatus = (state: RootState) => state.posts.status;
 export const selectPostsError = (state: RootState) => state.posts.error;
 // Export TYPES

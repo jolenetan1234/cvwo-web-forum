@@ -48,7 +48,7 @@ export function useAllPosts(): {
         if (postsStatus === 'failed') {
             setError(postsError ?? "Error fetching all posts");
         }
-    })
+    }, [postsStatus]);
 
     return {
         allPosts,
@@ -78,7 +78,7 @@ export function useCreatePostForm(handleClose: () => void): UseFeatureFormRespon
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
 
-        console.log("[useCreatePostForm.handleSubmit()], formData", formData);
+        console.log("[useCreatePostForCreatem.handleSubmit()], formData", formData);
 
         const createPost = async () => {
             setLoading(true);
