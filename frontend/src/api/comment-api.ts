@@ -30,6 +30,12 @@ const COMMENTS: BackendComment[] = [
         content: "hope u step on legos",
         post_id: 1,
         user_id: 3,
+    },
+    {
+        id: 4,
+        content: "haha",
+        post_id: 1,
+        user_id: 4
     }
 ]
 
@@ -55,12 +61,28 @@ export const getCommentsByPostId = async (postId: number): Promise<BackendCommen
  * @returns {Comment} The Comment with ID == `commentID`.
  */
 export const getCommentById = async (commentId: number): Promise<BackendComment> => {
-    // TODO: replace with API call
     const comment = COMMENTS.find(c => c.id === commentId);
 
     // if not found, throw error
     if (!comment) {
-        throw new NotFoundError("404: Comment Not Found");
+        throw {
+            status: '404',
+            message: 'Comment not found',
+        };
+    } else {
+        return comment;
+    }
+}
+
+export const deleteComment = async (commentId: number): Promise<BackendComment> => {
+    const comment = COMMENTS.find(c => c.id === commentId);
+
+    // if not found, throw error
+    if (!comment) {
+        throw {
+            status: '404',
+            message: 'Comment not found',
+        };
     } else {
         return comment;
     }

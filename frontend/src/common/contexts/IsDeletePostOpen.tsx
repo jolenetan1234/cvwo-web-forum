@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 const IsDeletePostOpenContext = createContext<{
     isDeletePostOpen: boolean,
     toggleDeletePostOpen: (postId?: string) => void,
-    postId: string
+    postId: string | null
 }
 >({
     isDeletePostOpen: false,
@@ -16,12 +16,12 @@ const IsDeletePostOpenContext = createContext<{
 export const IsDeletePostOpenProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
     // initial values
     const [isDeletePostOpen, setIsDeletePostOpen] = useState(false);
-    const [postId, setPostId] = useState('');
+    const [postId, setPostId] = useState<string | null>(null);
 
     const toggleDeletePostOpen = (postId?: string) => {
         console.log("[IsDeletePostOpenContext: toggleDeletePostOpen] isDeletePostOpen", isDeletePostOpen);
         setIsDeletePostOpen(prev => !prev);
-        setPostId(postId ?? '');
+        setPostId(postId ?? null);
     }
 
     return (

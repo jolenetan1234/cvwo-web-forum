@@ -28,8 +28,8 @@ const initialState: CommentsState = {
 
 // THUNKS
 export const getCommentsByPostId = createAsyncThunk<
-    Comment[],
-    string,
+    Comment[], // Payload type of `fulfilled` action
+    string, // Argument types
     { rejectValue: string }
 >(
     'comments/getCommentsByPostId',
@@ -38,6 +38,29 @@ export const getCommentsByPostId = createAsyncThunk<
         const res = await commentClient.getByPostId(postId);
         if (res.type === 'success') {
             return res.data as Comment[];
+        } else {
+            return rejectWithValue(res.error);
+        }
+    }
+)
+
+export const deleteComment = createAsyncThunk<
+    Comment, // Payload type of `fulfilled` action
+    { 
+        commentId: string, 
+        token: string, 
+    }, // Argument types
+    { rejectValue: string }
+>(
+    'comments/deleteComment',
+    // PAYLOAD CREATOR (the thunk)
+    async ({ commentId, token }: {
+        commentId: string,
+        token: string
+    }, { rejectWithValue }) => {
+        const res = await commentClient.delete(commentId, token);
+        if (res.type === 'success') {
+            return res.data as Comment;
         } else {
             return rejectWithValue(res.error);
         }
@@ -79,6 +102,19 @@ const CommentsSlice = createSlice({
                 error: action.payload ?? `Failed to fetch comments for post ${postId}: An unexpected error occured.`,
             }
         })
+        .addCase(deleteComment.fulfilled, (state, action) => {
+            const commentId = action.meta.arg.commentId;
+            const deletedComment = action.payload;
+            const postId = deletedComment.post_id;
+
+            // Remove comment from `state.allComments`
+            state.allComments = state.allComments.filter(comment => comment.id != commentId);
+
+            // Search for comment in `commentsByPostId` and delete
+            if (postId in state.commentsByPostId) {
+                delete state.commentsByPostId[postId]; // Remove the key from the object
+            }
+        })
     }
 })
 
@@ -89,7 +125,7 @@ export default CommentsSlice.reducer;
 // Selectors
 export const selectAllComments = (state: RootState) => state.comments.allComments;
 /** NOTE: `selectCommentsByPostId` will be undefined if `postId` is not a key in `comments.commentsByPostId`. */
-export const selectCommentsByPostId = (state: RootState, postId: string) => state.comments.commentsByPostId;
+export const selectCommentsByPostId = (state: RootState) => state.comments.commentsByPostId;
 // export const selectCommentsByPostId = (state: RootState, postId: string) => state.comments.commentsByPostId[postId].comments || null;
 // export const selectCommentsByPostIdStatus = (state: RootState, postId: string) => state.comments.commentsByPostId[postId].status;
 // export const selectCommentsByPostIdError = (staate: RootState, postId: string) => staate.comments.commentsByPostId[postId].error;

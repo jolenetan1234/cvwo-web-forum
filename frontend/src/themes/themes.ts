@@ -8,7 +8,7 @@ export const darkTheme = createTheme({
 
 export const theme = createTheme({
     typography: {
-        fontFamily: "Robotoo, Arial, sans-serif",
+        fontFamily: "Roboto, Arial, sans-serif",
     },
     palette: {
         primary: {

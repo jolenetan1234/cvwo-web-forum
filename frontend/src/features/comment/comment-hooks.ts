@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
-import { getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
+import { deleteComment, getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
 import Comment from "./comment-types";
+import { selectUserToken } from "../user/user-slice";
+
+// hi
 
 /**
  * 
@@ -109,4 +112,61 @@ export const useGetCommentsByPostId = (postId: string) => {
         loading,
         error
     }
+}
+
+/**
+ * Custom hook to handle the deletion of a comment.
+ * 
+ * @param {string | null} commentId - The ID of the comment to delete. If null, an error will be set.
+ * @param {() => void} handleClose - A callback function executed after the comment is successfully deleted.
+ *
+ * @returns {Object} An object containing the following properties:
+ * @property {boolean} loading - Indicates whether the delete operation is in progress.
+ * @property {string | null} error - Contains an error message if the delete operation fails, or null otherwise.
+ * @property {() => void} handleDelete - A function to initiate the delete operation. 
+ */
+export const useCommentDelete = (
+    commentId: string | null, 
+    handleClose: () => void,
+) => {
+
+    const dispatch = useAppDispatch();
+    const token = useAppSelector(selectUserToken);
+
+    // return { loading, error, handleDelete }
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+
+    const handleDelete = () => {
+
+        const del = async () => {
+
+            try {
+                if (!token) {
+                    setError('Failed to DELETE comment: 401 unauthorised');
+                } else if (!commentId) {
+                    setError('Failed to DELETE comment: Comment ID is null');
+                } else {
+                    setLoading(true);
+                    await dispatch(deleteComment({ commentId, token })).unwrap();
+                    handleClose();
+                };
+            } catch (err: any) {
+                setError(err.message ?? 'Failed to DELETE comment: An unexpected error occurred');
+            } finally {
+                setLoading(false);
+            }
+
+        }
+
+        del();
+    };
+
+    return {
+        loading,
+        error,
+        handleDelete,
+    };
+
 }

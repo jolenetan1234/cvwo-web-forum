@@ -84,7 +84,7 @@ export const filterPostsByCategories = createAsyncThunk<
 
 export const fetchAllPosts = createAsyncThunk<
     Post[], // Payload type of `fulfilled` action
-    void, // argument types
+    void, // Argument types
     { rejectValue: string }
 >(
     'posts/fetchAllPosts',

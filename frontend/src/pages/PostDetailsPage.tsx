@@ -8,19 +8,32 @@ import { useIsEditPostOpen } from "../common/contexts/IsEditPostOpenContext";
 import { useIsDeletePostOpen } from "../common/contexts/IsDeletePostOpen";
 import { ConfirmDelete } from "../common/components/DeleteItem";
 import { usePostDelete } from "../features/post/post-hooks";
+import { useIsDeleteCommentOpen } from "../common/contexts/IsDeleteCommentOpen";
+import { useCommentDelete } from "../features/comment/comment-hooks";
 
 export default function PostDetailsPage(): JSX.Element {
     // ALL HOOKS SHOULD BE CALLED AT THE VERY START, AND NOT CONDITIONALLY.
     // Else, the hooks called may differ from render to render.
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isEditPostOpen } = useIsEditPostOpen();
+
+    // States and variables for delete post
     const { isDeletePostOpen, toggleDeletePostOpen, postId } = useIsDeletePostOpen();
     const { loading: deletePostLoading, error: deletePostError, handleDelete: handlePostDelete } = usePostDelete(
         postId, 
         () => toggleDeletePostOpen()
     );
 
-    
+    // States and variables for delete comment
+    const { isDeleteCommentOpen, toggleDeleteCommentOpen, commentId } = useIsDeleteCommentOpen();
+    const { 
+        loading: deleteCommentLoading, 
+        error: deleteCommentError, 
+        handleDelete: handleCommentDelete 
+    } = useCommentDelete(
+        commentId,
+        () => toggleDeleteCommentOpen()
+    );
 
     // props for `ConfirmDelete`
     let isDeleteOpen = false;
@@ -30,24 +43,44 @@ export default function PostDetailsPage(): JSX.Element {
     let loading = false;
     let error: string | null = '';
 
-    if (isDeletePostOpen) {
-        handleClose = () => {
-            toggleDeletePostOpen();
-        }
+    switch (true) {
+        case isDeletePostOpen:
+            handleClose = () => {
+                toggleDeletePostOpen();
+            };
+            isDeleteOpen = isDeletePostOpen;
+            confirmDeleteText = 'Are you sure you want to delete this post?';
+            handleDelete = handlePostDelete;
+            loading = deletePostLoading;
+            error = deletePostError;
+            break;
 
-        // IMPT:
-        // CANNOT call the hook here like this.
-        // Because in a single render, when state of `isDeletePostOpen` changes,
-        // Then this hook will not be called whereas it was called previously.
-        // So React complains and says "React has detected a change in the order of Hooks".
-        // const { loading: deletePostLoading, error: deletePostError, handleDelete: handlePostDelete } = usePostDelete(postId, handleClose);
-
-        isDeleteOpen = isDeletePostOpen;
-        confirmDeleteText = 'Are you sure you want to delete this post?';
-        handleDelete = handlePostDelete;
-        loading = deletePostLoading;
-        error = deletePostError;
+        case isDeleteCommentOpen:
+            handleClose = () => {
+                toggleDeleteCommentOpen();
+            };
+            isDeleteOpen = isDeleteCommentOpen;
+            confirmDeleteText = 'Are you sure you want to delete this comment?';
+            handleDelete = handleCommentDelete;
+            loading = deleteCommentLoading;
+            error = deleteCommentError;
     }
+
+    // if (isDeletePostOpen) {
+    //     handleClose = () => {
+    //         toggleDeletePostOpen();
+    //     }
+    //     isDeleteOpen = isDeletePostOpen;
+    //     confirmDeleteText = 'Are you sure you want to delete this post?';
+    //     handleDelete = handlePostDelete;
+    //     loading = deletePostLoading;
+    //     error = deletePostError;
+    // } else if (isDeleteCommentOpen) {
+    //     handleClose = () => {
+    //         toggleDeleteCommentOpen();
+    //     }
+    //     isDeleteOpen = 
+    // }
 
     return (
         <Box>

@@ -215,7 +215,7 @@ export function useEditPostForm(postId: string, handleClose: () => void): UseFea
     }
 }
 
-export function usePostDelete(postId: string, handleClose: () => void) {
+export function usePostDelete(postId: string | null, handleClose: () => void) {
 
     const dispatch = useAppDispatch();
     const token = useAppSelector(selectUserToken);
@@ -229,7 +229,9 @@ export function usePostDelete(postId: string, handleClose: () => void) {
             setLoading(true);
 
             try {
-                if (!token) {
+                if (!postId) {
+                    setError('Failed to DELETE post: PostID is null');
+                } else if (!token) {
                     setError('401 Unauthorised');
                 } else {
                     const deletedPost = await dispatch(deletePost({ postId, token })).unwrap();

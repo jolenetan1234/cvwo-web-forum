@@ -1,16 +1,12 @@
 import { Button } from "@mui/material";
 
-export default function StyledButton({ content, onClick, contentColor, bgColor }: {
+export default function StyledButton({ content, onClick, sx }: {
     content: React.ReactNode,
     onClick: () => void
-    contentColor?: string,
-    bgColor?: string,
+    sx?: object,
 }): JSX.Element {
     return (
-        <Button color="inherit" onClick={onClick} sx={{ 
-            color: contentColor ?? 'inherit',
-            backgroundColor: bgColor ?? 'inherit',
-            }}>
+        <Button color="inherit" onClick={onClick} sx={sx}>
             {content}
         </Button> 
     )

@@ -21,13 +21,7 @@ class UserClient extends ApiClient<User> {
             } as ApiClientResponse<User[]>;
 
         } catch (err: any) {
-            let message;
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
-            } else {
-                message = "An unknown error occurred.";
-            } 
+            const message = err.message ?? 'Failed to GET User: An unknown error occurred.';
 
             return {
                 type: "error",

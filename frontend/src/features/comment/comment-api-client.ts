@@ -3,7 +3,7 @@ import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 import Comment from "./comment-types";
 
 // MOCK API ENDPOINTS
-import { getAllComments, getCommentById, getCommentsByPostId } from "../../api/comment-api";
+import { deleteComment, getAllComments, getCommentById, getCommentsByPostId } from "../../api/comment-api";
 import MockError from "../../common/errors/MockError";
 
 class CommentClient extends ApiClient<Comment> {
@@ -113,6 +113,47 @@ class CommentClient extends ApiClient<Comment> {
                 data: null,
                 error: message,
             } as ApiClientResponse<Comment[]>;
+        }
+    }
+
+    async delete(commentId: string, token: string): Promise<ApiClientResponse<Comment>> {    
+        try {
+
+            if (!token) {
+                return {
+                    type: 'error',
+                    data: null,
+                    error: 'Failed to DELETE comment: User unauthorised',
+                };
+            };
+
+            // TODO: replace with actual API call and pass in token
+            const res = await deleteComment(parseInt(commentId));
+            const deletedComment = res;
+
+            // TODO: check if res is ok. if not, return error
+            // format data
+            const data = {
+                ...deletedComment,
+                id: deletedComment.id.toString(),
+                post_id: deletedComment.post_id.toString(),
+                user_id: deletedComment.user_id.toString(),
+            };
+           
+            return {
+                type: "success",
+                data: data,
+                error: "",
+            } as ApiClientResponse<Comment>;
+
+        } catch (err: any) {
+            const message = err.message || 'Failed to DELETE comment: An unexpected error occured.';
+
+            return {
+                type: 'error',
+                data: null,
+                error: message,
+            };
         }
     }
 }

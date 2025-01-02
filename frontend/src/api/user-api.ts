@@ -37,7 +37,10 @@ const getUserById = async (userId: number): Promise<User> => {
 
     // throw error if user doesn't exist.
     if (!res) {
-        throw new NotFoundError("User");
+        throw {
+            status: '404',
+            message: 'User not found',
+        }
     } else {
         const user = {
             id: res?.id.toString(),
