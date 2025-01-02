@@ -13,9 +13,7 @@ import Comment from "./comment-types";
 export const useGetCommentsByPostId = (postId: string) => {
 
     const dispatch = useAppDispatch();
-    const commentsByPostId = useAppSelector(
-        state => selectCommentsByPostId(state, postId)
-    ); // NOTE:  will be `undefined` if not yet fetched.
+    const commentsByPostId = useAppSelector(selectCommentsByPostId) // NOTE:  will be `undefined` if not yet fetched.
 
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(false);
@@ -24,10 +22,11 @@ export const useGetCommentsByPostId = (postId: string) => {
     // IMPLEMENTATION #1:
     useEffect(() => {
        
-        // if postId not in the hash map `commentsByPostId`, it has not been fetched yet.
         console.log('[useGetCommentsByPostId]')
 
         if (!(postId in commentsByPostId)) {
+        // postId not in the hash map `commentsByPostId` iff it has not been fetched yet.
+        // so fetch it
             dispatch(getCommentsByPostId(postId));
             
         } else {
