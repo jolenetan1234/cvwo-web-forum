@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, styled, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Divider, Stack, styled, Typography } from "@mui/material";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
 
@@ -140,15 +140,28 @@ const CommentSection = ({ postId }: { postId: string }): JSX.Element => {
     // "POST comment" bar
     // comments list
     return (
-        <Stack>
-            <Typography variant="h6" sx={{ mt: -1 }}>Comments</Typography>
-            <Divider sx={{ my: 1 }}/>
+        <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+            {/* Comment Section Header */}
+            <CardHeader
+            title={
+                <Typography 
+                variant="h5" 
+                sx={{ mt: -1, fontWeight: 'bold', }}
+                >
+                    Comments
+                </Typography>
+            }
+            />
 
-            {/* "POST comment" bar */}
-            
-            {/* Comments list */}
-            <Comments comments={comments as Comment[]} />
-        </Stack>
+            {/* List of comments */}
+            <CardContent>
+                <Stack>
+                    <Divider sx={{ my: 1, mt: -3 }}/>
+                    {/* Comments list */}
+                    <Comments comments={comments as Comment[]} />
+                </Stack>
+            </CardContent>
+        </Card>
     )
 }
 

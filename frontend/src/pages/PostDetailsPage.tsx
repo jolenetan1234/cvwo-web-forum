@@ -10,15 +10,22 @@ import { ConfirmDelete } from "../common/components/DeleteItem";
 import { usePostDelete } from "../features/post/post-hooks";
 import { useIsDeleteCommentOpen } from "../common/contexts/IsDeleteCommentOpen";
 import { useCommentDelete } from "../features/comment/comment-hooks";
+import { useParams } from "react-router-dom";
+import CommentSection from "../features/comment/comment-components";
 
 export default function PostDetailsPage(): JSX.Element {
     // ALL HOOKS SHOULD BE CALLED AT THE VERY START, AND NOT CONDITIONALLY.
     // Else, the hooks called may differ from render to render.
+    // postId
+    const params = useParams<{ id : string }>();
+    const postId = params.id ?? '';
+
+    // States for login form and edit post form
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isEditPostOpen } = useIsEditPostOpen();
 
     // States and variables for delete post
-    const { isDeletePostOpen, toggleDeletePostOpen, postId } = useIsDeletePostOpen();
+    const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
     const { loading: deletePostLoading, error: deletePostError, handleDelete: handlePostDelete } = usePostDelete(
         postId, 
         () => toggleDeletePostOpen()
@@ -69,9 +76,11 @@ export default function PostDetailsPage(): JSX.Element {
             error = deleteCommentError;
     }
 
+
     return (
         <Box>
-            <PostDetails />
+            <PostDetails postId={postId} />
+            <CommentSection postId={postId} />
             { isLoginOpen ? <LoginForm /> : <></>}
             { isEditPostOpen ? <EditPostForm /> : <></>}
             {/* { isDeletePostOpen ? <ConfirmPostDelete /> : <></>} */}

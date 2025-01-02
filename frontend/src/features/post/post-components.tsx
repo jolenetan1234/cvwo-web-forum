@@ -222,9 +222,11 @@ function Feed({ selectedCategories }: {
  * Displays the expanded, detailed view of a post. 
  * @returns 
  */
-function PostDetails(): JSX.Element {
-    const params = useParams<{ id : string }>();
-    const postId = params.id ?? '';
+function PostDetails({ postId }: { 
+    postId: string
+}): JSX.Element {
+    // const params = useParams<{ id : string }>();
+    // const postId = params.id ?? '';
     
     // states
     const [post, setPost] = useState<Post | undefined>(undefined);
@@ -257,27 +259,28 @@ function PostDetails(): JSX.Element {
         );
     } else {
             return (
-            <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                <PostCardHeader 
-                    post={post as Post}
-                    editButton={<EditPostButton postId={postId}/>}
-                    // deleteButton={<DeletePostButton postId={postId} />}
-                    deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
-                />
+                <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+                    <PostCardHeader 
+                        post={post as Post}
+                        editButton={<EditPostButton postId={postId}/>}
+                        // deleteButton={<DeletePostButton postId={postId} />}
+                        deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
+                    />
 
-                {/* Post Content */}
-                <CardContent sx={{ mt: -3 }}>
-                    <Typography>
-                        {post?.content}
-                    </Typography>
-                </CardContent>
+                    {/* Post Content */}
+                    <CardContent sx={{ mt: -3 }}>
+                        <Typography>
+                            {post?.content}
+                        </Typography>
+                    </CardContent>
 
-                <Divider />
-                {/* Comment Section */}
-                <CardContent>
-                    <CommentSection postId={postId}/>
-                </CardContent>
-            </Card> 
+
+                    {/* <Divider /> */}
+                    {/* Comment Section */}
+                    {/* <CardContent> */}
+                        {/* <CommentSection postId={postId}/> */}
+                    {/* </CardContent> */}
+                </Card> 
         );
    }
 }
