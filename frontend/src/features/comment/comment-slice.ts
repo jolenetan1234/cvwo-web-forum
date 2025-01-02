@@ -91,6 +91,6 @@ export const selectAllComments = (state: RootState) => state.comments.allComment
 /** NOTE: `selectCommentsByPostId` will be undefined if `postId` is not a key in `comments.commentsByPostId`. */
 export const selectCommentsByPostId = (state: RootState, postId: string) => state.comments.commentsByPostId;
 // export const selectCommentsByPostId = (state: RootState, postId: string) => state.comments.commentsByPostId[postId].comments || null;
-export const selectCommentsByPostIdStatus = (state: RootState, postId: string) => state.comments.commentsByPostId[postId].status;
-export const selectCommentsByPostIdError = (staate: RootState, postId: string) => staate.comments.commentsByPostId[postId].error;
+// export const selectCommentsByPostIdStatus = (state: RootState, postId: string) => state.comments.commentsByPostId[postId].status;
+// export const selectCommentsByPostIdError = (staate: RootState, postId: string) => staate.comments.commentsByPostId[postId].error;
 // Types

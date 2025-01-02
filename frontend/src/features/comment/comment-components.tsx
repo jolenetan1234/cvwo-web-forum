@@ -19,6 +19,7 @@ import { getCommentsByPostId, selectCommentsByAllPostId, selectCommentsByPostIdE
 
 // selectors
 import { selectCommentsByPostId } from "./comment-slice.ts";
+import { useGetCommentsByPostId } from "./comment-hooks.ts";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -84,73 +85,8 @@ function Comments({ comments }: { comments: Comment[] }): JSX.Element {
 }
 
 export default function CommentSection({ postId }: { postId: string }): JSX.Element {
-    // memoize the callback
-    // const fetchComments = useCallback(
-    //     () => commentClient.getByPostId(postId),
-    //     [postId]
-    // );
 
-    // const { data, error, loading } = useFetch(fetchComments);
-
-    // const comments = data;
-
-    const dispatch = useAppDispatch();
-    const commentsByPostId = useAppSelector(
-        state => selectCommentsByPostId(state, postId)
-    ); // NOTE:  will be `undefined` if not yet fetched.
-
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    /*
-    const comments = useAppSelector(state => selectCommentsByPostId(state, postId));
-    const status = useAppSelector(state => selectCommentsByPostIdStatus(state, postId));
-    const error = useAppSelector(state => selectCommentsByPostIdError(state, postId));
-    */
-    
-    useEffect(() => {
-        // fetch from backend if not yet fetched
-        /*
-        if (comments === undefined) {
-            console.log('HEL')
-            dispatch(getCommentsByPostId(postId));
-        }
-            */
-        // if postId not in the hash map `commentsByPostId`, it has not been fetched yet.
-        if (!(postId in commentsByPostId)) {
-
-            const fetchCommentsByPostId = async () => {
-                console.log('[CommentSectionComponent.fetchCommentsByPostId]');
-                setLoading(true);
-                try {
-                    const res = await dispatch(getCommentsByPostId(postId)).unwrap();
-                    setComments(res);
-                } catch (err: any) {
-                    setError(err);
-                } finally {
-                    setLoading(false);
-                }
-            }
-
-            fetchCommentsByPostId();
-            
-        } else {
-            // If already fetched, just read directly from the store.
-            setComments(commentsByPostId[postId].comments as Comment[]);
-        };
-
-        /*
-            dispatch(getCommentsByPostId(postId)); 
-            // right after this, `commentsByPostId` should NOT be undefined.
-            // nvm it's still undefined??
-            console.log('HELLOOOOO', commentsByPostId[postId]);
-        }
-            */
-    }, [dispatch, postId, commentsByPostId]);
-
-    // const commentsByPostIdStatus = useAppSelector(state => selectCommentsByPostIdStatus(state, postId));
-    const comment = commentsByPostId[postId];
+    const { data: comments, loading, error } = useGetCommentsByPostId(postId);
 
     if (loading) {
         return <Loading />
