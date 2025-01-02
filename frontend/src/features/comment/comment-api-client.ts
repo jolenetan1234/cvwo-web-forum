@@ -139,6 +139,8 @@ class CommentClient extends ApiClient<Comment> {
                 post_id: deletedComment.post_id.toString(),
                 user_id: deletedComment.user_id.toString(),
             };
+
+            console.log('[commentClient.delete] Successfully DELETE post', data)
            
             return {
                 type: "success",

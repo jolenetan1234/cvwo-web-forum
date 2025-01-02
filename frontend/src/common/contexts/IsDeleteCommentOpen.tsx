@@ -20,7 +20,6 @@ export const IsDeleteCommentOpenProvider = ({ children }: {
     const [commentId, setCommentId] = useState<string | null>(null);
     
     const toggleDeleteCommentOpen = (commentId?: string) => {
-        console.log("EOIRHEOIHR")
         setIsDeleteCommentOpen(prev => !prev);
         setCommentId(commentId ?? null);
     }

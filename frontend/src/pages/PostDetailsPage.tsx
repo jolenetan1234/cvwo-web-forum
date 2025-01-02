@@ -36,6 +36,7 @@ export default function PostDetailsPage(): JSX.Element {
     );
 
     // props for `ConfirmDelete`
+    let title = '';
     let isDeleteOpen = false;
     let confirmDeleteText = '';
     let handleClose = () => {};
@@ -45,42 +46,28 @@ export default function PostDetailsPage(): JSX.Element {
 
     switch (true) {
         case isDeletePostOpen:
+            title = 'Delete Post';
+            isDeleteOpen = isDeletePostOpen;
+            confirmDeleteText = 'Are you sure you want to delete this post?';
             handleClose = () => {
                 toggleDeletePostOpen();
             };
-            isDeleteOpen = isDeletePostOpen;
-            confirmDeleteText = 'Are you sure you want to delete this post?';
             handleDelete = handlePostDelete;
             loading = deletePostLoading;
             error = deletePostError;
             break;
 
         case isDeleteCommentOpen:
+            title = 'Delete Comment';
+            isDeleteOpen = isDeleteCommentOpen;
+            confirmDeleteText = 'Are you sure you want to delete this comment?';
             handleClose = () => {
                 toggleDeleteCommentOpen();
             };
-            isDeleteOpen = isDeleteCommentOpen;
-            confirmDeleteText = 'Are you sure you want to delete this comment?';
             handleDelete = handleCommentDelete;
             loading = deleteCommentLoading;
             error = deleteCommentError;
     }
-
-    // if (isDeletePostOpen) {
-    //     handleClose = () => {
-    //         toggleDeletePostOpen();
-    //     }
-    //     isDeleteOpen = isDeletePostOpen;
-    //     confirmDeleteText = 'Are you sure you want to delete this post?';
-    //     handleDelete = handlePostDelete;
-    //     loading = deletePostLoading;
-    //     error = deletePostError;
-    // } else if (isDeleteCommentOpen) {
-    //     handleClose = () => {
-    //         toggleDeleteCommentOpen();
-    //     }
-    //     isDeleteOpen = 
-    // }
 
     return (
         <Box>
@@ -89,6 +76,7 @@ export default function PostDetailsPage(): JSX.Element {
             { isEditPostOpen ? <EditPostForm /> : <></>}
             {/* { isDeletePostOpen ? <ConfirmPostDelete /> : <></>} */}
             <ConfirmDelete 
+            title={title}
             isOpen={isDeleteOpen} 
             confirmDeleteText={confirmDeleteText} 
             handleClose={handleClose} 

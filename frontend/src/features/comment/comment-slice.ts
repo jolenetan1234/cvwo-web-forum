@@ -112,7 +112,8 @@ const CommentsSlice = createSlice({
 
             // Search for comment in `commentsByPostId` and delete
             if (postId in state.commentsByPostId) {
-                delete state.commentsByPostId[postId]; // Remove the key from the object
+                const comments = state.commentsByPostId[postId].comments;
+                state.commentsByPostId[postId].comments = comments?.filter(c => c.id != commentId) ?? [];
             }
         })
     }
