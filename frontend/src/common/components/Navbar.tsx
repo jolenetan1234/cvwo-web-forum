@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 // types
 import { logout, selectUserIsLoggedIn } from "../../features/user/user-slice.ts";
 import { clearSessionInCookies } from "../../features/user/user-utils.ts";
+import { ToggleThemeButton } from "../../features/theme/theme-components.tsx";
 
 /**
  * Can use MUI's style() utility, 
@@ -52,9 +53,7 @@ export default function Navbar(): JSX.Element {
                     <Stack direction="row" alignItems="center" width="50%">
 
                         {/* Light/Dark mode toggle */}
-                        <IconButton>
-                            Light/Dark Mode
-                        </IconButton>
+                        <ToggleThemeButton />
 
                         {/* Login/Logout button */}
                         {isLoggedIn ? <LogoutButton /> : <LoginButton />}

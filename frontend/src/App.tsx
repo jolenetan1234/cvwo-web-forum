@@ -25,6 +25,12 @@ import { useDispatch } from 'react-redux';
 import { IsEditPostOpenProvider } from './common/contexts/IsEditPostOpenContext.tsx';
 import { IsDeletePostOpenProvider } from './common/contexts/IsDeletePostOpen.tsx';
 import { IsDeleteCommentOpenProvider } from './common/contexts/IsDeleteCommentOpen.tsx';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+
+// themes
+import { lightTheme, darkTheme } from './themes/themes.ts';
+import { restoreTheme, selectTheme } from './features/theme/theme-slice.ts';
+import { useAppSelector } from './store/store-hooks.ts';
 
 /**
  * App router
@@ -50,21 +56,28 @@ function App() {
   // Ie. set the `user` states first.
   useEffect(() => {
     // dispatch restoreSession action
-    dispatch(restoreSession())
+    dispatch(restoreSession());
+    dispatch(restoreTheme());
   }, [dispatch])
 
+ const theme = useAppSelector(selectTheme);
+
   return (
-    <IsLoginOpenProvider>
-      <IsCreateOpenProvider>      
-        <IsEditPostOpenProvider>
-          <IsDeletePostOpenProvider>
-            <IsDeleteCommentOpenProvider>
-              <RouterProvider router={router} />
-            </IsDeleteCommentOpenProvider>
-          </IsDeletePostOpenProvider>
-        </IsEditPostOpenProvider>
-      </IsCreateOpenProvider>
-    </IsLoginOpenProvider>
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <CssBaseline>
+        <IsLoginOpenProvider>
+          <IsCreateOpenProvider>      
+            <IsEditPostOpenProvider>
+              <IsDeletePostOpenProvider>
+                <IsDeleteCommentOpenProvider>
+                  <RouterProvider router={router} />
+                </IsDeleteCommentOpenProvider>
+              </IsDeletePostOpenProvider>
+            </IsEditPostOpenProvider>
+          </IsCreateOpenProvider>
+        </IsLoginOpenProvider>
+      </CssBaseline>
+    </ThemeProvider>
   );
 }
 
