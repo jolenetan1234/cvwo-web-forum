@@ -8,7 +8,7 @@ interface useFilterResponse<T> {
     // data will only be null in the case of an error,
     // in which error message will be displayed.
     // Empty arrays will still be here.
-    filteredList: T[] | null,     
+    data: T[] | null,     
     error: string,
     loading: boolean,
 }
@@ -25,7 +25,7 @@ function useFilter<T>(
     apiClient: ApiClient<T>,
     filterFunction: (filters: any[]) => Promise<ApiClientResponse<T[]>>
 ): useFilterResponse<T>{
-    const [filteredList, setFilteredList] = useState<T[]>([]);
+    const [data, setData] = useState<T[]>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
@@ -47,7 +47,7 @@ function useFilter<T>(
 
                 // set states based on response status
                 if (res.type === "success") {
-                    setFilteredList(res.data);
+                    setData(res.data);
                 } else {
                     setError(res.error);
                 }
@@ -64,7 +64,7 @@ function useFilter<T>(
     }, [filters]);
 
     return {
-        filteredList,
+        data,
         error,
         loading
     };

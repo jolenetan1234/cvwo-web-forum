@@ -1,8 +1,9 @@
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
-import { useFeatureFormResponse } from "../../common/types/common-types";
+import { UseFeatureFormResponse } from "../../common/types/common-types";
 
 // hooks
 import useForm from "../../common/hooks/useForm";
@@ -15,6 +16,7 @@ import userClient from "./user-api-client";
 import { useDispatch, useSelector } from "react-redux";
 // userActions
 import { login, logout } from "./user-slice";
+import { storeSessionInCookies } from "./user-utils";
 
 
 /**
@@ -30,7 +32,7 @@ interface useUserFormResponse<T> {
 }
     */
 
-export function useLoginForm(handleClose: () => void): useFeatureFormResponse<LoginData> {
+export function useLoginForm(handleClose: () => void): UseFeatureFormResponse<LoginData> {
     const initialData: LoginData = {
         username: "",
         password: "",
@@ -42,7 +44,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
 
     // initialise states
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
@@ -59,14 +61,17 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
                    
                     console.log("[useLoginForm.handleSubmit] LOGIN SUCCESS", user);
                   
-                    // dispatch login
+                    // dispatch login, to update redux store
                     dispatch(login({
                         user: user,
                         token: token,
                     }));
 
-                    console.log("HELLO", );
+                    // store session in browser cookies - can be accessed later on
+                    storeSessionInCookies(user, token);
 
+                    // close the form
+                    handleClose();
                 } else {
                     setError(res.error);
                     console.log("[useLoginForm.handleSubmit] LOGIN ERROR", res.error);
@@ -75,8 +80,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
                 setError("An unknown error occurred.");
             } finally {
                 setLoading(false);
-                // close & reset form data
-                handleClose();
+                // reset form data
                 resetForm();
             }
         }
@@ -93,7 +97,7 @@ export function useLoginForm(handleClose: () => void): useFeatureFormResponse<Lo
     };
 }
 
-export function useSignUpForm(handleClose: () => void): useUserFormResponse<SignUpData> {
+export function useSignUpForm(handleClose: () => void): UseFeatureFormResponse<SignUpData> {
     const initialData = {
         username: "",
         password: "",
@@ -107,9 +111,11 @@ export function useSignUpForm(handleClose: () => void): useUserFormResponse<Sign
         confirm_password: string;
     }>(initialData);
 
+    const navigate = useNavigate();
+
     // initialise states
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
@@ -120,7 +126,6 @@ export function useSignUpForm(handleClose: () => void): useUserFormResponse<Sign
             if (data.password != data.confirm_password) {
                 alert("Passwords don't match!");
                 resetForm();
-                return;
             }
 
             try {
@@ -135,6 +140,8 @@ export function useSignUpForm(handleClose: () => void): useUserFormResponse<Sign
                 if (res.type === "success") {
                     const user = res.data;
                     console.log("[useSignUpForm.handleSubmit] SUCCESSFULLY CREATED USER", user);
+
+                    navigate('/');
                 } else {
                     setError(res.error);
                 }

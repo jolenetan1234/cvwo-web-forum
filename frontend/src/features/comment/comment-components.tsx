@@ -7,11 +7,19 @@ import Comment from "../comment/comment-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch";
+import { useAppDispatch, useAppSelector } from "../../store/store-hooks.ts";
+import { useCallback, useEffect, useState } from "react";
 
 // API clients
 import commentClient from "./comment-api-client.ts";
 import userClient from "../user/user-api-client.ts";
-import { useCallback } from "react";
+
+// thunks/actions
+import { getCommentsByPostId, selectCommentsByAllPostId, selectCommentsByPostIdError, selectCommentsByPostIdStatus } from "./comment-slice.ts";
+
+// selectors
+import { selectCommentsByPostId } from "./comment-slice.ts";
+import { useGetCommentsByPostId } from "./comment-hooks.ts";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -41,32 +49,10 @@ function CommentCard({ comment }: { comment: Comment, }): JSX.Element {
     )
 
     const { data, error, loading } = useFetch(fetchUser);
-    /*
-    const { data, error, loading } = useFetch(
-        () => userClient.getById(comment.userId)
-    );
-    */
 
     const user = data;
 
-    /*
-    let user;
-
-    try {
-        // user = getUserById(comment.userId);
-        user = {
-        id: 2,
-        username: "meowmeowmeowmeow",
-        password: "pw",
-        }
-    } catch (err) {
-        if (err instanceof NotFoundError) {
-            return <ErrorMessage message={err.toString()}/>
-        } else {
-            return <ErrorMessage message="An unknown error occured." />
-        }
-    }
-    */
+    // dispatch(fetchComments(postId));
 
     return (
         <StyledCommentBox>
@@ -98,28 +84,13 @@ function Comments({ comments }: { comments: Comment[] }): JSX.Element {
     )
 }
 
-export default function CommentSection({ postId }: { postId: number }): JSX.Element {
-    // memoize the callback
-    const fetchComments = useCallback(
-        () => commentClient.getByPostId(postId),
-        [postId]
-    );
+export default function CommentSection({ postId }: { postId: string }): JSX.Element {
 
-    // Fetch comments
-    // const comments = await getCommentsByPostId(postId);
-    /*
-    const { data, error, loading } = useFetch<Comment[]>(
-        () => commentClient.getByPostId(postId)
-    )
-        */
-
-    const { data, error, loading } = useFetch(fetchComments);
-
-    const comments = data;
+    const { data: comments, loading, error } = useGetCommentsByPostId(postId);
 
     if (loading) {
         return <Loading />
-    } else if (error != "") {
+    } else if (error) {
         return <ErrorMessage message={error} />
     }
 

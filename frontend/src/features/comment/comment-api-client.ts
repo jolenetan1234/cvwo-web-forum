@@ -43,11 +43,11 @@ class CommentClient extends ApiClient<Comment> {
         }
     }
 
-    async getById(commentId: number) {
+    async getById(commentId: string) {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("API_BASE_URL/comment/commentId")
-            const res = await getCommentById(commentId);
+            const res = await getCommentById(parseInt(commentId));
             
             const data = {
                 ...res,
@@ -80,11 +80,11 @@ class CommentClient extends ApiClient<Comment> {
         }
     }
     
-    async getByPostId(postId: number) {
+    async getByPostId(postId: string) {
         try {
             // TODO: replace with axios GET call
             // const data =a await axios.get("API_BASE_URL/comment/?postId=postId")
-            const res = await getCommentsByPostId(postId);
+            const res = await getCommentsByPostId(parseInt(postId));
             
             const data = res.map(comment => ({
                 ...comment,

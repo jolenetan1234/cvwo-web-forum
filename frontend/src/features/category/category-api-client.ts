@@ -42,13 +42,13 @@ class CategoryClient extends ApiClient<Category> {
         }
     }
 
-    async getById(categoryId: number): Promise<ApiClientResponse<Category>> {
+    async getById(categoryId: string): Promise<ApiClientResponse<Category>> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("API_BASE_URL/category/categoryId")
 
             console.log("categoryClient.getById(id)", categoryId);
-            const res = await getCategorybyId(categoryId);
+            const res = await getCategorybyId(parseInt(categoryId));
            
             const data = {
                 ...res,

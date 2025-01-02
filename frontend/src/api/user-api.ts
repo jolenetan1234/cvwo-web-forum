@@ -49,6 +49,15 @@ const getUserById = async (userId: number): Promise<User> => {
 
 // mock controller for POST API_BASE_URL/user
 const createUser = async (content: SignUpData): Promise<User> => {
+    // check if username is taken
+    const usernames = USERS.map(user => user.username);
+
+    if (usernames.includes(content.username)) {
+        throw {
+            message: "Username already taken"
+        };
+    } 
+
     const newId = Math.max(...USERS.map(user => user.id));
                         
     const newUser = {

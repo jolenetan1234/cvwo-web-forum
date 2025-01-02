@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 // Define context
 const IsLoginOpenContext = createContext(
+    // DEFAULT VALUE (fallback if eg. someone tries to consume this context outside its scope)
     {
         isLoginOpen: false,
         toggleLoginOpen: () => {}

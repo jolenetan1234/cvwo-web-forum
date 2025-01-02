@@ -82,13 +82,8 @@ class UserClient extends ApiClient<User> {
             } as ApiClientResponse<User>;
 
         } catch (err: any) {
-            let message;
-            // TODO: replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
-            } else {
-                message = "An unknown error occurred.";
-            }
+            console.log("[userClient.post] Failed to create user", err);
+            const message = err.message ?? '[userClient] Failed to create user: An unknown error occured.';
 
             return {
                 type: "error",
