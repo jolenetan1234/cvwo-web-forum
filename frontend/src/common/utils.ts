@@ -23,7 +23,6 @@ export const isAuthor = (item: Post | Comment) => {
  *  
  */
 export const isEdited = (item: Post | Comment) => {
-    console.log("FOWIEJFOIEWJ")
     return item.created_at != item.updated_at;
 }
 
