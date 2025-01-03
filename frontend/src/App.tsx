@@ -32,6 +32,7 @@ import { lightTheme, darkTheme } from './themes/themes.ts';
 import { restoreTheme, selectTheme } from './features/theme/theme-slice.ts';
 import { useAppSelector } from './store/store-hooks.ts';
 import { IsCreateCommentOpenProvider } from './common/contexts/IsCreateCommentOpenContext.tsx';
+import { IsEditCommentOpenProvider } from './common/contexts/IsEditCommentOpenContext.tsx';
 
 /**
  * App router
@@ -72,7 +73,9 @@ function App() {
               <IsDeletePostOpenProvider>
                 <IsDeleteCommentOpenProvider>
                   <IsCreateCommentOpenProvider>
-                    <RouterProvider router={router} />
+                    <IsEditCommentOpenProvider>
+                      <RouterProvider router={router} />
+                    </IsEditCommentOpenProvider>
                   </IsCreateCommentOpenProvider>
                 </IsDeleteCommentOpenProvider>
               </IsDeletePostOpenProvider>

@@ -26,3 +26,12 @@ export interface NewComment {
     content: string;
     post_id: string;
 }
+
+/**
+ * @interface UpdatedComment - The shape of the data needed to update a comment.
+ * 
+ * @property {string} content - The updated text content of a Comment.
+ */
+export interface UpdatedComment {
+    content: string;
+}

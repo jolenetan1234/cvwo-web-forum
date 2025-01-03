@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
 import { addNewComment, deleteComment, getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
-import Comment, { NewComment } from "./comment-types";
+import Comment, { NewComment, UpdatedComment } from "./comment-types";
 import { selectUserToken } from "../user/user-slice";
 import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import useForm from "../../common/hooks/useForm";
-
 // hi
 
 /**
@@ -116,6 +115,23 @@ export const useGetCommentsByPostId = (postId: string) => {
     }
 }
 
+/**
+ * A custom hook for managing the state and submission of a form to create a new comment.
+ *
+ * @param {string} postId - The ID of the post to which the comment is being added.
+ * @param {() => void} handleClose - A callback function to be executed after the form is successfully submitted.
+ * 
+ * @returns {Object} An object containing:
+ * @property {{ content: string, postId: string }} data - The current form data of type `NewComment`.
+ * @property {boolean} loading - A boolean indicating whether the comment creation is in progress.
+ * @property {string | null} error - A string representing the error message, or `null` if no error occurred.
+ * @property {() => void} handleChange - A function to update the form data fields.
+ * @property {() => void} handleSubmit - A function to handle the form submission.
+ *
+ * @param postId 
+ * @param handleClose 
+ * @returns 
+ */
 export const useCreateCommentForm = (postId: string, handleClose: () => void): UseFeatureFormResponse<NewComment> => {
 
     // HOOKS
@@ -132,8 +148,11 @@ export const useCreateCommentForm = (postId: string, handleClose: () => void): U
 
     const { data: formData, handleChange, resetForm } = useForm<NewComment>(initialData);
 
-    const handleSubmit = () => {
-        console.log("FOIHWEOIF")
+    /**
+     * The handler for the "submit form" event.
+     */
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
         const createComment = async () => {
             try {
@@ -170,6 +189,50 @@ export const useCreateCommentForm = (postId: string, handleClose: () => void): U
     }
 }
 
+export const useEditCommentForm = (
+    commentId: string,
+    token: string,
+): UseFeatureFormResponse<UpdatedComment> => {
+
+    const initialData: UpdatedComment = {
+        content: '',
+    };
+
+    // HOOKS
+    const { data: formData, handleChange, resetForm } = useForm<UpdatedComment>(initialData);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    /**
+     * The handler for the "submit form" event.
+     */
+    const handleSubmit = () => {
+
+        const update = async () => {
+            try {
+                if (!token) {
+                    setError('401 Unauthorised');
+                } else if (!commentId) {
+                    setError('Failed to UPDATE comment: Comment ID is null.');
+                } else {
+                    // await dispatch
+                }
+            } catch (err: any) {
+                setError(err.message ?? 'Failed to UPDATE comment: An unexpected error occurred.');
+            }
+        }
+
+        update();
+    }
+
+    return {
+        data: formData,
+        loading,
+        error,
+        handleChange,
+        handleSubmit
+    }
+}
 /**
  * Custom hook to handle the deletion of a comment.
  * 
@@ -182,7 +245,7 @@ export const useCreateCommentForm = (postId: string, handleClose: () => void): U
  * @property {() => void} handleDelete - A function to initiate the delete operation. 
  */
 export const useCommentDelete = (
-    commentId: string | null, 
+    commentId: string,
     handleClose: () => void,
 ) => {
 

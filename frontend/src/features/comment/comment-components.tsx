@@ -1,6 +1,6 @@
 // components
 import { Box, Card, CardContent, CardHeader, Dialog, Divider, FormControl, InputLabel, Paper, Stack, styled, TextField, Typography } from "@mui/material";
-import { AddComment } from "@mui/icons-material";
+import { AddComment, Edit, Delete } from "@mui/icons-material";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
 import StyledButton from "../../common/components/StyledButton.tsx";
@@ -22,7 +22,7 @@ import { getCommentsByPostId, selectCommentsByAllPostId, selectCommentsByPostIdE
 
 // selectors
 import { selectCommentsByPostId } from "./comment-slice.ts";
-import { useCreateCommentForm, useGetCommentsByPostId } from "./comment-hooks.ts";
+import { useCreateCommentForm, useEditCommentForm, useGetCommentsByPostId } from "./comment-hooks.ts";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
 import { isAuthor } from "../post/post-utils.ts";
 import { useIsDeleteCommentOpen } from "../../common/contexts/IsDeleteCommentOpen.tsx";
@@ -30,6 +30,9 @@ import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { useIsCreateCommentOpen } from "../../common/contexts/IsCreateCommentOpenContext.tsx";
 import { FormField } from "../../common/types/common-types.ts";
 import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
+import { selectUserIsLoggedIn } from "../user/user-slice.ts";
+import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
+import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext.tsx";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -61,18 +64,12 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
 
     const { data: user, error, loading } = useFetch(fetchUser);
 
-    /**
-     * Handles the event where the `Delete` button is clicked.
-     */
-    const { toggleDeleteCommentOpen } = useIsDeleteCommentOpen();
-    const handleDeleteOpen = () => {
-        toggleDeleteCommentOpen(comment.id);
-    }
 
     return (
-        <Stack>
-            {/* Header with username, data, delete button */}
-            <Stack direction='row' justifyContent='space-between' alignItems='center'>
+        <Stack direction='row' justifyContent='space-between'>
+            {/* Left side with username and content */}
+            <Stack>
+                {/* Username */}
                 <Typography 
                 variant='subtitle2'
                 sx={{ fontWeight: 'bold', }}
@@ -80,29 +77,32 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
                     {user?.username ?? 'Unknown Author'}
                 </Typography>
 
-                {/* Date and Delete Button */}
-                <Stack direction='row' alignItems='center'>
-                    {isAuthor(comment) ?
-                        <DeleteItemButton 
-                        itemId={comment.user_id}
-                        handleDeleteOpen={handleDeleteOpen}
-                        sx={{ py: 0 }}
-                        />
-                        :
-                        <Box />
-                    }
-                    <Typography 
-                    variant='subtitle2'
-                    sx={{ fontWeight: 'bold', }}
-                    >
-                        {/* TODO: replace with `created_at` */}
-                        00000
-                    </Typography>
-                </Stack>
+                {/* Content */}
+                <Typography>{comment.content}</Typography>
             </Stack>
 
-            {/* Content */}
-            <Typography>{comment.content}</Typography>
+            {/* Right side with date, delete button, edit button */}
+            <Stack alignItems='center'>
+                {/* Date */}
+                <Typography 
+                variant='subtitle2'
+                sx={{ fontWeight: 'bold', }}
+                >
+                    {/* TODO: replace with `created_at` */}
+                    00000
+                </Typography>
+
+                {/* Delete Button, Edit Button */}
+                {isAuthor(comment) ? 
+                    <Stack direction='row' alignItems='center'>
+                        <DeleteCommentButton commentId={comment.id}/>
+                        <EditCommentButton />
+                    </Stack>
+                :
+                <></>
+                }
+
+            </Stack>
 
         </Stack>
     )
@@ -191,19 +191,28 @@ const CommentSection = ({ postId }: { postId: string }): JSX.Element => {
 const CreateCommentButton = (): JSX.Element => {
 
     const { toggleCreateCommentOpen } = useIsCreateCommentOpen();
+    const { toggleLoginOpen } = useIsLoginOpen();
+    const isLoggedIn = useAppSelector(selectUserIsLoggedIn);
 
     /**
      * Toggle the CreateCommentForm open.
      */
     const handleClick = () => {
-        toggleCreateCommentOpen();
+        if (isLoggedIn) {
+            toggleCreateCommentOpen();
+        } else {
+            toggleLoginOpen();
+        }
     };
 
     return (
         <StyledButton
         content={<AddComment />}
         onClick={handleClick}
-        sx={{ color: 'primary.main' }}
+        sx={{ 
+            color: 'primary.main',
+            px: 0,
+        }}
         />
     );
 }
@@ -258,11 +267,16 @@ const CreateCommentForm = ({ postId }: {
                             onChange={handleChange}
                             />
                         ))}
+
+                        {/* Submit button */}
                         <SubmitButton
                         submitButtonText={<>Add Comment</>}
                         loading={loading}
-                        sx={{ mt: 2 }}
+                        sx={{ mt: 1 }}
                         />
+
+                        {/* Error message */}
+                        {error ? <Typography textAlign='center' sx={{ mt: 1 }}>{error}</Typography> : <></>}
                     </Box>
 
                 </Paper>
@@ -272,6 +286,57 @@ const CreateCommentForm = ({ postId }: {
 }
 
 // FEATURE: EDIT COMMENT
+const EditCommentButton = (): JSX.Element => {
 
-export { CreateCommentForm };
+    const { toggleEditCommentOpen } = useIsEditCommentOpen();
+
+    const handleClick = () => {
+        toggleEditCommentOpen();
+    };
+
+    return (
+        <Edit
+        onClick={handleClick}
+        sx={{ 
+            color: 'gray',
+            cursor: 'pointer',
+        }}
+        />
+    )
+}
+
+const EditCommentForm = (): JSX.Element => {
+
+    // const { data: formData, loading, error, handleChange, handleSubmit } = useEditCommentForm(commentId: string, token: string );
+    // need { commentId: string, token: string } => dispatch
+
+    return (
+        <>HI</>
+    )
+}
+
+// FEATURE: DELETE COMMENT
+const DeleteCommentButton = ({ commentId }: {
+    commentId: string,
+}): JSX.Element => {
+    /**
+     * Handles the event where the `Delete` button is clicked.
+     */
+    const { toggleDeleteCommentOpen } = useIsDeleteCommentOpen();
+    const handleDeleteOpen = () => {
+        toggleDeleteCommentOpen(commentId);
+    };
+
+    return (
+        <Delete
+        onClick={handleDeleteOpen}
+        sx={{
+            color: 'red',
+            cursor: 'pointer',
+        }}
+        />
+    )
+}
+
+export { CreateCommentForm, EditCommentForm };
 export default CommentSection;

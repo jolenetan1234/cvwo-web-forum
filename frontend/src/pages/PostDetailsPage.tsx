@@ -11,12 +11,13 @@ import { useAllPosts, usePostDelete } from "../features/post/post-hooks";
 import { useIsDeleteCommentOpen } from "../common/contexts/IsDeleteCommentOpen";
 import { useCommentDelete } from "../features/comment/comment-hooks";
 import { useParams } from "react-router-dom";
-import CommentSection, { CreateCommentForm } from "../features/comment/comment-components";
+import CommentSection, { CreateCommentForm, EditCommentForm } from "../features/comment/comment-components";
 import { useEffect, useState } from "react";
 import Loading from "../common/components/Loading";
 import ErrorMessage from "../common/components/ErrorMessage";
 import Post from "../features/post/post-types";
 import { useIsCreateCommentOpen } from "../common/contexts/IsCreateCommentOpenContext";
+import { useIsEditCommentOpen } from "../common/contexts/IsEditCommentOpenContext";
 
 export default function PostDetailsPage(): JSX.Element {
     // ALL HOOKS SHOULD BE CALLED AT THE VERY START, AND NOT CONDITIONALLY.
@@ -25,10 +26,11 @@ export default function PostDetailsPage(): JSX.Element {
     const params = useParams<{ id : string }>();
     const postId = params.id ?? '';
 
-    // States and variables for LoginForm, EditPostForm, EditCommentForm, CreateCommentForm
+    // States and variables for LoginForm, EditPostForm, CreateCommentForm, EditCommentForm
     const { isLoginOpen } = useIsLoginOpen();
     const { isEditPostOpen } = useIsEditPostOpen();
     const { isCreateCommentOpen } = useIsCreateCommentOpen();
+    const { isEditCommentOpen } = useIsEditCommentOpen();
 
     // States and variables for DeletePost
     const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
@@ -108,6 +110,7 @@ export default function PostDetailsPage(): JSX.Element {
             { isLoginOpen ? <LoginForm /> : <></>}
             { isEditPostOpen ? <EditPostForm post={post}/> : <></>}
             { isCreateCommentOpen ? <CreateCommentForm postId={postId} /> : <></>}
+            { isEditCommentOpen ? <EditCommentForm /> : <></>}
             <ConfirmDelete 
             title={title}
             isOpen={isDeleteOpen} 
