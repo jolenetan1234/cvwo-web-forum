@@ -49,7 +49,8 @@ export const getAllComments = async (): Promise<BackendComment[]> => {
  * @returns {Comment[]} An array of comments belonging to the post.
  */
 export const getCommentsByPostId = async (postId: number): Promise<BackendComment[]> => {
-    // TODO: replace with API call
+    // NOTE: actual backend also needs to check if the post exists.
+    // If not, throw an error. (Instead of just returning an empty array)
     const comments = COMMENTS.filter(c => c.post_id === postId);
 
     return comments; 

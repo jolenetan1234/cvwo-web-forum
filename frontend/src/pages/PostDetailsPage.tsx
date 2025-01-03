@@ -7,11 +7,15 @@ import { Box } from "@mui/material";
 import { useIsEditPostOpen } from "../common/contexts/IsEditPostOpenContext";
 import { useIsDeletePostOpen } from "../common/contexts/IsDeletePostOpen";
 import { ConfirmDelete } from "../common/components/DeleteItem";
-import { usePostDelete } from "../features/post/post-hooks";
+import { useAllPosts, usePostDelete } from "../features/post/post-hooks";
 import { useIsDeleteCommentOpen } from "../common/contexts/IsDeleteCommentOpen";
 import { useCommentDelete } from "../features/comment/comment-hooks";
 import { useParams } from "react-router-dom";
 import CommentSection from "../features/comment/comment-components";
+import { useEffect, useState } from "react";
+import Loading from "../common/components/Loading";
+import ErrorMessage from "../common/components/ErrorMessage";
+import Post from "../features/post/post-types";
 
 export default function PostDetailsPage(): JSX.Element {
     // ALL HOOKS SHOULD BE CALLED AT THE VERY START, AND NOT CONDITIONALLY.
@@ -48,8 +52,8 @@ export default function PostDetailsPage(): JSX.Element {
     let confirmDeleteText = '';
     let handleClose = () => {};
     let handleDelete = () => {};
-    let loading = false;
-    let error: string | null = '';
+    let deleteLoading = false;
+    let deleteError: string | null = '';
 
     switch (true) {
         case isDeletePostOpen:
@@ -60,8 +64,8 @@ export default function PostDetailsPage(): JSX.Element {
                 toggleDeletePostOpen();
             };
             handleDelete = handlePostDelete;
-            loading = deletePostLoading;
-            error = deletePostError;
+            deleteLoading = deletePostLoading;
+            deleteError = deletePostError;
             break;
 
         case isDeleteCommentOpen:
@@ -72,14 +76,34 @@ export default function PostDetailsPage(): JSX.Element {
                 toggleDeleteCommentOpen();
             };
             handleDelete = handleCommentDelete;
-            loading = deleteCommentLoading;
-            error = deleteCommentError;
+            deleteLoading = deleteCommentLoading;
+            deleteError = deleteCommentError;
     }
 
+    // Find the post
+    const [post, setPost] = useState<Post | undefined>(undefined);
+
+    // fetching all posts and finding the post
+    const { allPosts, loading: getAllPostsLoading, error: getAllPostsError } = useAllPosts();
+    useEffect(() => {
+        setPost(allPosts.find(p => p.id === postId));
+    }, [allPosts]);
+
+    if (getAllPostsLoading) {
+        return <Loading />
+    } else if (getAllPostsError) {
+        return (
+            <ErrorMessage message={getAllPostsError} />
+        );
+    } else if (!post) {
+        return (
+            <ErrorMessage message='Post not found' />
+        )
+    }
 
     return (
         <Box>
-            <PostDetails postId={postId} />
+            <PostDetails post={post} />
             <CommentSection postId={postId} />
             { isLoginOpen ? <LoginForm /> : <></>}
             { isEditPostOpen ? <EditPostForm /> : <></>}
@@ -90,8 +114,8 @@ export default function PostDetailsPage(): JSX.Element {
             confirmDeleteText={confirmDeleteText} 
             handleClose={handleClose} 
             handleDelete={handleDelete} 
-            loading={loading} 
-            error={error} 
+            loading={deleteLoading} 
+            error={deleteError} 
             />
         </Box>
     )

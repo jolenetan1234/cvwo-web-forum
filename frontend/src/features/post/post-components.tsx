@@ -222,20 +222,21 @@ function Feed({ selectedCategories }: {
  * Displays the expanded, detailed view of a post. 
  * @returns 
  */
-function PostDetails({ postId }: { 
-    postId: string
+function PostDetails({ post }: { 
+    post: Post
 }): JSX.Element {
+    const postId = post.id;
     // const params = useParams<{ id : string }>();
     // const postId = params.id ?? '';
     
-    // states
-    const [post, setPost] = useState<Post | undefined>(undefined);
+    // // states
+    // const [post, setPost] = useState<Post | undefined>(undefined);
 
-    // fetching all posts
-    const { allPosts, loading, error } = useAllPosts();
-    useEffect(() => {
-        setPost(allPosts.find(p => p.id === postId));
-    }, [allPosts]);
+    // // fetching all posts
+    // const { allPosts, loading, error } = useAllPosts();
+    // useEffect(() => {
+    //     setPost(allPosts.find(p => p.id === postId));
+    // }, [allPosts]);
 
     // IsDeletePostOpen context
     const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
@@ -247,17 +248,18 @@ function PostDetails({ postId }: {
     }
 
 
-    if (loading) {
-        return <Loading />
-    } else if (error != "") {
-        return (
-            <ErrorMessage message={error} />
-        );
-    } else if (!post) {
-        return (
-            <ErrorMessage message="Post not found" />
-        );
-    } else {
+    // if (loading) {
+    //     return <Loading />
+    // } else if (error) {
+    //     return (
+    //         <ErrorMessage message={error} />
+    //     );
+    // } else if (!post) {
+    //     return (
+    //         <ErrorMessage message="Post not found" />
+    //     );
+    // } else {
+    console.log('OFIWJEIOFJ', post)
             return (
                 <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
                     <PostCardHeader 
@@ -282,7 +284,7 @@ function PostDetails({ postId }: {
                     {/* </CardContent> */}
                 </Card> 
         );
-   }
+//    }
 }
 
 // FEATURE: CREATE POST

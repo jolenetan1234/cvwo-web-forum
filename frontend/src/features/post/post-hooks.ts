@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
 export function useAllPosts(): {
     allPosts: Post[],
     loading: boolean,
-    error: string,
+    error: string | null,
 } {
     // global states
     const allPosts = useSelector(selectAllPosts);
@@ -25,7 +25,7 @@ export function useAllPosts(): {
 
     // states
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
     // dispatch
     const dispatch = useAppDispatch();

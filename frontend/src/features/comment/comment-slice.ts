@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import Comment from "./comment-types"
 import { RootState } from "../../store/store"
 import commentClient from "./comment-api-client"
+import { deletePost } from "../post/post-slice"
 
 // STATE INTERFACE
 /**
@@ -114,6 +115,15 @@ const CommentsSlice = createSlice({
             if (postId in state.commentsByPostId) {
                 const comments = state.commentsByPostId[postId].comments;
                 state.commentsByPostId[postId].comments = comments?.filter(c => c.id != commentId) ?? [];
+            }
+        })
+        // LISTEN FOR DELETED POST
+        .addCase(deletePost.fulfilled, (state, action) => {
+            const postId = action.meta.arg.postId;
+
+            if (postId in state.commentsByPostId) {
+                const { [postId]: _, ...rest } = state.commentsByPostId;
+                state.commentsByPostId = rest;
             }
         })
     }
