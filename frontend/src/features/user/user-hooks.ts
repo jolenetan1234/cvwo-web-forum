@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
-import { UseFeatureFormResponse } from "../../common/types/common-types";
+import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 
 // hooks
 import useForm from "../../common/hooks/useForm";

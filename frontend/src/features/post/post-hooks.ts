@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { UseFeatureFormResponse } from "../../common/types/common-types";
+import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
 import useForm from "../../common/hooks/useForm";
 import forumPostClient from "./post-api-client";

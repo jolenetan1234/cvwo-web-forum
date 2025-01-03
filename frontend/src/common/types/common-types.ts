@@ -25,10 +25,10 @@ export interface FormField {
  * @property {(e: React.FormEvent) => void} handleSubmit - The handler when "submit" is clicked.
  * 
  */
-export interface UseFeatureFormResponse<T> {
-    data: T,
-    loading: boolean,
-    error: string | null,
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void,
-    handleSubmit: (e: React.FormEvent) => void,
-}
+// export interface UseFeatureFormResponse<T> {
+//     data: T,
+//     loading: boolean,
+//     error: string | null,
+//     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void,
+//     handleSubmit: (e: React.FormEvent) => void,
+// }

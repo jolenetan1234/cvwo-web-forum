@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
 import { addNewComment, deleteComment, getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
 import Comment, { NewComment } from "./comment-types";
 import { selectUserToken } from "../user/user-slice";
-import { UseFeatureFormResponse } from "../../common/types/common-types";
+import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import useForm from "../../common/hooks/useForm";
 
 // hi
