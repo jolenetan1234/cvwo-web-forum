@@ -1,9 +1,9 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 // import Comment from "../../types/Comment";
-import Comment, { NewComment } from "./comment-types";
+import Comment, { NewComment, UpdatedComment } from "./comment-types";
 
 // MOCK API ENDPOINTS
-import { createComment, deleteComment, getAllComments, getCommentById, getCommentsByPostId } from "../../api/comment-api";
+import { createComment, deleteComment, getAllComments, getCommentById, getCommentsByPostId, updateComment } from "../../api/comment-api";
 import MockError from "../../common/errors/MockError";
 
 class CommentClient extends ApiClient<Comment> {
@@ -116,7 +116,7 @@ class CommentClient extends ApiClient<Comment> {
         }
     }
 
-    async post(newComment: NewComment, token: string): Promise<ApiClientResponse<Comment>> {
+    async post(formData: NewComment, token: string): Promise<ApiClientResponse<Comment>> {
         try {
 
             // check for token
@@ -130,8 +130,8 @@ class CommentClient extends ApiClient<Comment> {
 
             // format data to fit backend requirements
             const sentData = {
-                content: newComment.content,
-                post_id: parseInt(newComment.post_id),
+                content: formData.content,
+                post_id: parseInt(formData.post_id),
             }
 
             // TODO: replace with actual API call and pass in token
@@ -162,9 +162,52 @@ class CommentClient extends ApiClient<Comment> {
         };
     }
 
+    async put(commentId: string, formData: UpdatedComment, token: string): Promise<ApiClientResponse<Comment>> {
+        try {
+            if (!token) {
+                return {
+                    type: 'error',
+                    data: null,
+                    error: 'Failed to DELETE comment: User unauthorised',
+                };
+            }
+
+            // Format data to suit backend requirements
+            const sentData = {
+                ...formData,
+            };
+
+            // TODO: send PUT req to API_BASE_URL/comments/${commentId}
+            // And include token in request headers.
+            const res = await updateComment(sentData, parseInt(commentId));
+
+            // Format BackendComment into Comment
+            const data = {
+                ...res,
+                id: res.id.toString(),
+                post_id: res.post_id.toString(),
+                user_id: res.user_id.toString(),
+            };
+
+            return {
+                type: 'success',
+                data: data,
+                error: '',
+            };
+        } catch (err: any) {
+            const message = err.message ?? 'Failed to UPDATE comment: An unexpected error occurred.';
+
+            return {
+                type: 'error',
+                data: null,
+                error: message,
+            };
+        }
+
+    }
+
     async delete(commentId: string, token: string): Promise<ApiClientResponse<Comment>> {    
         try {
-
             if (!token) {
                 return {
                     type: 'error',

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
-import { addNewComment, deleteComment, getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
+import { addNewComment, deleteComment, getCommentsByPostId, selectCommentsByPostId, updateComment } from "./comment-slice";
 import Comment, { NewComment, UpdatedComment } from "./comment-types";
 import { selectUserToken } from "../user/user-slice";
 import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import useForm from "../../common/hooks/useForm";
+import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext";
 // hi
 
 /**
@@ -170,7 +171,11 @@ export const useCreateCommentForm = (postId: string, handleClose: () => void): U
                 }
             } catch (err: any) {
                 console.log('[useCreateCommentForm.handleSubmit] Failed to CREATE comment', err);
-                setError(err.message || 'Failed to CREATE comment: An unexpected error occurred.');
+                if (typeof err === 'string') {
+                    setError(err);
+                } else {
+                    setError(err.message || 'Failed to CREATE comment: An unexpected error occurred.');
+                }
             } finally {
                 setLoading(false);
                 resetForm();
@@ -189,36 +194,52 @@ export const useCreateCommentForm = (postId: string, handleClose: () => void): U
     }
 }
 
-export const useEditCommentForm = (
-    commentId: string,
-    token: string,
-): UseFeatureFormResponse<UpdatedComment> => {
+export const useEditCommentForm = (handleClose: () => void): UseFeatureFormResponse<UpdatedComment> => {
 
-    const initialData: UpdatedComment = {
-        content: '',
-    };
 
     // HOOKS
-    const { data: formData, handleChange, resetForm } = useForm<UpdatedComment>(initialData);
+    const dispatch = useAppDispatch();
+    const { comment } = useIsEditCommentOpen(); // take from provider
+    const token = useAppSelector(selectUserToken);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const initialData: UpdatedComment = {
+        content: comment?.content ?? '',
+    };
+
+    const { data: formData, handleChange, resetForm } = useForm<UpdatedComment>(initialData);
 
     /**
      * The handler for the "submit form" event.
      */
-    const handleSubmit = () => {
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
         const update = async () => {
             try {
                 if (!token) {
                     setError('401 Unauthorised');
-                } else if (!commentId) {
-                    setError('Failed to UPDATE comment: Comment ID is null.');
+                } else if (!comment) {
+                    setError('Failed to UPDATE comment: Comment does not exist');
                 } else {
-                    // await dispatch
+                    setLoading(true);
+                    // unwrap the thunk promise
+                    const updatedComment = await dispatch(updateComment({ commentId: comment.id, formData, token }));
+                    handleClose();
+
+                    console.log('[useEditCommentForm.handleSubmit] Successfully UPDATED comment', updatedComment);
                 }
             } catch (err: any) {
-                setError(err.message ?? 'Failed to UPDATE comment: An unexpected error occurred.');
+                console.log('[useEditCommentForm.handleSubmit] Failed to UPDATE comment', err);
+                if (typeof err === 'string') {
+                    setError(err);
+                } else {
+                    setError(err.message ?? 'Failed to UPDATE comment: An unexpected error occurred.');
+                }
+            } finally {
+                setLoading(false);
+                resetForm();
             }
         }
 
@@ -233,6 +254,7 @@ export const useEditCommentForm = (
         handleSubmit
     }
 }
+
 /**
  * Custom hook to handle the deletion of a comment.
  * 

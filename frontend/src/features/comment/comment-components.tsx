@@ -6,7 +6,7 @@ import Loading from "../../common/components/Loading.tsx";
 import StyledButton from "../../common/components/StyledButton.tsx";
 
 // types
-import Comment, { NewComment } from "../comment/comment-types.ts";
+import Comment, { NewComment, UpdatedComment } from "../comment/comment-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch";
@@ -30,7 +30,7 @@ import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { useIsCreateCommentOpen } from "../../common/contexts/IsCreateCommentOpenContext.tsx";
 import { FormField } from "../../common/types/common-types.ts";
 import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
-import { selectUserIsLoggedIn } from "../user/user-slice.ts";
+import { selectUserIsLoggedIn, selectUserToken } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext.tsx";
 
@@ -96,7 +96,7 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
                 {isAuthor(comment) ? 
                     <Stack direction='row' alignItems='center'>
                         <DeleteCommentButton commentId={comment.id}/>
-                        <EditCommentButton />
+                        <EditCommentButton comment={comment}/>
                     </Stack>
                 :
                 <></>
@@ -286,12 +286,17 @@ const CreateCommentForm = ({ postId }: {
 }
 
 // FEATURE: EDIT COMMENT
-const EditCommentButton = (): JSX.Element => {
+const EditCommentButton = ({ comment }: {
+    comment: Comment,
+}): JSX.Element => {
 
     const { toggleEditCommentOpen } = useIsEditCommentOpen();
 
+    /**
+     * Toggles open the EditCommentForm component.
+     */
     const handleClick = () => {
-        toggleEditCommentOpen();
+        toggleEditCommentOpen(comment);
     };
 
     return (
@@ -307,11 +312,67 @@ const EditCommentButton = (): JSX.Element => {
 
 const EditCommentForm = (): JSX.Element => {
 
-    // const { data: formData, loading, error, handleChange, handleSubmit } = useEditCommentForm(commentId: string, token: string );
-    // need { commentId: string, token: string } => dispatch
+    const { isEditCommentOpen, toggleEditCommentOpen } = useIsEditCommentOpen();
 
+    const handleClose = () => {
+        toggleEditCommentOpen();
+    }
+
+    const { data, loading, error, handleChange, handleSubmit } = useEditCommentForm(handleClose);
+
+    const fields: FormField[] = [
+        {
+            fieldType: 'input',
+            placeholder: 'Comment',
+            name: 'content',
+            required: true,
+        }
+    ]
+    
     return (
-        <>HI</>
+        // dialog box
+        <Dialog open={isEditCommentOpen} maxWidth="xs" onClose={handleClose}>
+
+                <Paper elevation={8} sx={{p: 2}}>
+                    <StyledHeader
+                    avatar={<Edit />}
+                    title="Edit Comment"
+                    handleClose={handleClose}
+                    />
+                    
+                    {/* form component  */}
+                    <Box
+                    component="form"
+                    onSubmit={handleSubmit}>
+                        {fields.map(field => (
+                            <TextField
+                            key={field.name}
+                            fullWidth
+                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
+                            required={field.required}
+                            sx={{ mb: 2 }}
+                            autoFocus
+                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                            name={field.name}
+                            value={data[field.name as keyof UpdatedComment]} // Eg. value = data[content]
+                            onChange={handleChange}
+                            />
+                        ))}
+
+                        {/* Submit button */}
+                        <SubmitButton
+                        submitButtonText={<>Save</>}
+                        loading={loading}
+                        sx={{ mt: 1 }}
+                        />
+
+                        {/* Error message */}
+                        {error ? <Typography textAlign='center' sx={{ mt: 1 }}>{error}</Typography> : <></>}
+                    </Box>
+
+                </Paper>
+
+        </Dialog>
     )
 }
 

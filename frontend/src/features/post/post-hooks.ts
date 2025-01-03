@@ -204,7 +204,11 @@ export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () 
                     handleClose();
                 }
             } catch (err: any) {
-                setError(err.message ?? "An unexpected error occurred.");
+                if (typeof err === 'string') {
+                    setError(err);
+                } else {
+                    setError(err.message ?? "An unexpected error occurred.");
+                }
             } finally {
                 setLoading(false);
                 resetForm();
