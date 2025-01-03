@@ -33,6 +33,7 @@ import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
 import { selectUserIsLoggedIn, selectUserToken } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext.tsx";
+import { isEdited } from "../../common/utils.ts";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -91,6 +92,17 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
                     {/* TODO: replace with `created_at` */}
                     {comment.created_at}
                 </Typography>
+
+                {/* Edited status */}
+                {isEdited(comment) ? 
+                <Typography
+                variant='subtitle2'
+                >
+                    Edited
+                </Typography>
+                :
+                <></>
+                }
 
                 {/* Delete Button, Edit Button */}
                 {isAuthor(comment) ? 

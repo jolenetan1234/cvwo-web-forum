@@ -140,6 +140,7 @@ export const updateComment = async (data: BackendUpdateCommentData, commentId: n
         const updatedComment = {
             ...comment,
             content: data.content,
+            updated_at: Date(),
         };
 
         return updatedComment;

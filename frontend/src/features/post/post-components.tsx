@@ -118,6 +118,65 @@ const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }:
 }
 
 /**
+ * Template for a PostCard. 
+ * @param
+ * @returns 
+ */
+const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
+    post: Post,
+    linkUrl?: string,
+    editButton?: React.ReactNode,
+    deleteButton?: React.ReactNode,
+}) => {
+    return (
+        <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+            <Stack direction='row' alignItems='center'>
+                {/* Right side with post title and post content */}
+                <Stack width='80%'>
+                    {/* Header with title */}
+                    <PostCardHeader 
+                    post={post} 
+                    {...(linkUrl && { linkUrl: linkUrl })}
+                    {...(editButton && { editButton: editButton })}
+                    {...(deleteButton && { deleteButton: deleteButton })}
+                    />
+
+                    <CardContent sx={{ mt: -3 }}>
+                        <Typography>
+                            {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
+                            : post.content}
+                        </Typography>
+                    </CardContent>
+                </Stack>
+
+                {/* Left side with date and edited status */}
+                <Stack alignItems='center' width='20%'>
+                    {/* Created date */}
+                    <Typography 
+                    variant='subtitle2'
+                    sx={{ fontWeight: 'bold', }}
+                    >
+                        {post.created_at}
+                    </Typography>
+
+                    {/* Edited status */}
+                    {isEdited(post) ?
+                    <Typography
+                    variant='subtitle2'
+                    >
+                        Edited
+                    </Typography>
+                    :
+                    <></>
+                    }
+                </Stack>
+            </Stack>
+
+        </Card>
+    )
+}
+
+/**
  * Card view of a Post.
  * When clicked, redirects to the Post details.
  * @param {Object} props - Properties passed to the PostCard component.
@@ -174,60 +233,6 @@ const PostCard = ({ post }: { post: Post, }): JSX.Element => {
         //     </Stack>
 
         // </Card>
-    )
-}
-
-const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
-    post: Post,
-    linkUrl?: string,
-    editButton?: React.ReactNode,
-    deleteButton?: React.ReactNode,
-}) => {
-    return (
-        <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-            <Stack direction='row' alignItems='center'>
-                {/* Right side with post title and post content */}
-                <Stack width='80%'>
-                    {/* Header with title */}
-                    <PostCardHeader 
-                    post={post} 
-                    {...(linkUrl && { linkUrl: linkUrl })}
-                    {...(editButton && { editButton: editButton })}
-                    {...(deleteButton && { deleteButton: deleteButton })}
-                    />
-
-                    <CardContent sx={{ mt: -3 }}>
-                        <Typography>
-                            {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
-                            : post.content}
-                        </Typography>
-                    </CardContent>
-                </Stack>
-
-                {/* Left side with date and edited status */}
-                <Stack alignItems='center' width='20%'>
-                    {/* Created date */}
-                    <Typography 
-                    variant='subtitle2'
-                    sx={{ fontWeight: 'bold', }}
-                    >
-                        {post.created_at}
-                    </Typography>
-
-                    {/* Edited status */}
-                    {isEdited(post) ?
-                    <Typography
-                    variant='subtitle2'
-                    >
-                        Edited
-                    </Typography>
-                    :
-                    <></>
-                    }
-                </Stack>
-            </Stack>
-
-        </Card>
     )
 }
 

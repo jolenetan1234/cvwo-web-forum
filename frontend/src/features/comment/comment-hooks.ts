@@ -6,6 +6,7 @@ import { selectUserToken } from "../user/user-slice";
 import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import useForm from "../../common/hooks/useForm";
 import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext";
+import { isDifferent } from "../../common/utils";
 // hi
 
 /**
@@ -222,6 +223,10 @@ export const useEditCommentForm = (handleClose: () => void): UseFeatureFormRespo
                     setError('401 Unauthorised');
                 } else if (!comment) {
                     setError('Failed to UPDATE comment: Comment does not exist');
+                } else if (!isDifferent(formData, comment)) {
+                    // If no change in content,
+                    // simply close the form without dispatching any actions.
+                    handleClose();
                 } else {
                     setLoading(true);
                     // unwrap the thunk promise
