@@ -28,14 +28,14 @@ export default function PostDetailsPage(): JSX.Element {
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isEditPostOpen } = useIsEditPostOpen();
 
-    // States and variables for delete post
+    // States and variables for DeletePost
     const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
     const { loading: deletePostLoading, error: deletePostError, handleDelete: handlePostDelete } = usePostDelete(
         postId, 
         () => toggleDeletePostOpen()
     );
 
-    // States and variables for delete comment
+    // States and variables for DeleteComment
     const { isDeleteCommentOpen, toggleDeleteCommentOpen, commentId } = useIsDeleteCommentOpen();
     const { 
         loading: deleteCommentLoading, 
@@ -80,10 +80,8 @@ export default function PostDetailsPage(): JSX.Element {
             deleteError = deleteCommentError;
     }
 
-    // Find the post
+    // Fetching all posts and finding the post
     const [post, setPost] = useState<Post | undefined>(undefined);
-
-    // fetching all posts and finding the post
     const { allPosts, loading: getAllPostsLoading, error: getAllPostsError } = useAllPosts();
     useEffect(() => {
         setPost(allPosts.find(p => p.id === postId));
