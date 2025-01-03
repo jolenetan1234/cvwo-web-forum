@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import Comment from "./comment-types"
+import Comment, { NewComment } from "./comment-types"
 import { RootState } from "../../store/store"
 import commentClient from "./comment-api-client"
 import { deletePost } from "../post/post-slice"
@@ -57,9 +57,32 @@ export const deleteComment = createAsyncThunk<
     // PAYLOAD CREATOR (the thunk)
     async ({ commentId, token }: {
         commentId: string,
-        token: string
+        token: string,
     }, { rejectWithValue }) => {
         const res = await commentClient.delete(commentId, token);
+        if (res.type === 'success') {
+            return res.data as Comment;
+        } else {
+            return rejectWithValue(res.error);
+        }
+    }
+)
+
+export const addNewComment = createAsyncThunk<
+    Comment, // Payload type of `fulfilled` action
+    {
+        formData: NewComment,
+        token: string,
+    }, // Argument types
+    { rejectValue: string }
+>(
+    'comments/createComment',
+    // PAYLOAD CREATOR (the thunk)
+    async ({ formData, token }: {
+        formData: NewComment,
+        token: string,
+    }, { rejectWithValue }) => {
+        const res = await commentClient.post(formData, token);
         if (res.type === 'success') {
             return res.data as Comment;
         } else {
@@ -103,6 +126,20 @@ const CommentsSlice = createSlice({
                 error: action.payload ?? `Failed to fetch comments for post ${postId}: An unexpected error occured.`,
             }
         })
+        // LISTEN FOR CREATE COMMENT
+        .addCase(addNewComment.fulfilled, (state, action) => {
+            const newComment = action.payload;
+            const postId = newComment.post_id;
+            state.allComments.push(newComment);
+            
+            // Check if `commentsByPostId` has already been fetched for this `postId`.
+            // If so, then push this comment into that state.
+            if (postId in state.commentsByPostId) {
+                state.commentsByPostId[postId].comments?.push(newComment);
+            }
+            
+        })
+        // LISTEN FOR DELETED COMMENT
         .addCase(deleteComment.fulfilled, (state, action) => {
             const commentId = action.meta.arg.commentId;
             const deletedComment = action.payload;

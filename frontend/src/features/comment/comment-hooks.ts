@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
-import { deleteComment, getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
-import Comment from "./comment-types";
+import { addNewComment, deleteComment, getCommentsByPostId, selectCommentsByPostId } from "./comment-slice";
+import Comment, { NewComment } from "./comment-types";
 import { selectUserToken } from "../user/user-slice";
+import { UseFeatureFormResponse } from "../../common/types/common-types";
+import useForm from "../../common/hooks/useForm";
 
 // hi
 
@@ -111,6 +113,60 @@ export const useGetCommentsByPostId = (postId: string) => {
         data: comments,
         loading,
         error
+    }
+}
+
+export const useCreateCommentForm = (postId: string, handleClose: () => void): UseFeatureFormResponse<NewComment> => {
+
+    // HOOKS
+    const dispatch = useAppDispatch();
+    const token = useAppSelector(selectUserToken)
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const initialData: NewComment = {
+        content: '',
+        post_id: postId,
+    }
+
+    const { data: formData, handleChange, resetForm } = useForm<NewComment>(initialData);
+
+    const handleSubmit = () => {
+        console.log("FOIHWEOIF")
+
+        const createComment = async () => {
+            try {
+                if (!token) {
+                    setError('404 Unauthorised');
+                } else if (!postId) {
+                    setError('Failed to CREATE comment: Post ID is null');
+                } else {
+                    // await the async thunk dispatch
+                    setLoading(true);
+                    const newComment = await dispatch(addNewComment({ formData, token }));
+                    handleClose();
+
+                    console.log('[useCreateCommentForm.handleSubmit] Successfully CREATE comment', newComment);
+                }
+            } catch (err: any) {
+                console.log('[useCreateCommentForm.handleSubmit] Failed to CREATE comment', err);
+                setError(err.message || 'Failed to CREATE comment: An unexpected error occurred.');
+            } finally {
+                setLoading(false);
+                resetForm();
+            }
+        }
+
+        createComment();
+    }
+
+    return {
+        data: formData,
+        loading,
+        error,
+        handleChange,
+        handleSubmit,
     }
 }
 

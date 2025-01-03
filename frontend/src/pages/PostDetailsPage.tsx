@@ -107,7 +107,7 @@ export default function PostDetailsPage(): JSX.Element {
             <CommentSection postId={postId} />
             { isLoginOpen ? <LoginForm /> : <></>}
             { isEditPostOpen ? <EditPostForm post={post}/> : <></>}
-            { isCreateCommentOpen ? <CreateCommentForm /> : <></>}
+            { isCreateCommentOpen ? <CreateCommentForm postId={postId} /> : <></>}
             <ConfirmDelete 
             title={title}
             isOpen={isDeleteOpen} 

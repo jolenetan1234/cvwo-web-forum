@@ -1,12 +1,12 @@
 // components
-import { Box, Card, CardContent, CardHeader, Divider, Stack, styled, Typography } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Box, Card, CardContent, CardHeader, Dialog, Divider, FormControl, InputLabel, Paper, Stack, styled, TextField, Typography } from "@mui/material";
+import { AddComment } from "@mui/icons-material";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
 import StyledButton from "../../common/components/StyledButton.tsx";
 
 // types
-import Comment from "../comment/comment-types.ts";
+import Comment, { NewComment } from "../comment/comment-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch";
@@ -22,12 +22,14 @@ import { getCommentsByPostId, selectCommentsByAllPostId, selectCommentsByPostIdE
 
 // selectors
 import { selectCommentsByPostId } from "./comment-slice.ts";
-import { useGetCommentsByPostId } from "./comment-hooks.ts";
+import { useCreateCommentForm, useGetCommentsByPostId } from "./comment-hooks.ts";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
 import { isAuthor } from "../post/post-utils.ts";
 import { useIsDeleteCommentOpen } from "../../common/contexts/IsDeleteCommentOpen.tsx";
 import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { useIsCreateCommentOpen } from "../../common/contexts/IsCreateCommentOpenContext.tsx";
+import { FormField } from "../../common/types/common-types.ts";
+import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -198,14 +200,75 @@ const CreateCommentButton = (): JSX.Element => {
     };
 
     return (
-        <CreateItemButton
+        <StyledButton
+        content={<AddComment />}
         onClick={handleClick}
+        sx={{ color: 'primary.main' }}
         />
     );
 }
 
-const CreateCommentForm = (): JSX.Element => {
-    return <>HI</>
+const CreateCommentForm = ({ postId }: { 
+    postId: string 
+}): JSX.Element => {
+
+    const fields: FormField[] = [
+        {
+            fieldType: 'input',
+            placeholder: 'Comment',
+            name: 'content',
+            required: true,
+        }
+    ]
+
+    const handleClose = () => {
+        toggleCreateCommentOpen();
+    };
+
+    // HOOKS
+    const { isCreateCommentOpen, toggleCreateCommentOpen } = useIsCreateCommentOpen();
+    const { data, loading, error, handleChange, handleSubmit } = useCreateCommentForm(postId, handleClose);
+
+    return (
+        // dialog box
+        <Dialog open={isCreateCommentOpen} maxWidth="xs" onClose={handleClose}>
+
+                <Paper elevation={8} sx={{p: 2}}>
+                    <StyledHeader
+                    avatar="Hi"
+                    title="Add Comment"
+                    handleClose={handleClose}
+                    />
+                    
+                    {/* form component  */}
+                    <Box
+                    component="form"
+                    onSubmit={handleSubmit}>
+                        {fields.map(field => (
+                            <TextField
+                            key={field.name}
+                            fullWidth
+                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
+                            required={field.required}
+                            sx={{ mb: 2 }}
+                            autoFocus
+                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                            name={field.name}
+                            value={data[field.name as keyof NewComment]} // Eg. value = data[content]
+                            onChange={handleChange}
+                            />
+                        ))}
+                        <SubmitButton
+                        submitButtonText={<>Add Comment</>}
+                        loading={loading}
+                        sx={{ mt: 2 }}
+                        />
+                    </Box>
+
+                </Paper>
+
+        </Dialog>
+    );
 }
 
 // FEATURE: EDIT COMMENT

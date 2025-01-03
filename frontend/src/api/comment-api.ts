@@ -10,6 +10,19 @@ interface BackendComment {
     updated_at: string;
 }
 
+/**
+ * The shape of the object data needed to POST a new comment
+ * by the backend.
+ */
+interface BackendCreateCommentData {
+    content: string;
+    post_id: number;
+}
+
+interface BackendUpdateCommentData {
+    content: string;
+}
+
 // HARDCODED
 const COMMENTS: BackendComment[] = [
     {
@@ -93,5 +106,42 @@ export const deleteComment = async (commentId: number): Promise<BackendComment> 
         };
     } else {
         return comment;
+    }
+}
+
+// MOCK API endpoint for POST API_BASE_URL/comments
+export const createComment = async (data: BackendCreateCommentData): Promise<BackendComment> => {
+    // TODO: need authorise with token.
+    const newComment = {
+        id: COMMENTS.length + 1,
+        content: data.content,
+        post_id: data.post_id,
+        user_id: 2, // HARD-CODED. IN ACTUAL IMPLEMENTATION WILL CHECK FROM TOKEN
+        created_at: Date(),
+        updated_at: Date(),
+    }
+
+    return newComment;
+}
+
+// MOCK API endpoint for PUT API_BASE_URL/comments/:commentId
+export const updateComment = async (data: BackendUpdateCommentData, commentId: number): Promise<BackendComment> => {
+    // TODO: need authorise with token and chheck if the user can indeed update this post
+    const comment = COMMENTS.find(c => c.id === commentId);
+    // TODO: check comment.user_id is same as user_id in token
+
+    if (!comment) {
+        // mock an error
+        throw {
+            status: 404,
+            message: 'Failed to UPDATE comment: Comment does not exist',
+        };
+    } else {
+        const updatedComment = {
+            ...comment,
+            content: data.content,
+        };
+
+        return updatedComment;
     }
 }

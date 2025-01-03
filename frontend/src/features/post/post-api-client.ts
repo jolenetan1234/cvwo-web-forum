@@ -145,7 +145,6 @@ class ForumPostClient extends ApiClient<Post> {
             const sentData = {
                 ...newPost,
                 category_id: parseInt(newPost.category_id),
-                user_id: parseInt(newPost.user_id),
             };
 
             // TODO: replace with actual API call

@@ -60,17 +60,18 @@ export function useAllPosts(): {
 export function useCreatePostForm(handleClose: () => void): UseFeatureFormResponse<NewPost> {
 
     // HOOKS
-    const userId = useSelector(selectUser)?.id;
+    // const userId = useSelector(selectUser)?.id;
     const token = useSelector(selectUserToken);
     const dispatch = useAppDispatch();
 
-    const initialData = {
+    const initialData: NewPost = {
         title: "",
         content: "",
         category_id: "",
-        user_id: userId ?? "",
+        // user_id: userId ?? "",
     }
 
+    // Leave the form data handling to `useForm`
     const { data: formData, handleChange, resetForm } = useForm<NewPost>(initialData)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");

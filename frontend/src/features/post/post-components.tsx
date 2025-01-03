@@ -5,7 +5,7 @@ import Loading from "../../common/components/Loading.tsx";
 
 // types
 // import Post from "../../types/Post.ts";
-import Post, { CreatePostData, UpdatedPost } from "./post-types.ts";
+import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types.ts";
 import { FormField } from "../../common/types/common-types.ts";
 
 // hooks
@@ -278,6 +278,109 @@ const CreatePostButton = (): JSX.Element => {
     );
 }
 
+/*
+const PostsForm = ({ formOpen, handleClose, formTitle, avatar }: { 
+    formOpen: boolean,
+    handleClose: () => void,
+    formTitle: string,
+    avatar: React.ReactNode,
+}): JSX.Element => {
+    
+    const fields: FormField[] = [
+        {
+            fieldType: "input",
+            placeholder: "Title",
+            name: "title",
+            required: true,
+        }, {
+            fieldType: "input",
+            placeholder: "Type a post!",
+            name: "content",
+            required: true,
+        }, {
+            fieldType: "select",
+            placeholder: "Category",
+            name: "category_id",
+            required: true,
+        }
+    ];
+
+    return (
+        // dialog box
+        <Dialog open={formOpen} maxWidth="xs" onClose={handleClose}>
+
+                <Paper elevation={8} sx={{p: 2}}>
+                    <StyledHeader
+                    avatar={avatar}
+                    title="Create post"
+                    handleClose={handleClose}
+                    />
+                    
+                    {/* form component  */
+                    /*
+                    <Box
+                    component="form"
+                    onSubmit={handleSubmit}>
+                        {fields.map(field => {
+
+                            return ( 
+                                field.fieldType === "input" ? 
+                            <TextField
+                            key={field.name}
+                            fullWidth
+                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
+                            required={field.required}
+                            sx={{ mb: 2 }}
+                            autoFocus
+                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                            name={field.name}
+                            value={data[field.name as keyof CreatePostData]} // Eg. data[username], data[password]
+                            onChange={handleChange}
+                            />
+                            :
+                            
+                            <FormControl fullWidth>
+                                <InputLabel>{field.placeholder}</InputLabel>
+                                <Select
+                                key={field.name}
+                                name={field.name}
+                                value={data[field.name as keyof CreatePostData]}
+                                onChange={handleChange}
+                                input={<OutlinedInput label={field.placeholder} />}
+                                required={field.required}
+                                renderValue={selected => {
+                                    const category = categories?.find(cat => cat.id === selected);
+                                    return <>{category?.label}</>;
+                                }}
+                                >
+                                    {categories?.map(cat => (
+                                        <MenuItem key={cat.id} value={cat.id}>
+                                            {cat.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            );
+                    })}
+
+
+                        <SubmitButton
+                        submitButtonText={<>Create post</>}
+                        loading={loading}
+                        sx={{ mt: 2 }}
+                        />
+                    </Box>
+                        
+
+                </Paper>
+
+        </Dialog>
+    )
+    
+}
+    */
+
 function CreatePostForm(): JSX.Element {
     
     const handleClose = () => {
@@ -308,6 +411,7 @@ function CreatePostForm(): JSX.Element {
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
     const { data, loading, error, handleChange, handleSubmit } = useCreatePostForm(handleClose);
 
+    // Fetch categories to fill up the "Select Categories" button
     // TODO: replace with REDUX!
     const fetchAllCategories = useCallback(
         () => categoryClient.getAll(), []
@@ -343,22 +447,22 @@ function CreatePostForm(): JSX.Element {
                             autoFocus
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
-                            value={data[field.name as keyof CreatePostData]} // Eg. data[username], data[password]
+                            value={data[field.name as keyof NewPost]} // Eg. data[username], data[password]
                             onChange={handleChange}
                             />
                             :
                             
-                            <FormControl sx={({ width: 500 })}>
+                            <FormControl fullWidth>
                                 <InputLabel>{field.placeholder}</InputLabel>
                                 <Select
                                 key={field.name}
                                 name={field.name}
-                                value={data[field.name as keyof CreatePostData]}
+                                value={data[field.name as keyof NewPost]}
                                 onChange={handleChange}
                                 input={<OutlinedInput label={field.placeholder} />}
                                 required={field.required}
                                 renderValue={selected => {
-                                    const category = categories?.find(cat => cat.id === selected.id);
+                                    const category = categories?.find(cat => cat.id === selected);
                                     return <>{category?.label}</>;
                                 }}
                                 >
@@ -377,6 +481,7 @@ function CreatePostForm(): JSX.Element {
                         <SubmitButton
                         submitButtonText={<>Create post</>}
                         loading={loading}
+                        sx={{ mt: 2 }}
                         />
                     </Box>
                         
@@ -480,7 +585,7 @@ function EditPostForm({ post }: {
                             onChange={handleChange}
                             />
                             :
-                            <FormControl sx={({ width: 500 })}>
+                            <FormControl fullWidth>
                                 <InputLabel>{field.placeholder}</InputLabel>
                                 {/* Conditionally render based on loading state of categories */}
                                 {fetchCategoriesLoading
@@ -509,7 +614,6 @@ function EditPostForm({ post }: {
                                     </Select>
                                 }
                             </FormControl>
-
                             );
                     })}
 
@@ -517,6 +621,7 @@ function EditPostForm({ post }: {
                         <SubmitButton
                         submitButtonText={<>Save</>}
                         loading={loading}
+                        sx={{ mt: 2 }}
                         />
                     </Box>
                         

@@ -14,6 +14,11 @@ interface useFormResponse<T> {
     resetForm: () => void,
 }
 
+/**
+ * 
+ * @param initialData 
+ * @returns 
+ */
 function useForm<T>(
     initialData: T, 
 ): useFormResponse<T> {
@@ -24,8 +29,6 @@ function useForm<T>(
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
-        // sets state of `data`
-
         setData(prevData => ({
             ...prevData,
             [e.target.name]: e.target.value,
