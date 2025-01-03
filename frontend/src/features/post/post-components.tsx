@@ -26,7 +26,7 @@ import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.t
 import { isAuthor } from "./post-utils.ts";
 import { useIsDeletePostOpen } from "../../common/contexts/IsDeletePostOpen.tsx";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
-import { Delete, Edit } from "@mui/icons-material";
+import { AddCircle, Delete, Edit, PostAdd } from "@mui/icons-material";
 import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { isEdited } from "../../common/utils.ts";
 
@@ -369,9 +369,10 @@ const CreatePostButton = (): JSX.Element => {
     };
 
     return (
-
-        <CreateItemButton
+        <StyledButton
+        content={<AddCircle />}
         onClick={handleCreatePostOpen}
+        sx={{ color: 'primary.main' }}
         />
     );
 }
@@ -420,7 +421,7 @@ function CreatePostForm(): JSX.Element {
 
                 <Paper elevation={8} sx={{p: 2}}>
                     <StyledHeader
-                    avatar="Hi"
+                    avatar={<PostAdd />}
                     title="Create post"
                     handleClose={handleClose}
                     />
