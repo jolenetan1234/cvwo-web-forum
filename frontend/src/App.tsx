@@ -31,6 +31,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import { lightTheme, darkTheme } from './themes/themes.ts';
 import { restoreTheme, selectTheme } from './features/theme/theme-slice.ts';
 import { useAppSelector } from './store/store-hooks.ts';
+import { IsCreateCommentOpenProvider } from './common/contexts/IsCreateCommentOpenContext.tsx';
 
 /**
  * App router
@@ -70,7 +71,9 @@ function App() {
             <IsEditPostOpenProvider>
               <IsDeletePostOpenProvider>
                 <IsDeleteCommentOpenProvider>
-                  <RouterProvider router={router} />
+                  <IsCreateCommentOpenProvider>
+                    <RouterProvider router={router} />
+                  </IsCreateCommentOpenProvider>
                 </IsDeleteCommentOpenProvider>
               </IsDeletePostOpenProvider>
             </IsEditPostOpenProvider>

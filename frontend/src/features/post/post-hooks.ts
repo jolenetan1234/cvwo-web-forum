@@ -142,33 +142,40 @@ export function useCreatePostForm(handleClose: () => void): UseFeatureFormRespon
     };
 }
 
-export function useEditPostForm(postId: string, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
+export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
 
     const dispatch = useAppDispatch();
     const token = useSelector(selectUserToken);
 
     // states
-    const { allPosts } = useAllPosts();
-    const [initialData, setInitialData] = useState<UpdatedPost>({
-        title: "",
-        content: "",
-        category_id: "",
-    })
+    // const { allPosts } = useAllPosts();
+    // const [initialData, setInitialData] = useState<UpdatedPost>({
+    //     title: ,
+    //     content: "",
+    //     category_id: "",
+    // })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        // find the original post, and set initial data to be its fields.
-        const originalPost = allPosts.find(post => post.id === postId);
+    // initial form data
+    const initialData: UpdatedPost = {
+        title: post.title,
+        content: post.content,
+        category_id: post.category_id,
+    }
 
-        if (originalPost) {
-            setInitialData({
-                title: originalPost.title,
-                content: originalPost.content,
-                category_id: originalPost.category_id
-            });
-        };
-    }, [allPosts])
+    // useEffect(() => {
+    //     // find the original post, and set initial data to be its fields.
+    //     const originalPost = allPosts.find(post => post.id === postId);
+
+    //     if (originalPost) {
+    //         setInitialData({
+    //             title: originalPost.title,
+    //             content: originalPost.content,
+    //             category_id: originalPost.category_id
+    //         });
+    //     };
+    // }, [allPosts])
 
     const { data: formData, handleChange, resetForm } = useForm<UpdatedPost>(initialData);
 
@@ -188,7 +195,7 @@ export function useEditPostForm(postId: string, handleClose: () => void): UseFea
                     // Will throw error if rejected.
                     await dispatch(updatePost({ 
                         updatedPost: formData,
-                        postId,
+                        postId: post.id,
                         token
                     })).unwrap();
 

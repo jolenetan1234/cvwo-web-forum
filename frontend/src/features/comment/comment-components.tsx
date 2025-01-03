@@ -1,6 +1,9 @@
+// components
 import { Box, Card, CardContent, CardHeader, Divider, Stack, styled, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
+import StyledButton from "../../common/components/StyledButton.tsx";
 
 // types
 import Comment from "../comment/comment-types.ts";
@@ -23,6 +26,8 @@ import { useGetCommentsByPostId } from "./comment-hooks.ts";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
 import { isAuthor } from "../post/post-utils.ts";
 import { useIsDeleteCommentOpen } from "../../common/contexts/IsDeleteCommentOpen.tsx";
+import CreateItemButton from "../../common/components/CreateItem.tsx";
+import { useIsCreateCommentOpen } from "../../common/contexts/IsCreateCommentOpenContext.tsx";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -37,6 +42,7 @@ function PostCommentBar(): JSX.Element {
     )
 }
 
+// FEATURE: VIEW COMMENTS
 /**
  * Card view of a Comment.
  * @param {Object} props - Properties passed to the CommentCard component.
@@ -121,6 +127,29 @@ const Comments = ({ comments }: { comments: Comment[] }): JSX.Element => {
     )
 }
 
+const CommentSectionHeader = (): JSX.Element => {
+
+    return (
+        <CardHeader
+        title={
+            <Stack 
+            direction='row' 
+            sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                {/* Title containing "Comments" title and CreateCommentButton */}
+                <Typography 
+                variant="h5" 
+                sx={{ mt: -1, fontWeight: 'bold', }}
+                >
+                    Comments
+                </Typography>
+
+                <CreateCommentButton />
+            </Stack>
+        }
+        />
+    )
+}
+
 /**
  * The entire Comment Section component.
  * @param {Object} props - Properties passed to the `CommentSection` component.
@@ -142,16 +171,7 @@ const CommentSection = ({ postId }: { postId: string }): JSX.Element => {
     return (
         <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
             {/* Comment Section Header */}
-            <CardHeader
-            title={
-                <Typography 
-                variant="h5" 
-                sx={{ mt: -1, fontWeight: 'bold', }}
-                >
-                    Comments
-                </Typography>
-            }
-            />
+            <CommentSectionHeader />
 
             {/* List of comments */}
             <CardContent>
@@ -165,4 +185,30 @@ const CommentSection = ({ postId }: { postId: string }): JSX.Element => {
     )
 }
 
+// FEATURE: CREATE COMMENT
+const CreateCommentButton = (): JSX.Element => {
+
+    const { toggleCreateCommentOpen } = useIsCreateCommentOpen();
+
+    /**
+     * Toggle the CreateCommentForm open.
+     */
+    const handleClick = () => {
+        toggleCreateCommentOpen();
+    };
+
+    return (
+        <CreateItemButton
+        onClick={handleClick}
+        />
+    );
+}
+
+const CreateCommentForm = (): JSX.Element => {
+    return <>HI</>
+}
+
+// FEATURE: EDIT COMMENT
+
+export { CreateCommentForm };
 export default CommentSection;

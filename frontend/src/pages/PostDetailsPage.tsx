@@ -11,11 +11,12 @@ import { useAllPosts, usePostDelete } from "../features/post/post-hooks";
 import { useIsDeleteCommentOpen } from "../common/contexts/IsDeleteCommentOpen";
 import { useCommentDelete } from "../features/comment/comment-hooks";
 import { useParams } from "react-router-dom";
-import CommentSection from "../features/comment/comment-components";
+import CommentSection, { CreateCommentForm } from "../features/comment/comment-components";
 import { useEffect, useState } from "react";
 import Loading from "../common/components/Loading";
 import ErrorMessage from "../common/components/ErrorMessage";
 import Post from "../features/post/post-types";
+import { useIsCreateCommentOpen } from "../common/contexts/IsCreateCommentOpenContext";
 
 export default function PostDetailsPage(): JSX.Element {
     // ALL HOOKS SHOULD BE CALLED AT THE VERY START, AND NOT CONDITIONALLY.
@@ -24,9 +25,10 @@ export default function PostDetailsPage(): JSX.Element {
     const params = useParams<{ id : string }>();
     const postId = params.id ?? '';
 
-    // States for login form and edit post form
-    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    // States and variables for LoginForm, EditPostForm, EditCommentForm, CreateCommentForm
+    const { isLoginOpen } = useIsLoginOpen();
     const { isEditPostOpen } = useIsEditPostOpen();
+    const { isCreateCommentOpen } = useIsCreateCommentOpen();
 
     // States and variables for DeletePost
     const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
@@ -85,7 +87,7 @@ export default function PostDetailsPage(): JSX.Element {
     const { allPosts, loading: getAllPostsLoading, error: getAllPostsError } = useAllPosts();
     useEffect(() => {
         setPost(allPosts.find(p => p.id === postId));
-    }, [allPosts]);
+    }, [allPosts, isEditPostOpen]);
 
     if (getAllPostsLoading) {
         return <Loading />
@@ -104,8 +106,8 @@ export default function PostDetailsPage(): JSX.Element {
             <PostDetails post={post} />
             <CommentSection postId={postId} />
             { isLoginOpen ? <LoginForm /> : <></>}
-            { isEditPostOpen ? <EditPostForm /> : <></>}
-            {/* { isDeletePostOpen ? <ConfirmPostDelete /> : <></>} */}
+            { isEditPostOpen ? <EditPostForm post={post}/> : <></>}
+            { isCreateCommentOpen ? <CreateCommentForm /> : <></>}
             <ConfirmDelete 
             title={title}
             isOpen={isDeleteOpen} 

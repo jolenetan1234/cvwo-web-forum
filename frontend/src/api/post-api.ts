@@ -26,6 +26,8 @@ interface BackendPost {
     content: string;
     category_id: number;
     user_id: number;
+    created_at: string;
+    updated_at: string;
 }
 
 // HARD CODED
@@ -36,6 +38,8 @@ const posts: BackendPost[] = [
         content: "I love Lego",
         category_id: 1,
         user_id: 1,
+        created_at: Date(),
+        updated_at: Date(),
     },
     {
         id: 2,
@@ -43,6 +47,8 @@ const posts: BackendPost[] = [
         content: "I banged it against the table :(",
         category_id: 2,
         user_id: 1,
+        created_at: Date(),
+        updated_at: Date(),
     }
 ]
 

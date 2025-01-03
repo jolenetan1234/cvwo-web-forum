@@ -1,14 +1,13 @@
 // NOTE: this is only for development purposes.
 // USELESS once backend is set up.
 
-import Comment from "../../public/types/Comment";
-import NotFoundError from "../common/errors/MockError";
-
 interface BackendComment {
     id: number;
     content: string;
     post_id: number;
     user_id: number;
+    created_at: string;
+    updated_at: string;
 }
 
 // HARDCODED
@@ -18,24 +17,32 @@ const COMMENTS: BackendComment[] = [
         content: "Who even likes lego nowadays",
         post_id: 1,
         user_id: 2,
+        created_at: Date(),
+        updated_at: Date(),
     },
     {
         id: 2,
         content: "haha loser",
         post_id: 2,
         user_id: 2,
+        created_at: Date(),
+        updated_at: Date(),
     },
     {
         id: 3,
         content: "hope u step on legos",
         post_id: 1,
         user_id: 3,
+        created_at: Date(),
+        updated_at: Date(),
     },
     {
         id: 4,
         content: "haha",
         post_id: 1,
-        user_id: 4
+        user_id: 4,
+        created_at: Date(),
+        updated_at: Date(),
     }
 ]
 
