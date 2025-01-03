@@ -12,7 +12,7 @@ import { FormField } from "../../common/types/common-types.ts";
 import useFetch from "../../common/hooks/useFetch.ts";
 
 // API client
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
@@ -28,6 +28,7 @@ import { useIsDeletePostOpen } from "../../common/contexts/IsDeletePostOpen.tsx"
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
 import { Delete, Edit } from "@mui/icons-material";
 import CreateItemButton from "../../common/components/CreateItem.tsx";
+import { isEdited } from "../../common/utils.ts";
 
 // FEATURE: VIEW POST
 /**
@@ -130,15 +131,102 @@ const PostCard = ({ post }: { post: Post, }): JSX.Element => {
     const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
 
     return (
-        <Card>
-            <PostCardHeader post={post} linkUrl={linkUrl} />
+        <GenericPostCard
+        post={post}
+        linkUrl={linkUrl}
+        />
+        // <Card>
+        //     <Stack direction='row' alignItems='center'>
+        //         {/* Right side with post title and post content */}
+        //         <Stack width='80%'>
+        //             {/* Header with title */}
+        //             <PostCardHeader post={post} linkUrl={linkUrl} />
 
-            <CardContent sx={{ mt: -3 }}>
-                <Typography>
-                    {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
-                    : post.content}
-                </Typography>
-            </CardContent>
+        //             <CardContent sx={{ mt: -3 }}>
+        //                 <Typography>
+        //                     {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
+        //                     : post.content}
+        //                 </Typography>
+        //             </CardContent>
+        //         </Stack>
+
+        //         {/* Left side with date and edited status */}
+        //         <Stack alignItems='center' width='20%'>
+        //             {/* Created date */}
+        //             <Typography 
+        //             variant='subtitle2'
+        //             sx={{ fontWeight: 'bold', }}
+        //             >
+        //                 {post.created_at}
+        //             </Typography>
+
+        //             {/* Edited status */}
+        //             {isEdited(post) ?
+        //             <Typography
+        //             variant='subtitle2'
+        //             >
+        //                 Edited
+        //             </Typography>
+        //             :
+        //             <></>
+        //             }
+        //         </Stack>
+        //     </Stack>
+
+        // </Card>
+    )
+}
+
+const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
+    post: Post,
+    linkUrl?: string,
+    editButton?: React.ReactNode,
+    deleteButton?: React.ReactNode,
+}) => {
+    return (
+        <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+            <Stack direction='row' alignItems='center'>
+                {/* Right side with post title and post content */}
+                <Stack width='80%'>
+                    {/* Header with title */}
+                    <PostCardHeader 
+                    post={post} 
+                    {...(linkUrl && { linkUrl: linkUrl })}
+                    {...(editButton && { editButton: editButton })}
+                    {...(deleteButton && { deleteButton: deleteButton })}
+                    />
+
+                    <CardContent sx={{ mt: -3 }}>
+                        <Typography>
+                            {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
+                            : post.content}
+                        </Typography>
+                    </CardContent>
+                </Stack>
+
+                {/* Left side with date and edited status */}
+                <Stack alignItems='center' width='20%'>
+                    {/* Created date */}
+                    <Typography 
+                    variant='subtitle2'
+                    sx={{ fontWeight: 'bold', }}
+                    >
+                        {post.created_at}
+                    </Typography>
+
+                    {/* Edited status */}
+                    {isEdited(post) ?
+                    <Typography
+                    variant='subtitle2'
+                    >
+                        Edited
+                    </Typography>
+                    :
+                    <></>
+                    }
+                </Stack>
+            </Stack>
+
         </Card>
     )
 }
@@ -199,8 +287,6 @@ const Feed = ({ selectedCategories }: {
 
     console.log("[post-components: Feed] allPosts", allPosts);
 
-    // const { handleCategoryChange, handleCategoryDelete } = useCategory();
-
     if (loading) {
         return <Loading />
     } else if (error) {
@@ -211,7 +297,7 @@ const Feed = ({ selectedCategories }: {
         <Stack>
             <Stack direction="row" justifyContent="space-between">
                 <Posts posts={filteredPosts}/>
-                <RightBar />
+                {/* <RightBar /> */}
             </Stack>
         </Stack> 
     )
@@ -236,22 +322,29 @@ const PostDetails = ({ post }: {
     }
 
             return (
-                <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                    <PostCardHeader 
-                        post={post as Post}
-                        editButton={<EditPostButton postId={postId}/>}
-                        // deleteButton={<DeletePostButton postId={postId} />}
-                        deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
-                    />
 
-                    {/* Post Content */}
-                    <CardContent sx={{ mt: -3 }}>
-                        <Typography>
-                            {post?.content}
-                        </Typography>
-                    </CardContent>
+                <GenericPostCard
+                post={post}
+                editButton={<EditPostButton postId={postId}/>}
+                deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
+                />
 
-                </Card> 
+                // <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+                //     <PostCardHeader 
+                //         post={post as Post}
+                //         editButton={<EditPostButton postId={postId}/>}
+                //         // deleteButton={<DeletePostButton postId={postId} />}
+                //         deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
+                //     />
+
+                //     {/* Post Content */}
+                //     <CardContent sx={{ mt: -3 }}>
+                //         <Typography>
+                //             {post?.content}
+                //         </Typography>
+                //     </CardContent>
+
+                // </Card>
         );
 //    }
 }
@@ -277,109 +370,6 @@ const CreatePostButton = (): JSX.Element => {
         />
     );
 }
-
-/*
-const PostsForm = ({ formOpen, handleClose, formTitle, avatar }: { 
-    formOpen: boolean,
-    handleClose: () => void,
-    formTitle: string,
-    avatar: React.ReactNode,
-}): JSX.Element => {
-    
-    const fields: FormField[] = [
-        {
-            fieldType: "input",
-            placeholder: "Title",
-            name: "title",
-            required: true,
-        }, {
-            fieldType: "input",
-            placeholder: "Type a post!",
-            name: "content",
-            required: true,
-        }, {
-            fieldType: "select",
-            placeholder: "Category",
-            name: "category_id",
-            required: true,
-        }
-    ];
-
-    return (
-        // dialog box
-        <Dialog open={formOpen} maxWidth="xs" onClose={handleClose}>
-
-                <Paper elevation={8} sx={{p: 2}}>
-                    <StyledHeader
-                    avatar={avatar}
-                    title="Create post"
-                    handleClose={handleClose}
-                    />
-                    
-                    {/* form component  */
-                    /*
-                    <Box
-                    component="form"
-                    onSubmit={handleSubmit}>
-                        {fields.map(field => {
-
-                            return ( 
-                                field.fieldType === "input" ? 
-                            <TextField
-                            key={field.name}
-                            fullWidth
-                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
-                            required={field.required}
-                            sx={{ mb: 2 }}
-                            autoFocus
-                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
-                            name={field.name}
-                            value={data[field.name as keyof CreatePostData]} // Eg. data[username], data[password]
-                            onChange={handleChange}
-                            />
-                            :
-                            
-                            <FormControl fullWidth>
-                                <InputLabel>{field.placeholder}</InputLabel>
-                                <Select
-                                key={field.name}
-                                name={field.name}
-                                value={data[field.name as keyof CreatePostData]}
-                                onChange={handleChange}
-                                input={<OutlinedInput label={field.placeholder} />}
-                                required={field.required}
-                                renderValue={selected => {
-                                    const category = categories?.find(cat => cat.id === selected);
-                                    return <>{category?.label}</>;
-                                }}
-                                >
-                                    {categories?.map(cat => (
-                                        <MenuItem key={cat.id} value={cat.id}>
-                                            {cat.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-
-                            );
-                    })}
-
-
-                        <SubmitButton
-                        submitButtonText={<>Create post</>}
-                        loading={loading}
-                        sx={{ mt: 2 }}
-                        />
-                    </Box>
-                        
-
-                </Paper>
-
-        </Dialog>
-    )
-    
-}
-    */
 
 function CreatePostForm(): JSX.Element {
     

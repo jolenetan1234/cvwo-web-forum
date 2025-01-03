@@ -221,6 +221,7 @@ const postsSlice = createSlice({
                 originalPost.title = updatedPost.title;
                 originalPost.content = updatedPost.content;
                 originalPost.category_id = updatedPost.category_id;
+                originalPost.updated_at = updatedPost.updated_at;
             };
         })
         // `deletePost(postId, token)`

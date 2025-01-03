@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { selectUser, selectUserToken } from "../user/user-slice";
 import { addNewPost, deletePost, fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus, updatePost } from "./post-slice";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
+import { isDifferent } from "../../common/utils";
 
 /**
  * Fetches API data to populate `posts/allPosts` if necessary.
@@ -165,19 +166,6 @@ export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () 
         category_id: post.category_id,
     }
 
-    // useEffect(() => {
-    //     // find the original post, and set initial data to be its fields.
-    //     const originalPost = allPosts.find(post => post.id === postId);
-
-    //     if (originalPost) {
-    //         setInitialData({
-    //             title: originalPost.title,
-    //             content: originalPost.content,
-    //             category_id: originalPost.category_id
-    //         });
-    //     };
-    // }, [allPosts])
-
     const { data: formData, handleChange, resetForm } = useForm<UpdatedPost>(initialData);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -191,6 +179,11 @@ export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () 
             try {
                 if (!token) {
                     setError("401 Unauthorised");
+                } else if (!isDifferent(formData, post)) {
+                    // Next, check if there are actually any edits made.
+                    // If not,
+                    // simply close the form without trigerring any actions.
+                    handleClose();
                 } else {
                     // this will definitely succeed. 
                     // Will throw error if rejected.

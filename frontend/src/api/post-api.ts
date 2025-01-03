@@ -112,6 +112,8 @@ export const createPost = async (data: BackendCreatePostData): Promise<BackendPo
  * @returns 
  */
 export const updatePost = async (data: BackendUpdatePostData, postId: number): Promise<BackendPost> => {
+    // TODO: is it possible for backend to check that the post has indeed changed,
+    // and if not, let `updated_at` stay the same??
     const post = posts.find(p => p.id === postId);
 
     if (!post) {
@@ -126,6 +128,7 @@ export const updatePost = async (data: BackendUpdatePostData, postId: number): P
             title: data.title,
             content: data.content,
             category_id: data.category_id,
+            updated_at: Date(),
         };
 
         return updatedPost;

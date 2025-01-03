@@ -82,14 +82,14 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
             </Stack>
 
             {/* Right side with date, delete button, edit button */}
-            <Stack alignItems='center'>
+            <Stack alignItems='center' width='20%'>
                 {/* Date */}
                 <Typography 
                 variant='subtitle2'
                 sx={{ fontWeight: 'bold', }}
                 >
                     {/* TODO: replace with `created_at` */}
-                    00000
+                    {comment.created_at}
                 </Typography>
 
                 {/* Delete Button, Edit Button */}
