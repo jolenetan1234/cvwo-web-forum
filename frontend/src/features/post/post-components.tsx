@@ -145,7 +145,7 @@ const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
                     <CardContent sx={{ mt: -3 }}>
                         <SeeMore
                         content={post.content}
-                        maxLength={10}
+                        maxLength={100}
                         />
                     </CardContent>
                 </Stack>
