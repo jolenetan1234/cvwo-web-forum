@@ -1,5 +1,5 @@
 // components
-import { Box, Card, CardContent, CardHeader, Dialog, Divider, FormControl, InputLabel, Paper, Stack, styled, TextField, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Paper, Stack, styled, TextField, Typography } from "@mui/material";
 import { AddComment, Edit, Delete } from "@mui/icons-material";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
@@ -34,6 +34,7 @@ import { selectUserIsLoggedIn, selectUserToken } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext.tsx";
 import { isEdited } from "../../common/utils.ts";
+import { SeeMore } from "../../common/components/SeeMore.tsx";
 
 // styled
 const StyledCommentBox = styled(Box)({
@@ -65,11 +66,13 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
 
     const { data: user, error, loading } = useFetch(fetchUser);
 
+    const [expanded, setExpanded] = useState(false);
+
 
     return (
         <Stack direction='row' justifyContent='space-between'>
             {/* Left side with username and content */}
-            <Stack>
+            <Stack width='80%'>
                 {/* Username */}
                 <Typography 
                 variant='subtitle2'
@@ -79,7 +82,8 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
                 </Typography>
 
                 {/* Content */}
-                <Typography>{comment.content}</Typography>
+                {/* Shorten the content if too long */}
+                <SeeMore content={comment.content} maxLength={100} />
             </Stack>
 
             {/* Right side with date, delete button, edit button */}

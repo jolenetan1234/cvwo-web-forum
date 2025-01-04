@@ -29,6 +29,7 @@ import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
 import { AddCircle, Delete, Edit, PostAdd } from "@mui/icons-material";
 import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { isEdited } from "../../common/utils.ts";
+import { SeeMore } from "../../common/components/SeeMore.tsx";
 
 // FEATURE: VIEW POST
 /**
@@ -142,10 +143,10 @@ const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
                     />
 
                     <CardContent sx={{ mt: -3 }}>
-                        <Typography>
-                            {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
-                            : post.content}
-                        </Typography>
+                        <SeeMore
+                        content={post.content}
+                        maxLength={10}
+                        />
                     </CardContent>
                 </Stack>
 
