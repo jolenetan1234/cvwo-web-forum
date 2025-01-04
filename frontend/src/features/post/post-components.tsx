@@ -30,6 +30,7 @@ import { AddCircle, Delete, Edit, PostAdd } from "@mui/icons-material";
 import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { isEdited } from "../../common/utils.ts";
 import { SeeMore } from "../../common/components/SeeMore.tsx";
+import { useNavigate } from "react-router-dom";
 
 // FEATURE: VIEW POST
 /**
@@ -69,6 +70,9 @@ const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }:
     );
     const fetchUserResponse = useFetch(fetchUser);
 
+    // For title link
+    const navigate = useNavigate();
+
     return (
         <CardHeader
         title={
@@ -78,14 +82,21 @@ const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }:
                     {/* flexbox for title and category chip */}
                     <Stack direction="row" alignItems="center">
                         {linkUrl ? (
-                            <Link 
-                            variant="h6"
-                            sx={{ fontWeight: "bold" }}
-                            href={linkUrl}
-                            color="inherit"
+                            // <Link 
+                            // variant="h6"
+                            // sx={{ fontWeight: "bold" }}
+                            // href={linkUrl}
+                            // color="inherit"
+                            // >
+                            //     {post.title}
+                            // </Link>
+                            <Typography
+                            variant='h6'
+                            sx={{ fontWeight: 'bold', cursor: 'pointer'}}
+                            onClick={() => navigate(linkUrl)}
                             >
                                 {post.title}
-                            </Link>
+                            </Typography>
                         ) : (
                             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                                 {post.title}
@@ -142,6 +153,7 @@ const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
                     {...(deleteButton && { deleteButton: deleteButton })}
                     />
 
+                    {/* Post content */}
                     <CardContent sx={{ mt: -3 }}>
                         <SeeMore
                         content={post.content}
@@ -188,52 +200,13 @@ const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
  */
 const PostCard = ({ post }: { post: Post, }): JSX.Element => {
     // link to another URL to show post details
-    const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
+    const linkUrl = `/posts/${post.id}`;
 
     return (
         <GenericPostCard
         post={post}
         linkUrl={linkUrl}
         />
-        // <Card>
-        //     <Stack direction='row' alignItems='center'>
-        //         {/* Right side with post title and post content */}
-        //         <Stack width='80%'>
-        //             {/* Header with title */}
-        //             <PostCardHeader post={post} linkUrl={linkUrl} />
-
-        //             <CardContent sx={{ mt: -3 }}>
-        //                 <Typography>
-        //                     {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
-        //                     : post.content}
-        //                 </Typography>
-        //             </CardContent>
-        //         </Stack>
-
-        //         {/* Left side with date and edited status */}
-        //         <Stack alignItems='center' width='20%'>
-        //             {/* Created date */}
-        //             <Typography 
-        //             variant='subtitle2'
-        //             sx={{ fontWeight: 'bold', }}
-        //             >
-        //                 {post.created_at}
-        //             </Typography>
-
-        //             {/* Edited status */}
-        //             {isEdited(post) ?
-        //             <Typography
-        //             variant='subtitle2'
-        //             >
-        //                 Edited
-        //             </Typography>
-        //             :
-        //             <></>
-        //             }
-        //         </Stack>
-        //     </Stack>
-
-        // </Card>
     )
 }
 

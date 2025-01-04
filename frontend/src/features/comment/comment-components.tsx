@@ -72,7 +72,7 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
     return (
         <Stack direction='row' justifyContent='space-between'>
             {/* Left side with username and content */}
-            <Stack width='80%'>
+            <Stack width='80%' flexWrap='wrap'>
                 {/* Username */}
                 <Typography 
                 variant='subtitle2'
@@ -260,7 +260,7 @@ const CreateCommentForm = ({ postId }: {
 
                 <Paper elevation={8} sx={{p: 2}}>
                     <StyledHeader
-                    avatar="Hi"
+                    avatar={<AddComment />}
                     title="Add Comment"
                     handleClose={handleClose}
                     />

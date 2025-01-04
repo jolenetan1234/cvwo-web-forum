@@ -42,7 +42,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<MainLayout />}>
       <Route index element={<HomePage />} />
       <Route 
-      path="/post/:id" 
+      path="/posts/:id" 
       element={<PostDetailsPage /> } />
       <Route
       path="/signup"

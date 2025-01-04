@@ -22,19 +22,20 @@ export const SeeMore = ({ content, maxLength }: {
     // Depending on max length, either show expanded view
     // or shortened view, with a button to toggle expanded
     if (content.length > maxLength) {
+                console.log("OWEFJOIWEJFOIWEJ", content.slice(0, maxLength).length);
         return (
             expanded ? (
-                <Stack alignItems='flex-start'>
-                    <Typography>{content}</Typography>
+                <Stack alignItems='flex-start' maxWidth='100%'>
+                    <Typography sx={{ wordBreak: 'break-word' }}>{content}</Typography>
                     <StyledButton
                     content={<Chip label='See Less' />}
                     onClick={() => setExpanded(false)}
-                    sx={{ px: 0 }}
+                    sx={{ px: 0, cursor: 'pointer' }}
                     />
                 </Stack>
             ) : (
-                <Stack alignItems='flex-start'>
-                    <Typography>{content.slice(0, maxLength)}</Typography>
+                <Stack alignItems='flex-start' maxWidth='100%'>
+                    <Typography sx={{ wordBreak: 'break-word' }}>{content.slice(0, maxLength)}</Typography>
                     {/* See More button */}
                     <StyledButton
                     content={<Chip label='...' />}
