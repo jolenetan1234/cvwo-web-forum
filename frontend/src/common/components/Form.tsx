@@ -71,9 +71,10 @@ export function Fields<T>({ fields, data, handleSubmit, handleChange }: {
 }
     */
 
-export function SubmitButton({ submitButtonText, loading}: {
+export function SubmitButton({ submitButtonText, loading, sx }: {
     submitButtonText: React.ReactNode,
     loading: boolean,
+    sx?: object,
 }): JSX.Element {
     return (
         loading ? 
@@ -81,6 +82,7 @@ export function SubmitButton({ submitButtonText, loading}: {
             type="submit"
             variant="contained"
             fullWidth
+            sx={sx}
             >
                 Submitting...
             </Button>
@@ -89,6 +91,7 @@ export function SubmitButton({ submitButtonText, loading}: {
             type="submit"
             variant="contained"
             fullWidth
+            sx={sx}
             >
                 { submitButtonText }
             </Button>

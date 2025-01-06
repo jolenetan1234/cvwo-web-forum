@@ -1,4 +1,9 @@
+// utils
+import { useNavigate } from "react-router-dom";
+
+// components
 import { AppBar, Box, Button, Stack, styled, Toolbar, alpha, InputBase, Typography, IconButton } from "@mui/material";
+import { Home } from '@mui/icons-material';
 import StyledButton from "./StyledButton.tsx";
 import SearchIcon from "@mui/icons-material/Search";
 import { LoginButton, LogoutButton } from "../../features/user/user-components.tsx";
@@ -11,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 // types
 import { logout, selectUserIsLoggedIn } from "../../features/user/user-slice.ts";
 import { clearSessionInCookies } from "../../features/user/user-utils.ts";
+import { ToggleThemeButton } from "../../features/theme/theme-components.tsx";
 
 /**
  * Can use MUI's style() utility, 
@@ -33,7 +39,26 @@ const Search = styled("div")(({ theme }) => ({
     flexGrow: "1", // so Search fills the right gap within the <Stack> (See below)
 }));
 
-export default function Navbar(): JSX.Element {
+const HomeButton = (): JSX.Element => {
+
+    const navigate = useNavigate();
+
+    /**
+     * Redirects to home page
+     */
+    const handleClick = () => {
+        navigate('/');
+    }
+
+    return (
+        <StyledButton
+        content={<Home />}
+        onClick={handleClick}
+        />
+    )
+}
+
+const Navbar = (): JSX.Element => {
 
     // use hooks
     const isLoggedIn = useSelector(selectUserIsLoggedIn);
@@ -46,15 +71,19 @@ export default function Navbar(): JSX.Element {
             {/* static so that the components below Navbar will show */}
             <AppBar position="static">
                 <StyledToolbar>
-                    <Typography variant="h6">{TITLE}</Typography>
+                    <Stack direction='row' alignItems='center' width='50%'>
+                        {/* Title */}
+                        <Typography variant="h6">{TITLE}</Typography>
+                        {/* Home Button */}
+                        <HomeButton />
+                    </Stack>
+
                     {/* Made width 50% of StyledToolbar so the Login + Search + Light/Dark mode 
                     makes up 50% of the navbar horizontally */}
                     <Stack direction="row" alignItems="center" width="50%">
 
                         {/* Light/Dark mode toggle */}
-                        <IconButton>
-                            Light/Dark Mode
-                        </IconButton>
+                        <ToggleThemeButton />
 
                         {/* Login/Logout button */}
                         {isLoggedIn ? <LogoutButton /> : <LoginButton />}
@@ -69,3 +98,5 @@ export default function Navbar(): JSX.Element {
         </Box>
     )
 }
+
+export default Navbar;

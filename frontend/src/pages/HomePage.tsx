@@ -6,7 +6,6 @@ import { CreatePostForm, Feed } from "../features/post/post-components";
 import { useCategory } from "../features/category/category-hooks";
 import { LoginForm } from "../features/user/user-components";
 import { useIsLoginOpen } from "../common/contexts/IsLoginOpenContext";
-import { Login } from "@mui/icons-material";
 import { useIsCreateOpen } from "../common/contexts/IsCreateOpenContext";
 
 export default function HomePage(): JSX.Element {

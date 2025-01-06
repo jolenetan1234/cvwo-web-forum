@@ -2,7 +2,7 @@
 // NOTE: this is only for development purposes.
 // USELESS once backend is set up.
 
-import NotFoundError from "../common/errors/MockError";
+import NotFoundError from "../common/errors/MockError"
 import { User, LoginData, LoginResponse, SignUpData} from "../features/user/user-types";
 
 interface backendUser {
@@ -37,7 +37,10 @@ const getUserById = async (userId: number): Promise<User> => {
 
     // throw error if user doesn't exist.
     if (!res) {
-        throw new NotFoundError("User");
+        throw {
+            status: '404',
+            message: 'User not found',
+        }
     } else {
         const user = {
             id: res?.id.toString(),
@@ -58,7 +61,7 @@ const createUser = async (content: SignUpData): Promise<User> => {
         };
     } 
 
-    const newId = Math.max(...USERS.map(user => user.id));
+    const newId = USERS.length + 1;
                         
     const newUser = {
         id: newId,

@@ -1,21 +1,18 @@
-import { useParams } from "react-router-dom";
-
 // components
 import { Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
-import CommentSection from "../comment/comment-components.tsx";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
 
 // types
 // import Post from "../../types/Post.ts";
-import Post, { CreatePostData, UpdatedPost } from "./post-types.ts";
+import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types.ts";
 import { FormField } from "../../common/types/common-types.ts";
 
 // hooks
 import useFetch from "../../common/hooks/useFetch.ts";
 
 // API client
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import categoryClient from "../category/category-api-client.ts";
 import StyledButton from "../../common/components/StyledButton.tsx";
 import { useIsCreateOpen } from "../../common/contexts/IsCreateOpenContext.tsx";
@@ -29,22 +26,27 @@ import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.t
 import { isAuthor } from "./post-utils.ts";
 import { useIsDeletePostOpen } from "../../common/contexts/IsDeletePostOpen.tsx";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
-import { Delete, Edit } from "@mui/icons-material";
+import { AddCircle, Delete, Edit, PostAdd } from "@mui/icons-material";
+import CreateItemButton from "../../common/components/CreateItem.tsx";
+import { isEdited } from "../../common/utils.ts";
+import { SeeMore } from "../../common/components/SeeMore.tsx";
+import { useNavigate } from "react-router-dom";
 
+// FEATURE: VIEW POST
 /**
  * Header for a single PostCard.
  * Dynamic, based on whether the title needs to be a Link or not. 
  * @param param0 
  * @returns 
  */
-function PostCardHeader({ post, linkUrl, editButton, deleteButton }: 
+const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }: 
     { 
         post: Post,
         linkUrl?: string,
         editButton?: React.ReactNode,
         deleteButton?: React.ReactNode,
     }
-): JSX.Element {
+): JSX.Element => {
 
     // memoize the callback
     // otherwise everytime the return value is deemed to be different
@@ -68,6 +70,9 @@ function PostCardHeader({ post, linkUrl, editButton, deleteButton }:
     );
     const fetchUserResponse = useFetch(fetchUser);
 
+    // For title link
+    const navigate = useNavigate();
+
     return (
         <CardHeader
         title={
@@ -77,14 +82,21 @@ function PostCardHeader({ post, linkUrl, editButton, deleteButton }:
                     {/* flexbox for title and category chip */}
                     <Stack direction="row" alignItems="center">
                         {linkUrl ? (
-                            <Link 
-                            variant="h6"
-                            sx={{ fontWeight: "bold" }}
-                            href={linkUrl}
-                            color="inherit"
+                            // <Link 
+                            // variant="h6"
+                            // sx={{ fontWeight: "bold" }}
+                            // href={linkUrl}
+                            // color="inherit"
+                            // >
+                            //     {post.title}
+                            // </Link>
+                            <Typography
+                            variant='h6'
+                            sx={{ fontWeight: 'bold', cursor: 'pointer'}}
+                            onClick={() => navigate(linkUrl)}
                             >
                                 {post.title}
-                            </Link>
+                            </Typography>
                         ) : (
                             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                                 {post.title}
@@ -118,6 +130,66 @@ function PostCardHeader({ post, linkUrl, editButton, deleteButton }:
 }
 
 /**
+ * Template for a PostCard. 
+ * @param
+ * @returns 
+ */
+const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
+    post: Post,
+    linkUrl?: string,
+    editButton?: React.ReactNode,
+    deleteButton?: React.ReactNode,
+}) => {
+    return (
+        <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+            <Stack direction='row' alignItems='center'>
+                {/* Right side with post title and post content */}
+                <Stack width='80%'>
+                    {/* Header with title */}
+                    <PostCardHeader 
+                    post={post} 
+                    {...(linkUrl && { linkUrl: linkUrl })}
+                    {...(editButton && { editButton: editButton })}
+                    {...(deleteButton && { deleteButton: deleteButton })}
+                    />
+
+                    {/* Post content */}
+                    <CardContent sx={{ mt: -3 }}>
+                        <SeeMore
+                        content={post.content}
+                        maxLength={100}
+                        />
+                    </CardContent>
+                </Stack>
+
+                {/* Left side with date and edited status */}
+                <Stack alignItems='center' width='20%'>
+                    {/* Created date */}
+                    <Typography 
+                    variant='subtitle2'
+                    sx={{ fontWeight: 'bold', }}
+                    >
+                        {post.created_at}
+                    </Typography>
+
+                    {/* Edited status */}
+                    {isEdited(post) ?
+                    <Typography
+                    variant='subtitle2'
+                    >
+                        Edited
+                    </Typography>
+                    :
+                    <></>
+                    }
+                </Stack>
+            </Stack>
+
+        </Card>
+    )
+}
+
+/**
  * Card view of a Post.
  * When clicked, redirects to the Post details.
  * @param {Object} props - Properties passed to the PostCard component.
@@ -126,21 +198,15 @@ function PostCardHeader({ post, linkUrl, editButton, deleteButton }:
  * @param {string} props.content - Post content.
  * @returns {JSX.Element} A component displaying a Post.
  */
-function PostCard({ post }: { post: Post, }): JSX.Element {
+const PostCard = ({ post }: { post: Post, }): JSX.Element => {
     // link to another URL to show post details
-    const linkUrl = `${import.meta.env.VITE_APP_URL}/post/${post.id}`
+    const linkUrl = `/posts/${post.id}`;
 
     return (
-        <Card>
-            <PostCardHeader post={post} linkUrl={linkUrl} />
-
-            <CardContent sx={{ mt: -3 }}>
-                <Typography>
-                    {post.content.length > 100 ? `${post.content.slice(0, 100)}...` 
-                    : post.content}
-                </Typography>
-            </CardContent>
-        </Card>
+        <GenericPostCard
+        post={post}
+        linkUrl={linkUrl}
+        />
     )
 }
 
@@ -150,7 +216,7 @@ function PostCard({ post }: { post: Post, }): JSX.Element {
  * @param {Post[]} props.posts - Array of Post to be displayed.
  * @returns {JSX.Element} A component containing the forum posts.
  */
-function Posts({ posts }: { posts: Post[] }): JSX.Element {
+const Posts = ({ posts }: { posts: Post[] }): JSX.Element => {
     return (
         <Box flex={3} >
             { posts.length == 0 ? 
@@ -166,7 +232,7 @@ function Posts({ posts }: { posts: Post[] }): JSX.Element {
  * A right bar containing other information(?)
  * @returns {JSX.Element} A component containing the right bar of the Feed.
  */
-function RightBar(): JSX.Element {
+const RightBar = (): JSX.Element => {
     return (
         <Box bgcolor="purple" flex={1}>
             RightBar
@@ -181,9 +247,9 @@ function RightBar(): JSX.Element {
  * @param {Post[]} props.posts - Array of Post to be displayed.
  * @returns {JSX.Element} A component that displays the Feed.
  */
-function Feed({ selectedCategories }: {
+const Feed = ({ selectedCategories }: {
     selectedCategories: string[],
-}): JSX.Element {
+}): JSX.Element => {
     // states
     const { allPosts, loading, error } = useAllPosts();
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
@@ -200,11 +266,9 @@ function Feed({ selectedCategories }: {
 
     console.log("[post-components: Feed] allPosts", allPosts);
 
-    // const { handleCategoryChange, handleCategoryDelete } = useCategory();
-
     if (loading) {
         return <Loading />
-    } else if (error != "") {
+    } else if (error) {
         return <ErrorMessage message={error} />;
     }
 
@@ -212,7 +276,7 @@ function Feed({ selectedCategories }: {
         <Stack>
             <Stack direction="row" justifyContent="space-between">
                 <Posts posts={filteredPosts}/>
-                <RightBar />
+                {/* <RightBar /> */}
             </Stack>
         </Stack> 
     )
@@ -222,20 +286,12 @@ function Feed({ selectedCategories }: {
  * Displays the expanded, detailed view of a post. 
  * @returns 
  */
-function PostDetails(): JSX.Element {
-    const params = useParams<{ id : string }>();
-    const postId = params.id ?? '';
-    
-    // states
-    const [post, setPost] = useState<Post | undefined>(undefined);
+const PostDetails = ({ post }: { 
+    post: Post
+}): JSX.Element => {
 
-    // fetching all posts
-    const { allPosts, loading, error } = useAllPosts();
-    useEffect(() => {
-        setPost(allPosts.find(p => p.id === postId));
-    }, [allPosts]);
+    const postId = post.id;
 
-    // IsDeletePostOpen context
     const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
     /**
      * @function handleDeleteOpen - handles the event where the "Delete" button is pressed.
@@ -244,58 +300,53 @@ function PostDetails(): JSX.Element {
         toggleDeletePostOpen(postId);
     }
 
-
-    if (loading) {
-        return <Loading />
-    } else if (error != "") {
-        return (
-            <ErrorMessage message={error} />
-        );
-    } else if (!post) {
-        return (
-            <ErrorMessage message="Post not found" />
-        );
-    } else {
             return (
-            <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                <PostCardHeader 
-                    post={post as Post}
-                    editButton={<EditPostButton postId={postId}/>}
-                    // deleteButton={<DeletePostButton postId={postId} />}
-                    deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
+
+                <GenericPostCard
+                post={post}
+                editButton={<EditPostButton postId={postId}/>}
+                deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
                 />
 
-                {/* Post Content */}
-                <CardContent sx={{ mt: -3 }}>
-                    <Typography>
-                        {post?.content}
-                    </Typography>
-                </CardContent>
+                // <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+                //     <PostCardHeader 
+                //         post={post as Post}
+                //         editButton={<EditPostButton postId={postId}/>}
+                //         // deleteButton={<DeletePostButton postId={postId} />}
+                //         deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
+                //     />
 
-                <Divider />
-                {/* Comment Section */}
-                <CardContent>
-                    <CommentSection postId={postId}/>
-                </CardContent>
-            </Card> 
+                //     {/* Post Content */}
+                //     <CardContent sx={{ mt: -3 }}>
+                //         <Typography>
+                //             {post?.content}
+                //         </Typography>
+                //     </CardContent>
+
+                // </Card>
         );
-   }
+//    }
 }
 
 // FEATURE: CREATE POST
-function CreatePostButton(): JSX.Element {
+const CreatePostButton = (): JSX.Element => {
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
     const isLoggedIn = useSelector(selectUserIsLoggedIn);
 
-    const handleClick = () => {
+    /** Conditionally render either the CreatePostForm
+     * or the LoginForm,
+     * based on the logged in status of the user.
+     */
+    const handleCreatePostOpen = () => {
         isLoggedIn ? toggleCreateOpen() : toggleLoginOpen();
     };
 
     return (
         <StyledButton
-        content="Create post"
-        onClick={handleClick}
+        content={<AddCircle />}
+        onClick={handleCreatePostOpen}
+        sx={{ color: 'primary.main' }}
         />
     );
 }
@@ -330,6 +381,7 @@ function CreatePostForm(): JSX.Element {
     const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
     const { data, loading, error, handleChange, handleSubmit } = useCreatePostForm(handleClose);
 
+    // Fetch categories to fill up the "Select Categories" button
     // TODO: replace with REDUX!
     const fetchAllCategories = useCallback(
         () => categoryClient.getAll(), []
@@ -337,24 +389,13 @@ function CreatePostForm(): JSX.Element {
 
     const { data: categories } = useFetch(fetchAllCategories);
 
-    /*
-    const formData: NewPost()
-
-    initialFormData = {// ADD LATER}
-    const { data: formData, handleChange, resetForm } = useForm<NewPost>(initialFormData);
-    const handleSubmit = () => {
-        dispatch(addPost(formData, token));
-    }
-    on submit, dispatch(addPost(newPost))    
-    */
-
     return (
         // dialog box
         <Dialog open={isCreateOpen} maxWidth="xs" onClose={handleClose}>
 
                 <Paper elevation={8} sx={{p: 2}}>
                     <StyledHeader
-                    avatar="Hi"
+                    avatar={<PostAdd />}
                     title="Create post"
                     handleClose={handleClose}
                     />
@@ -376,22 +417,22 @@ function CreatePostForm(): JSX.Element {
                             autoFocus
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
-                            value={data[field.name as keyof CreatePostData]} // Eg. data[username], data[password]
+                            value={data[field.name as keyof NewPost]} // Eg. data[username], data[password]
                             onChange={handleChange}
                             />
                             :
                             
-                            <FormControl sx={({ width: 500 })}>
+                            <FormControl fullWidth>
                                 <InputLabel>{field.placeholder}</InputLabel>
                                 <Select
                                 key={field.name}
                                 name={field.name}
-                                value={data[field.name as keyof CreatePostData]}
+                                value={data[field.name as keyof NewPost]}
                                 onChange={handleChange}
                                 input={<OutlinedInput label={field.placeholder} />}
                                 required={field.required}
                                 renderValue={selected => {
-                                    const category = categories?.find(cat => cat.id === selected.id);
+                                    const category = categories?.find(cat => cat.id === selected);
                                     return <>{category?.label}</>;
                                 }}
                                 >
@@ -410,6 +451,7 @@ function CreatePostForm(): JSX.Element {
                         <SubmitButton
                         submitButtonText={<>Create post</>}
                         loading={loading}
+                        sx={{ mt: 2 }}
                         />
                     </Box>
                         
@@ -420,7 +462,7 @@ function CreatePostForm(): JSX.Element {
     )
 }
 
-// EDIT POST
+// FEATURE: EDIT POST
 function EditPostButton({ postId }: { postId: string }): JSX.Element {
     const { isEditPostOpen, toggleEditPostOpen } = useIsEditPostOpen();
 
@@ -439,7 +481,9 @@ function EditPostButton({ postId }: { postId: string }): JSX.Element {
  * 
  * @returns The form to edit a post.
  */
-function EditPostForm(): JSX.Element {
+function EditPostForm({ post }: {
+    post: Post,
+}): JSX.Element {
     const { isEditPostOpen, toggleEditPostOpen, postId } = useIsEditPostOpen();
 
     const handleClose = () => {
@@ -452,13 +496,13 @@ function EditPostForm(): JSX.Element {
         error, 
         handleChange, 
         handleSubmit 
-    } = useEditPostForm(postId, handleClose);
+    } = useEditPostForm(post, handleClose);
 
     // TODO: replace with REDUX!
     const fetchAllCategories = useCallback(
         () => categoryClient.getAll(), []
     );
-    const { data: categories } = useFetch(fetchAllCategories);
+    const { data: categories, loading: fetchCategoriesLoading } = useFetch(fetchAllCategories);
 
     // form fields
     const fields: FormField[] = [
@@ -511,29 +555,35 @@ function EditPostForm(): JSX.Element {
                             onChange={handleChange}
                             />
                             :
-                            
-                            <FormControl sx={({ width: 500 })}>
+                            <FormControl fullWidth>
                                 <InputLabel>{field.placeholder}</InputLabel>
-                                <Select
-                                key={field.name}
-                                name={field.name}
-                                value={formData[field.name as keyof UpdatedPost]}
-                                onChange={handleChange}
-                                input={<OutlinedInput label={field.placeholder} />}
-                                required={field.required}
-                                renderValue={selected => {
-                                    const category = categories?.find(cat => cat.id === selected.id);
-                                    return <>{category?.label}</>;
-                                }}
-                                >
-                                    {categories?.map(cat => (
-                                        <MenuItem key={cat.id} value={cat.id}>
-                                            {cat.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
+                                {/* Conditionally render based on loading state of categories */}
+                                {fetchCategoriesLoading
+                                    ?
+                                    <Select 
+                                    value=''
+                                    />
+                                    :
+                                    <Select
+                                    key={field.name}
+                                    name={field.name}
+                                    value={formData[field.name as keyof UpdatedPost]}
+                                    onChange={handleChange}
+                                    input={<OutlinedInput label={field.placeholder} />}
+                                    required={field.required}
+                                    renderValue={selected => {
+                                        const category = categories?.find(cat => cat.id === selected);
+                                        return <>{category?.label}</>;
+                                    }}
+                                    >
+                                        {categories?.map(cat => (
+                                            <MenuItem key={cat.id} value={cat.id}>
+                                                {cat.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                }
                             </FormControl>
-
                             );
                     })}
 
@@ -541,6 +591,7 @@ function EditPostForm(): JSX.Element {
                         <SubmitButton
                         submitButtonText={<>Save</>}
                         loading={loading}
+                        sx={{ mt: 2 }}
                         />
                     </Box>
                         
@@ -552,45 +603,45 @@ function EditPostForm(): JSX.Element {
 }
 
 // FEATURE: DELETE
-export function ConfirmPostDelete(): JSX.Element {
-    const { isDeletePostOpen, toggleDeletePostOpen, postId } = useIsDeletePostOpen();
+// export function ConfirmPostDelete(): JSX.Element {
+//     const { isDeletePostOpen, toggleDeletePostOpen, postId } = useIsDeletePostOpen();
 
-    const handleClose = () => {
-        toggleDeletePostOpen();
-    }
+//     const handleClose = () => {
+//         toggleDeletePostOpen();
+//     }
 
-    const confirmDeleteText = 'Are you sure you want to delete this post?';
+//     const confirmDeleteText = 'Are you sure you want to delete this post?';
 
  
-    const { loading, error, handleDelete } = usePostDelete(postId, handleClose);
+//     const { loading, error, handleDelete } = usePostDelete(postId, handleClose);
 
-    return (
-        <Dialog open={isDeletePostOpen} maxWidth="xs" onClose={handleClose}>
-            <Paper elevation={8} sx={{p: 2}}>
+//     return (
+//         <Dialog open={isDeletePostOpen} maxWidth="xs" onClose={handleClose}>
+//             <Paper elevation={8} sx={{p: 2}}>
 
-                <StyledHeader
-                avatar={<Delete />}
-                title='Delete Post'
-                />
+//                 <StyledHeader
+//                 avatar={<Delete />}
+//                 title='Delete Post'
+//                 />
 
-                <Typography>{confirmDeleteText}</Typography>
+//                 <Typography>{confirmDeleteText}</Typography>
 
-                <Stack direction='row' justifyContent='space-between'>
-                    <StyledButton
-                    content='Cancel'
-                    onClick={handleClose}
-                    />
+//                 <Stack direction='row' justifyContent='space-between'>
+//                     <StyledButton
+//                     content='Cancel'
+//                     onClick={handleClose}
+//                     />
 
-                    <StyledButton
-                    content='Yes'
-                    bgColor='red'
-                    onClick={handleDelete}
-                    />
-                </Stack>
-            </Paper>
-        </Dialog>
-    )
-}
+//                     <StyledButton
+//                     content='Yes'
+//                     bgColor='red'
+//                     onClick={handleDelete}
+//                     />
+//                 </Stack>
+//             </Paper>
+//         </Dialog>
+//     )
+// }
 
 
 export { Feed, PostDetails, CreatePostButton, CreatePostForm, EditPostForm };

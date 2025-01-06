@@ -5,18 +5,26 @@ import StyledButton from "./StyledButton";
 import { StyledHeader } from "./Form";
 
 
-export const DeleteItemButton = ({ itemId, handleDeleteOpen }: { itemId: string, handleDeleteOpen: () => void }): JSX.Element => {
+export const DeleteItemButton = ({ itemId, handleDeleteOpen, sx }: { 
+    itemId: string, 
+    handleDeleteOpen: () => void,
+    sx?: object
+}): JSX.Element => {
 
     return (
         <StyledButton
         content={<Delete />}
         onClick={handleDeleteOpen}
-        contentColor="red"
+        sx={{
+            ...sx,
+            color: 'red',
+        }}
         />
     )
 }
 
-export function ConfirmDelete({ isOpen, confirmDeleteText, handleClose, handleDelete, loading, error }: {
+export function ConfirmDelete({ title, isOpen, confirmDeleteText, handleClose, handleDelete, loading, error }: {
+    title: string,
     isOpen: boolean,
     confirmDeleteText: string,
     handleClose: () => void,
@@ -31,7 +39,7 @@ export function ConfirmDelete({ isOpen, confirmDeleteText, handleClose, handleDe
                 {/* Header */}
                 <StyledHeader
                 avatar={<Delete />}
-                title='Delete Post'
+                title={title}
                 />
 
                 {/* Confirm delete text */}
@@ -46,8 +54,8 @@ export function ConfirmDelete({ isOpen, confirmDeleteText, handleClose, handleDe
 
                     <StyledButton
                     content='Yes'
-                    bgColor='red'
                     onClick={handleDelete}
+                    sx={{ backgroundColor: 'red' }}
                     />
                 </Stack>
             </Paper>

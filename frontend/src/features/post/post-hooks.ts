@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { UseFeatureFormResponse } from "../../common/types/common-types";
+import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
 import useForm from "../../common/hooks/useForm";
 import forumPostClient from "./post-api-client";
@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { selectUser, selectUserToken } from "../user/user-slice";
 import { addNewPost, deletePost, fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus, updatePost } from "./post-slice";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
+import { isDifferent } from "../../common/utils";
 
 /**
  * Fetches API data to populate `posts/allPosts` if necessary.
@@ -16,7 +17,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
 export function useAllPosts(): {
     allPosts: Post[],
     loading: boolean,
-    error: string,
+    error: string | null,
 } {
     // global states
     const allPosts = useSelector(selectAllPosts);
@@ -25,7 +26,7 @@ export function useAllPosts(): {
 
     // states
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
     // dispatch
     const dispatch = useAppDispatch();
@@ -60,17 +61,18 @@ export function useAllPosts(): {
 export function useCreatePostForm(handleClose: () => void): UseFeatureFormResponse<NewPost> {
 
     // HOOKS
-    const userId = useSelector(selectUser)?.id;
+    // const userId = useSelector(selectUser)?.id;
     const token = useSelector(selectUserToken);
     const dispatch = useAppDispatch();
 
-    const initialData = {
+    const initialData: NewPost = {
         title: "",
         content: "",
         category_id: "",
-        user_id: userId ?? "",
+        // user_id: userId ?? "",
     }
 
+    // Leave the form data handling to `useForm`
     const { data: formData, handleChange, resetForm } = useForm<NewPost>(initialData)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -142,33 +144,27 @@ export function useCreatePostForm(handleClose: () => void): UseFeatureFormRespon
     };
 }
 
-export function useEditPostForm(postId: string, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
+export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
 
     const dispatch = useAppDispatch();
     const token = useSelector(selectUserToken);
 
     // states
-    const { allPosts } = useAllPosts();
-    const [initialData, setInitialData] = useState<UpdatedPost>({
-        title: "",
-        content: "",
-        category_id: "",
-    })
+    // const { allPosts } = useAllPosts();
+    // const [initialData, setInitialData] = useState<UpdatedPost>({
+    //     title: ,
+    //     content: "",
+    //     category_id: "",
+    // })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        // find the original post, and set initial data to be its fields.
-        const originalPost = allPosts.find(post => post.id === postId);
-
-        if (originalPost) {
-            setInitialData({
-                title: originalPost.title,
-                content: originalPost.content,
-                category_id: originalPost.category_id
-            });
-        };
-    }, [allPosts])
+    // initial form data
+    const initialData: UpdatedPost = {
+        title: post.title,
+        content: post.content,
+        category_id: post.category_id,
+    }
 
     const { data: formData, handleChange, resetForm } = useForm<UpdatedPost>(initialData);
 
@@ -183,12 +179,17 @@ export function useEditPostForm(postId: string, handleClose: () => void): UseFea
             try {
                 if (!token) {
                     setError("401 Unauthorised");
+                } else if (!isDifferent(formData, post)) {
+                    // Next, check if there are actually any edits made.
+                    // If not,
+                    // simply close the form without trigerring any actions.
+                    handleClose();
                 } else {
                     // this will definitely succeed. 
                     // Will throw error if rejected.
                     await dispatch(updatePost({ 
                         updatedPost: formData,
-                        postId,
+                        postId: post.id,
                         token
                     })).unwrap();
 
@@ -196,7 +197,11 @@ export function useEditPostForm(postId: string, handleClose: () => void): UseFea
                     handleClose();
                 }
             } catch (err: any) {
-                setError(err.message ?? "An unexpected error occurred.");
+                if (typeof err === 'string') {
+                    setError(err);
+                } else {
+                    setError(err.message ?? "An unexpected error occurred.");
+                }
             } finally {
                 setLoading(false);
                 resetForm();
@@ -215,7 +220,7 @@ export function useEditPostForm(postId: string, handleClose: () => void): UseFea
     }
 }
 
-export function usePostDelete(postId: string, handleClose: () => void) {
+export function usePostDelete(postId: string | null, handleClose: () => void) {
 
     const dispatch = useAppDispatch();
     const token = useAppSelector(selectUserToken);
@@ -229,7 +234,9 @@ export function usePostDelete(postId: string, handleClose: () => void) {
             setLoading(true);
 
             try {
-                if (!token) {
+                if (!postId) {
+                    setError('Failed to DELETE post: PostID is null');
+                } else if (!token) {
                     setError('401 Unauthorised');
                 } else {
                     const deletedPost = await dispatch(deletePost({ postId, token })).unwrap();

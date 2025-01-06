@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../features/user/user-slice";
 import postsReducer from "../features/post/post-slice";
 import commentsReducer from "../features/comment/comment-slice";
+import themeReducer from "../features/theme/theme-slice";
 
 // the redux store.
 export const store = configureStore({
@@ -12,6 +13,7 @@ export const store = configureStore({
         user: userReducer,
         posts: postsReducer,
         comments: commentsReducer,
+        theme: themeReducer,
     }
 }
 )

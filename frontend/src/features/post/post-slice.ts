@@ -84,7 +84,7 @@ export const filterPostsByCategories = createAsyncThunk<
 
 export const fetchAllPosts = createAsyncThunk<
     Post[], // Payload type of `fulfilled` action
-    void, // argument types
+    void, // Argument types
     { rejectValue: string }
 >(
     'posts/fetchAllPosts',
@@ -193,7 +193,7 @@ const postsSlice = createSlice({
     extraReducers: builder => {
         // addCase(actionCreator, reducer)
         builder
-        // for the `fetchAllPosts()` thunk
+        // LISTEN FOR FETCH ALL POSTS
         .addCase(fetchAllPosts.pending, (state, action) => {
             state.status = 'loading';
         })
@@ -205,12 +205,12 @@ const postsSlice = createSlice({
         .addCase(fetchAllPosts.rejected, (state, action) => {
             state.status = 'failed';
         })
-        // `addNewPost(newPost, token)`
+        // LISTEN FOR CREATE POST
         .addCase(addNewPost.fulfilled, (state, action) => {
             // action.payload is is the new Post
             state.allPosts.push(action.payload);
         })
-        // `updatePost(updatedPost, postId, token)`
+        // LISTEN FOR UPDATE POST
         .addCase(updatePost.fulfilled, (state, action) => {
             // action.payload is the updated Post
             const updatedPost = action.payload;
@@ -221,7 +221,8 @@ const postsSlice = createSlice({
                 originalPost.title = updatedPost.title;
                 originalPost.content = updatedPost.content;
                 originalPost.category_id = updatedPost.category_id;
-            }
+                originalPost.updated_at = updatedPost.updated_at;
+            };
         })
         // `deletePost(postId, token)`
         .addCase(deletePost.fulfilled, (state, action) => {

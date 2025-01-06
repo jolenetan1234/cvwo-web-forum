@@ -126,8 +126,17 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async post(newPost: NewPost, token: UserState["token"]): Promise<ApiClientResponse<Post>> {
+    async post(newPost: NewPost, token: string): Promise<ApiClientResponse<Post>> {
         try {
+
+            if (!token) {
+                return {
+                    type: 'error',
+                    data: null,
+                    error: 'Failed to CREATE post: User unauthorised',
+                };
+            };
+
             // reformat data to send to backend
             // TODO: reformat based on actual backend needs (Eg. send token in header,)
             // const token = useSelector(selectUserToken); // CANNOT! Hooks can only be called WITHIN a component.
@@ -136,7 +145,6 @@ class ForumPostClient extends ApiClient<Post> {
             const sentData = {
                 ...newPost,
                 category_id: parseInt(newPost.category_id),
-                user_id: parseInt(newPost.user_id),
             };
 
             // TODO: replace with actual API call
@@ -182,6 +190,15 @@ class ForumPostClient extends ApiClient<Post> {
         // and return the respective 'success' / 'error' objects.
         // IN THE CATCH BLOCK, you can keep it as it is here.
         try {
+
+            if (!token) {
+                return {
+                    type: 'error',
+                    data: null,
+                    error: 'Failed to UPDATE post: User unauthorised',
+                };
+            };
+
             // TODO: send actual API call,
             // and include token in headers, for backend authentication.
             
@@ -223,6 +240,14 @@ class ForumPostClient extends ApiClient<Post> {
 
     async delete(postId: string, token: string): Promise<ApiClientResponse<Post>> {
         try {
+            if (!token) {
+                return {
+                    type: 'error',
+                    data: null,
+                    error: 'Failed to DELETE post: User unauthorised',
+                };
+            };
+
             // TODO: send actual backend API call.
             const res = await deletePost(parseInt(postId));
             // TODO: check is (res.ok) or something like that

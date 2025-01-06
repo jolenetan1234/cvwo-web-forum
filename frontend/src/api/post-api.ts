@@ -11,7 +11,6 @@ interface BackendCreatePostData {
     title: string;
     content: string;
     category_id: number;
-    user_id: number;
 }
 
 interface BackendUpdatePostData {
@@ -26,6 +25,8 @@ interface BackendPost {
     content: string;
     category_id: number;
     user_id: number;
+    created_at: string;
+    updated_at: string;
 }
 
 // HARD CODED
@@ -36,6 +37,8 @@ const posts: BackendPost[] = [
         content: "I love Lego",
         category_id: 1,
         user_id: 1,
+        created_at: Date(),
+        updated_at: Date(),
     },
     {
         id: 2,
@@ -43,6 +46,8 @@ const posts: BackendPost[] = [
         content: "I banged it against the table :(",
         category_id: 2,
         user_id: 1,
+        created_at: Date(),
+        updated_at: Date(),
     }
 ]
 
@@ -87,13 +92,14 @@ export const getPostByCategories = async (categories: number[]): Promise<Backend
  */
 export const createPost = async (data: BackendCreatePostData): Promise<BackendPost> => {
     // HARDCODED
-    const userId = data.user_id;
     const newPost = {
         id: posts.length + 1,
         title: data.title,
         content: data.content,
         category_id: data.category_id,
-        user_id: userId,
+        user_id: 3, // HARDCODED. WHEN I ACTUALLY IMPLEMENT BACKEND, THE USER_ID IS GOING TO BE IN THE TOKEN.
+        created_at: Date(),
+        updated_at: Date(),
     };
 
     // But in the actual API, I'll manipulate the db
@@ -106,6 +112,8 @@ export const createPost = async (data: BackendCreatePostData): Promise<BackendPo
  * @returns 
  */
 export const updatePost = async (data: BackendUpdatePostData, postId: number): Promise<BackendPost> => {
+    // TODO: is it possible for backend to check that the post has indeed changed,
+    // and if not, let `updated_at` stay the same??
     const post = posts.find(p => p.id === postId);
 
     if (!post) {
@@ -120,6 +128,7 @@ export const updatePost = async (data: BackendUpdatePostData, postId: number): P
             title: data.title,
             content: data.content,
             category_id: data.category_id,
+            updated_at: Date(),
         };
 
         return updatedPost;

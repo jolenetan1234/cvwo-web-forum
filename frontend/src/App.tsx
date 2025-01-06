@@ -24,6 +24,15 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { IsEditPostOpenProvider } from './common/contexts/IsEditPostOpenContext.tsx';
 import { IsDeletePostOpenProvider } from './common/contexts/IsDeletePostOpen.tsx';
+import { IsDeleteCommentOpenProvider } from './common/contexts/IsDeleteCommentOpen.tsx';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+
+// themes
+import { lightTheme, darkTheme } from './themes/themes.ts';
+import { restoreTheme, selectTheme } from './features/theme/theme-slice.ts';
+import { useAppSelector } from './store/store-hooks.ts';
+import { IsCreateCommentOpenProvider } from './common/contexts/IsCreateCommentOpenContext.tsx';
+import { IsEditCommentOpenProvider } from './common/contexts/IsEditCommentOpenContext.tsx';
 
 /**
  * App router
@@ -33,7 +42,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<MainLayout />}>
       <Route index element={<HomePage />} />
       <Route 
-      path="/post/:id" 
+      path="/posts/:id" 
       element={<PostDetailsPage /> } />
       <Route
       path="/signup"
@@ -49,19 +58,32 @@ function App() {
   // Ie. set the `user` states first.
   useEffect(() => {
     // dispatch restoreSession action
-    dispatch(restoreSession())
+    dispatch(restoreSession());
+    dispatch(restoreTheme());
   }, [dispatch])
 
+ const theme = useAppSelector(selectTheme);
+
   return (
-    <IsLoginOpenProvider>
-      <IsCreateOpenProvider>      
-        <IsEditPostOpenProvider>
-          <IsDeletePostOpenProvider>
-            <RouterProvider router={router} />
-          </IsDeletePostOpenProvider>
-        </IsEditPostOpenProvider>
-      </IsCreateOpenProvider>
-    </IsLoginOpenProvider>
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <CssBaseline>
+        <IsLoginOpenProvider>
+          <IsCreateOpenProvider>      
+            <IsEditPostOpenProvider>
+              <IsDeletePostOpenProvider>
+                <IsDeleteCommentOpenProvider>
+                  <IsCreateCommentOpenProvider>
+                    <IsEditCommentOpenProvider>
+                      <RouterProvider router={router} />
+                    </IsEditCommentOpenProvider>
+                  </IsCreateCommentOpenProvider>
+                </IsDeleteCommentOpenProvider>
+              </IsDeletePostOpenProvider>
+            </IsEditPostOpenProvider>
+          </IsCreateOpenProvider>
+        </IsLoginOpenProvider>
+      </CssBaseline>
+    </ThemeProvider>
   );
 }
 
