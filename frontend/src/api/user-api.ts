@@ -2,7 +2,7 @@
 // NOTE: this is only for development purposes.
 // USELESS once backend is set up.
 
-import NotFoundError from "../common/errors/MockError";
+import NotFoundError from "../common/errors/MockError"
 import { User, LoginData, LoginResponse, SignUpData} from "../features/user/user-types";
 
 interface backendUser {
@@ -61,7 +61,7 @@ const createUser = async (content: SignUpData): Promise<User> => {
         };
     } 
 
-    const newId = Math.max(...USERS.map(user => user.id));
+    const newId = USERS.length + 1;
                         
     const newUser = {
         id: newId,

@@ -121,29 +121,31 @@ export function useSignUpForm(handleClose: () => void): UseFeatureFormResponse<S
         setLoading(true);
 
         const signUp = async (): Promise<void> => {
-            // check confirm pw is same as pw.
-            if (data.password != data.confirm_password) {
-                alert("Passwords don't match!");
-                resetForm();
-            }
 
             try {
-                // remove confirm_password field
-                const sentData: SignUpData = {
-                    username: data.username,
-                    password: data.password
-                }
-
-                const res = await userClient.post(sentData);
-
-                if (res.type === "success") {
-                    const user = res.data;
-                    console.log("[useSignUpForm.handleSubmit] SUCCESSFULLY CREATED USER", user);
-
-                    navigate('/');
+                // check confirm pw is same as pw.
+                if (data.password != data.confirm_password) {
+                    alert("Passwords don't match!");
+                    resetForm();
                 } else {
-                    setError(res.error);
+                    // remove confirm_password field
+                    const sentData: SignUpData = {
+                        username: data.username,
+                        password: data.password
+                    }
+
+                    const res = await userClient.post(sentData);
+
+                    if (res.type === "success") {
+                        const user = res.data;
+                        console.log("[useSignUpForm.handleSubmit] SUCCESSFULLY CREATED USER", user);
+
+                        navigate('/');
+                    } else {
+                        setError(res.error);
+                    }
                 }
+                
             } catch (err: any) {
                 setError("An unknown error occurred.");
             } finally {
