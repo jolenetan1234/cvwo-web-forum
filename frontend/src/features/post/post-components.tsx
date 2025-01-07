@@ -82,17 +82,9 @@ const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }:
                     {/* flexbox for title and category chip */}
                     <Stack direction="row" alignItems="center">
                         {linkUrl ? (
-                            // <Link 
-                            // variant="h6"
-                            // sx={{ fontWeight: "bold" }}
-                            // href={linkUrl}
-                            // color="inherit"
-                            // >
-                            //     {post.title}
-                            // </Link>
                             <Typography
                             variant='h6'
-                            sx={{ fontWeight: 'bold', cursor: 'pointer'}}
+                            sx={{ fontWeight: "bold", cursor: "pointer", textDecorationLine: "underline" }}
                             onClick={() => navigate(linkUrl)}
                             >
                                 {post.title}

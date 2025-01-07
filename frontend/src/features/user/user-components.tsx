@@ -19,6 +19,7 @@ import { clearSessionInCookies } from "./user-utils";
 
 // action creators
 import { logout } from "./user-slice";
+import { useNavigate } from "react-router-dom";
 
 export function LoginButton(): JSX.Element {
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
@@ -51,8 +52,14 @@ export function LogoutButton(): JSX.Element {
 export function LoginForm(): JSX.Element {
     // hooks
     const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    const navigate = useNavigate();
 
     const handleClose = (): void => {
+        toggleLoginOpen();
+    }
+
+    const handleSignupClick = (): void => {
+        navigate("/signup");
         toggleLoginOpen();
     }
 
@@ -116,7 +123,15 @@ export function LoginForm(): JSX.Element {
 
                         <Stack sx={{ mt: 2, textAlign: "center" }}>
                             <Typography>No account?</Typography>
-                            <Link href={`${import.meta.env.VITE_APP_URL}/signup`} color="#0000EE">Create one!</Link>
+                            <Typography 
+                            color="#0000EE" 
+                            sx={{ textDecorationLine: "underline", cursor: "pointer" }}
+                            onClick={handleSignupClick}
+                            >
+                                Create one!
+                            </Typography>
+                            
+                            {/* <Link href={`${import.meta.env.VITE_APP_URL}/signup`} color="#0000EE">Create one!</Link> */}
                             {/* error message */}
                             {error ? <Typography>{error}</Typography> : <></>}
                         </Stack>
@@ -163,40 +178,25 @@ export function SignupForm(): JSX.Element {
         // dialog box
 
                 <Paper elevation={8} sx={{p: 2}}>
-                    {/* "Sign In" and close button */}
-                    <Stack 
-                    direction="row"
-                    alignItems="center"
-                    width="100%"
-                    >
-                        {/* Spacer for Avatar */}
-                        <Box 
-                        flexGrow={5}
-                        display="flex"
-                        justifyContent="flex-end" 
-                        >
-                        {/* Avatar */}
-                            <Avatar sx={{ 
-                                bgcolor: "secondary.main",
-                            }}>
-                                <LockOutlined />
-                            </Avatar>
-                        </Box>
 
-                        {/* Cancel button */}
-                        <Button 
-                        onClick={() => {}} 
-                        sx={{ color: "black", display:"flex", flexGrow:"4", justifyContent: "flex-end"}}>
-                            <Cancel />
-                        </Button>
+                    {/* Avatar and "Sign Up" text */}
+                    <Stack alignItems="center">
+                        {/* Avatar */}
+                        <Avatar sx={{ 
+                            bgcolor: "secondary.main",
+                        }}>
+                            <LockOutlined />
+                        </Avatar>
+
+                        {/* "Sign Up" text */}
+                        <Typography 
+                        variant="h6" 
+                        sx={{
+                            textAlign: "center"
+                        }}>
+                            Sign Up
+                        </Typography>
                     </Stack>
-                    <Typography 
-                    variant="h6" 
-                    sx={{
-                        textAlign: "center"
-                    }}>
-                        Sign Up
-                    </Typography>
 
                     {/* form component  */}
                     <Box
