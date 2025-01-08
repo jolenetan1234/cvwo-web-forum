@@ -1,7 +1,16 @@
 package dto
 
+// Creating enum-like type for `Status`
+type Status string
+
+// Enum-like constants for `Status`
+const (
+	Success Status = "success"
+	Error   Status = "error"
+)
+
 type APIResponse[T any] struct {
-	Status  string
-	Message string
-	Data    T
+	Status Status `json:"status"`
+	Data   T      `json:"data"`
+	Error  string `json:"error"`
 }

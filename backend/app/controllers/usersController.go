@@ -8,6 +8,8 @@ import (
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/dao"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/dto"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/initialisers"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // add new user
@@ -28,13 +30,19 @@ func CreateUser(c *gin.Context) {
 	bindErr := c.ShouldBindJSON(&createUserRequest)
 
 	if bindErr != nil {
+		log.Println("HELLLOOO ", bindErr)
 		// return error response
-		c.JSON(400, gin.H{
-			"status":  "error",
-			"message": "Failed to CREATE user: invalid request format",
-			"data":    nil,
+		c.JSON(400, dto.APIResponse[error]{
+			Status: dto.Error,
+			Data:   nil,
+			Error:  "Failed to CREATE user: Invalid request format",
 		})
+		return
 	}
+
+	// Hash the password
+	hash, _ := bcrypt.GenerateFromPassword([]byte(createUserRequest.Password), 15)
+	createUserRequest.Password = string(hash)
 
 	// Create a post (with GORM)
 	// Convert data to DAO form (if necessary)
@@ -43,20 +51,19 @@ func CreateUser(c *gin.Context) {
 		Password: createUserRequest.Password,
 	}
 
-	// Hash the password
 	// Add user to database
 	res := initialisers.DB.Create(&newUserDAO)
 
 	// Check for errors
 	if res.Error != nil {
 		// return error response
-		c.JSON(400, gin.H{
-			"status":  "error",
-			"message": "Failed to CREATE user",
-			"data":    nil,
+		c.JSON(400, dto.APIResponse[error]{
+			Status: dto.Error,
+			Data:   nil,
+			Error:  "Failed to CREATE user",
 		})
 
-		log.Fatal("Failed to CREATE user", res.Error)
+		log.Println("[controllers.CreateUser()] Failed to CREATE user: ", res.Error)
 		return
 	}
 
@@ -66,11 +73,10 @@ func CreateUser(c *gin.Context) {
 		Username: newUserDAO.Username,
 	}
 
-	//  Return the post in response body
-	c.JSON(200, gin.H{
-		"status":  "success",
-		"message": "Successfully created user",
-		"data":    newUserDTO,
+	c.JSON(200, dto.APIResponse[dto.User]{
+		Status: dto.Success,
+		Data:   newUserDTO,
+		Error:  "",
 	})
 
 }
