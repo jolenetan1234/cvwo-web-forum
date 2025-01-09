@@ -1,6 +1,6 @@
 // Struct of `User` exposed to frontend
 // Excludes sensitive fields  (Eg. password)
-package dto
+package resource
 
 // `User` - The type of `User` that is exposed to the frontend.
 type User struct {

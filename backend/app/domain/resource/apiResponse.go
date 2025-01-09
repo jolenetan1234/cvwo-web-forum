@@ -1,4 +1,4 @@
-package dto
+package resource
 
 // Creating enum-like type for `Status`
 type Status string
