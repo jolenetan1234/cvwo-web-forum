@@ -80,16 +80,6 @@ func (u UserServiceImpl) GetUserByID(id int) (resource.User, error) {
 	var userEntity entity.User
 	var err error
 
-	// convert ID to int
-	/*
-		val, convErr := strconv.Atoi(id)
-		if convErr != nil {
-			log.Println("[services.UserService.GetUserByID] Conversion error: ", convErr)
-			return resource.User{}, convErr
-		}
-	*/
-
-	// Pass to repository layer
 	userEntity, err = u.userRepo.GetByID(id)
 	if err != nil {
 		// If there's an error,

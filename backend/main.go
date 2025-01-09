@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/controllers"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/initialisers"
+	"github.com/jolenetan1234/cvwo-web-forum/backend/app/middleware"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/repositories"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/services"
 	"gorm.io/gorm"
@@ -64,7 +65,17 @@ func main() {
 	var userController controllers.UserController = controllers.InitUserController(userService)
 	var authController controllers.AuthController = controllers.InitAuthController(authService)
 
+	testController := func(c *gin.Context) {
+		user, _ := c.Get("user")
+
+		c.JSON(200, gin.H{
+			"ping": "poing",
+			"user": user,
+		})
+	}
+
 	// Routes
+	r.GET("/test", middleware.RequireAuth, testController)
 	r.POST("/users", userController.CreateUser)
 	r.GET("/users/:id", userController.GetUserById)
 
