@@ -1,6 +1,7 @@
 package services
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/entity"
@@ -10,29 +11,31 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Define struct
-type UserService struct {
-	userRepo repositories.UserRepo
-}
-
 // Define interface methods
-type UserServiceMethods interface {
+type UserService interface {
 	// CreateUser takes in a CreateUserRequest,
 	// sends it to the repository,
 	// converts the new user from Entity to Resource format,
-	// and returns a POINTER to it.
+	// and returns it.
 	CreateUser(createUserRequest resource.CreateUserRequest) (resource.User, error)
+	GetUserByID(id int) (resource.User, error)
+}
+
+// Define struct
+type UserServiceImpl struct {
+	userRepo repositories.UserRepo
 }
 
 // Constructor to create a new instance of UserService
-func InitUserService(userRepo repositories.UserRepo) UserService {
-	return UserService{
+// We return the concrete struct that implements the methods
+func InitUserService(userRepo repositories.UserRepo) UserServiceImpl {
+	return UserServiceImpl{
 		userRepo: userRepo,
 	}
 }
 
 // Implement interface methods
-func (userService UserService) CreateUser(createUserRequest resource.CreateUserRequest) (resource.User, error) {
+func (userServiceImpl UserServiceImpl) CreateUser(createUserRequest resource.CreateUserRequest) (resource.User, error) {
 	// TODO: implement
 	// The type of a `User` as per the database
 	var userEntity entity.User
@@ -54,30 +57,46 @@ func (userService UserService) CreateUser(createUserRequest resource.CreateUserR
 
 	// Add user to database
 	// TODO: send to UserRepository
-	userEntity, err = userService.userRepo.CreateUser(userEntity)
-	// res := initialisers.DB.Create(&userEntity)
-
-	// Check for errors
-	/*
-		if res.Error != nil {
-			userResource = resource.User{} // Simply return the zero value
-			err = res.Error
-
-			log.Println("[services.userService.CreateUser] Failed to CREATE user: ", res.Error)
-		} else {
-			// Format the new user to Resource
-			userResource = resource.User{
-				ID:       strconv.Itoa(userEntity.ID),
-				Username: userEntity.Username,
-			}
-			err = nil
-		}
-	*/
+	userEntity, err = userServiceImpl.userRepo.Create(userEntity)
 
 	if err != nil {
 		// If there's an error,
 		// simply return the zero value of `userResource`
 		userResource = resource.User{}
+	} else {
+		// Format the user to Resource
+		userResource = resource.User{
+			ID:       strconv.Itoa(userEntity.ID),
+			Username: userEntity.Username,
+		}
+	}
+
+	return userResource, err
+}
+
+func (u UserServiceImpl) GetUserByID(id int) (resource.User, error) {
+	// TODO: pass to repository
+	var userResource resource.User
+	var userEntity entity.User
+	var err error
+
+	// convert ID to int
+	/*
+		val, convErr := strconv.Atoi(id)
+		if convErr != nil {
+			log.Println("[services.UserService.GetUserByID] Conversion error: ", convErr)
+			return resource.User{}, convErr
+		}
+	*/
+
+	// Pass to repository layer
+	userEntity, err = u.userRepo.GetByID(id)
+	if err != nil {
+		// If there's an error,
+		// simply return the zero value of `userResource`
+		userResource = resource.User{}
+
+		log.Println("[services.UserService.GetUserByID] Failed to GET user by ID: ", err)
 	} else {
 		// Format the user to Resource
 		userResource = resource.User{

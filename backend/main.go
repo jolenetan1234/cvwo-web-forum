@@ -6,6 +6,7 @@ import (
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/initialisers"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/repositories"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/services"
+	"gorm.io/gorm"
 )
 
 func init() {
@@ -24,19 +25,20 @@ func main() {
 	})
 
 	// Initialise DB
-	db := initialisers.DB
+	var db *gorm.DB = initialisers.DB
 
 	// Initialise repositories
-	userRepo := repositories.InitUserRepo(db)
+	var userRepo repositories.UserRepo = repositories.InitUserRepo(db)
 
 	// Initialise services
-	userService := services.InitUserService(userRepo)
+	var userService services.UserService = services.InitUserService(userRepo)
 
 	// Initialise controllers
-	userController := controllers.InitUserController(userService)
+	var userController controllers.UserController = controllers.InitUserController(userService)
 
 	// Routes
 	r.POST("/users", userController.CreateUser)
+	r.GET("/users/:id", userController.GetUserById)
 
 	r.Run()
 
