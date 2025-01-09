@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/controllers"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/initialisers"
@@ -16,6 +17,9 @@ func init() {
 
 func main() {
 	r := gin.Default()
+
+	// Enable CORS for all origins (for local dev purposes)
+	r.Use(cors.Default())
 
 	// To test if server is running
 	r.GET("/", func(c *gin.Context) {
