@@ -9,6 +9,7 @@ import { UserState } from "../user/user-slice";
 import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost, deletePost } from "../../api/post-api";
 import { useSelector } from "react-redux";
 import { selectUserToken } from "../user/user-slice";
+import axios from "axios";
 
 class ForumPostClient extends ApiClient<Post> {
     async getAll(): Promise<ApiClientResponse<Post[]>> {
@@ -16,6 +17,8 @@ class ForumPostClient extends ApiClient<Post> {
             // TODO: replace with axios GET call
             // const data = await axios.get(")
             const res = await getAllPosts();
+            // const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
+            // console.log("TEST", test)
             
             const data = res.map(post => ({
                 ...post,
@@ -38,6 +41,8 @@ class ForumPostClient extends ApiClient<Post> {
             } else {
                 message = "An unknown error occurred.";
             }
+
+            console.log("[ForumPostClient.getAll] Failed to GET all posts", err)
 
             return {
                 type: "error",
