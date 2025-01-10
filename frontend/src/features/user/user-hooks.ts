@@ -63,11 +63,11 @@ export function useLoginForm(handleClose: () => void): UseFeatureFormResponse<Lo
                     // dispatch login, to update redux store
                     dispatch(login({
                         user: user,
-                        token: token,
+                        token: "h",
                     }));
 
                     // store session in browser cookies - can be accessed later on
-                    storeSessionInCookies(user, token);
+                    storeSessionInCookies(user, "h");
 
                     // close the form
                     handleClose();
