@@ -100,7 +100,7 @@ func (ac AuthControllerImpl) Login(c *gin.Context) {
 		Error:  "",
 	})
 
-	log.Println("[controllers.AuthController.Login] Successfully LOGIN user. User: ", userResource)
+	log.Println("[controllers.AuthController.Login] Successfully LOGIN user. USER: ", userResource, "TOKEN: ", token)
 
 	// format response
 	// ERROR1: Invalid username or password
