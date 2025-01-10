@@ -15,7 +15,8 @@ import userClient from "./user-api-client";
 import { useDispatch, useSelector } from "react-redux";
 // userActions
 import { login, logout } from "./user-slice";
-import { storeSessionInCookies } from "./user-utils";
+import { clearSessionInCookies, storeSessionInCookies } from "./user-utils";
+import { useAppDispatch } from "../../store/store-hooks";
 
 
 /**
@@ -31,7 +32,7 @@ interface useUserFormResponse<T> {
 }
     */
 
-export function useLoginForm(handleClose: () => void): UseFeatureFormResponse<LoginData> {
+const useLoginForm = (handleClose: () => void): UseFeatureFormResponse<LoginData> => {
     const initialData: LoginData = {
         username: "",
         password: "",
@@ -96,7 +97,7 @@ export function useLoginForm(handleClose: () => void): UseFeatureFormResponse<Lo
     };
 }
 
-export function useSignUpForm(handleClose: () => void): UseFeatureFormResponse<SignUpData> {
+const useSignUpForm = (handleClose: () => void): UseFeatureFormResponse<SignUpData> => {
     const initialData = {
         username: "",
         password: "",
@@ -167,3 +168,34 @@ export function useSignUpForm(handleClose: () => void): UseFeatureFormResponse<S
         handleSubmit
     }
 }
+
+const useLogout = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const dispatch = useAppDispatch();
+
+    const handleLogout = async () => {
+        setLoading(true);
+        const res = await userClient.logout();
+
+        if (res.type === "success") {
+            // REMOVE SESSION FROM COOKIES
+            clearSessionInCookies();
+
+            // UPDATE REDUX STORE
+            dispatch(logout());
+        } else {
+            setError(res.error);
+        }
+
+        setLoading(false);
+    }
+
+    return {
+        loading,
+        error,
+        handleLogout
+    }
+}
+
+export { useLoginForm, useSignUpForm, useLogout }

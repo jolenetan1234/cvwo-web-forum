@@ -89,9 +89,9 @@ class UserClient extends ApiClient<User> {
             console.log("[userClient.post] Failed to create user", err);
 
             if (err instanceof AxiosError) {
-                message = err.response?.data.error ?? '[userClient.post] Failed to create user: An unknown error occured.';
+                message = err.response?.data.error ?? 'Failed to create user: An unknown error occured.';
             } else {
-                message = '[userClient.post] Failed to create user: An unknown error occured.';
+                message = 'Failed to create user: An unknown error occured.';
             }
 
             return {
@@ -105,9 +105,6 @@ class UserClient extends ApiClient<User> {
     // TODO: refactor to just include user
     async login(credentials: LoginData): Promise<ApiClientResponse<LoginResponse>> {
         try {
-            // TODO: replace with axios POST call
-            // POST API_BASE_URL/user/login
-            // for now, userApi.login is the MOCK CONTROLLER for that endpoint.
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, credentials, { withCredentials: true })
 
             // const apiResponse: ApiResponse<LoginResponse> = res.data;
@@ -129,13 +126,43 @@ class UserClient extends ApiClient<User> {
 
         } catch (err: any) {
             let message;
-           
-            if (err.status === 401) {
-                message = err.message;
-            } else {
-                message = "An unknown error occurred.";
-            };
 
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to login user: An unknown error occured.';
+            } else {
+                message = 'Failed to create user: An unknown error occured.';
+            }
+           
+            return {
+                type: "error",
+                data: null,
+                error: message,
+            };
+        }
+    }
+
+    async logout(): Promise<ApiClientResponse<null>> {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
+                withCredentials: true
+            });
+
+            console.log("[userClient.logout] Successfully log out", res);
+
+            return {
+                type: "success",
+                data: null,
+                error: "",
+            }
+        } catch (err: any) {
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to logout: An unknown error occured.';
+            } else {
+                message = 'Failed to logout: An unknown error occured.';
+            }
+           
             return {
                 type: "error",
                 data: null,

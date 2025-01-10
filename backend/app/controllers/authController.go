@@ -13,6 +13,7 @@ import (
 // Define interface
 type AuthController interface {
 	Login(c *gin.Context)
+	Logout(c *gin.Context)
 }
 
 // Define implementation struct type
@@ -36,9 +37,10 @@ func (ac AuthControllerImpl) Login(c *gin.Context) {
 	if bindErr != nil {
 		// return error response
 		c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
-			Status: resource.Error,
-			Data:   nil,
-			Error:  "Invalid request format",
+			Status:  resource.Error,
+			Message: "Failed to login",
+			Data:    nil,
+			Error:   "Invalid request format",
 		})
 
 		log.Println("[controllers.AuthController.Login] Failed to LOGIN user: Invalid request format", bindErr)
@@ -58,15 +60,17 @@ func (ac AuthControllerImpl) Login(c *gin.Context) {
 			// }
 			// return loginResponse, nil:
 			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
-				Status: resource.Error,
-				Data:   nil,
-				Error:  err.Error(),
+				Status:  resource.Error,
+				Message: "Failed to login",
+				Data:    nil,
+				Error:   err.Error(),
 			})
 		default:
 			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
-				Status: resource.Error,
-				Data:   nil,
-				Error:  "An unexpected error occurred",
+				Status:  resource.Error,
+				Message: "Failed to login",
+				Data:    nil,
+				Error:   "An unexpected error occurred",
 			})
 		}
 
@@ -95,16 +99,25 @@ func (ac AuthControllerImpl) Login(c *gin.Context) {
 	*/
 
 	c.JSON(http.StatusOK, resource.APIResponse[resource.User]{
-		Status: resource.Success,
-		Data:   userResource,
-		Error:  "",
+		Status:  resource.Success,
+		Message: "Successfully logged in",
+		Data:    userResource,
+		Error:   "",
 	})
 
 	log.Println("[controllers.AuthController.Login] Successfully LOGIN user. USER: ", userResource, "TOKEN: ", token)
 
-	// format response
-	// ERROR1: Invalid username or password
-	// ERROR2: An unexpected error occurred
+}
 
-	// return success response
+func (ac AuthControllerImpl) Logout(c *gin.Context) {
+	// Clear the cookie by setting an expiration time in the past
+	c.SetCookie("Authorization", "", -1, "", "", false, true)
+
+	// RETURN SUCCESS RESPONSE
+	c.JSON(http.StatusOK, resource.APIResponse[*resource.User]{
+		Status:  resource.Success,
+		Message: "Successfully logged out",
+		Data:    nil,
+		Error:   "",
+	})
 }

@@ -93,6 +93,7 @@ func main() {
 
 	// Auth
 	r.POST("login", authController.Login)
+	r.GET("logout", authController.Logout)
 
 	r.Run()
 

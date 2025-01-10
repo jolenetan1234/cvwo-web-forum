@@ -6,7 +6,7 @@ import { StyledHeader, SubmitButton } from "../../common/components/Form";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext";
 
 // hooks
-import { useLoginForm, useSignUpForm } from "./user-hooks";
+import { useLoginForm, useLogout, useSignUpForm } from "./user-hooks";
 import { useDispatch } from "react-redux";
 
 // types
@@ -33,18 +33,21 @@ export function LoginButton(): JSX.Element {
 }
 
 export function LogoutButton(): JSX.Element {
-    const dispatch = useDispatch();
 
-    const onClick = () => {
-        // REMOVE SESSION FROM COOKIES
-        clearSessionInCookies();
+    const { loading, error, handleLogout } = useLogout();
 
-        // UPDATE REDUX STORE
-        dispatch(logout());
-    }
+    // const dispatch = useDispatch();
+
+    // const onClick = () => {
+    //     // REMOVE SESSION FROM COOKIES
+    //     clearSessionInCookies();
+
+    //     // UPDATE REDUX STORE
+    //     dispatch(logout());
+    // }
 
     return (
-        <StyledButton content="Logout" onClick = {onClick} />
+        <StyledButton content="Logout" onClick = {handleLogout} />
     );
 }
 
