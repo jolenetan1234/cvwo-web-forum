@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"log"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -41,7 +42,18 @@ func main() {
 	r := gin.Default()
 
 	// Enable CORS for all origins (for local dev purposes)
-	r.Use(cors.Default())
+	// r.Use(cors.Default())
+	// CORS config
+	config := cors.DefaultConfig()
+	// config.AllowAllOrigins = true
+	config.AllowOrigins = []string{"http://localhost:3000"} // For dev purposes
+	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true // Allows cookies and credentials
+	config.MaxAge = 12 * time.Hour
+
+	r.Use(cors.New(config))
 
 	// To test if server is running
 	r.GET("/", func(c *gin.Context) {

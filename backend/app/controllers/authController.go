@@ -76,21 +76,31 @@ func (ac AuthControllerImpl) Login(c *gin.Context) {
 
 	// SET COOKIES
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("Authorisation", token, 3600*24*30, "", "", false, true)
+	c.SetCookie("Authorization", token, 3600*24*30, "", "", false, true)
 
 	// RETURN SUCCESS RESPONSE
-	loginResponse := resource.LoginResponse{
-		User:  userResource,
-		Token: token,
-	}
+	/*
+		loginResponse := resource.LoginResponse{
+			User:  userResource,
+			Token: token,
+		}
+	*/
 
-	c.JSON(http.StatusOK, resource.APIResponse[resource.LoginResponse]{
+	/*
+		c.JSON(http.StatusOK, resource.APIResponse[resource.LoginResponse]{
+			Status: resource.Success,
+			Data:   loginResponse,
+			Error:  "",
+		})
+	*/
+
+	c.JSON(http.StatusOK, resource.APIResponse[resource.User]{
 		Status: resource.Success,
-		Data:   loginResponse,
+		Data:   userResource,
 		Error:  "",
 	})
 
-	log.Println("[controllers.AuthController.Login] Successfully LOGIN user. LoginResponse: ", loginResponse)
+	log.Println("[controllers.AuthController.Login] Successfully LOGIN user. User: ", userResource)
 
 	// format response
 	// ERROR1: Invalid username or password

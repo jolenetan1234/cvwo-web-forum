@@ -17,8 +17,6 @@ class ForumPostClient extends ApiClient<Post> {
             // TODO: replace with axios GET call
             // const data = await axios.get(")
             const res = await getAllPosts();
-            // const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
-            // console.log("TEST", test)
             
             const data = res.map(post => ({
                 ...post,
@@ -134,6 +132,10 @@ class ForumPostClient extends ApiClient<Post> {
     async post(newPost: NewPost, token: string): Promise<ApiClientResponse<Post>> {
         try {
 
+            const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
+            // console.log("TEST", test)
+
+            // HARDCODED (the token stored here is fake so doesn't matter)
             if (!token) {
                 return {
                     type: 'error',

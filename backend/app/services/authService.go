@@ -48,9 +48,9 @@ func (as AuthServiceImpl) Login(loginReq resource.LoginRequest) (resource.User, 
 		// If cannot find user,
 		// Simply set the loginResponse as the zero value
 		// And return `ErrInvalidCredentials`.
+		log.Println("[services.AuthService.Login] Failed to LOGIN user. Error: ", repoErr)
 		return resource.User{}, "", commonerrors.ErrInvalidCredentials
 		// loginResponse = resource.LoginResponse{}
-		log.Println("[services.AuthService.Login] Failed to LOGIN user. Error: ", repoErr)
 		// return loginResponse, commonerrors.ErrInvalidCredentials
 	}
 

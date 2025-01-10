@@ -110,15 +110,20 @@ class UserClient extends ApiClient<User> {
             // for now, userApi.login is the MOCK CONTROLLER for that endpoint.
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, credentials)
 
-            const apiResponse: ApiResponse<LoginResponse> = res.data;
+            // const apiResponse: ApiResponse<LoginResponse> = res.data;
+            const apiResponse: ApiResponse<User> = res.data;
 
-            const loginResponse = apiResponse.data;
+            const user = apiResponse.data;
+            // const loginResponse = apiResponse.data;
 
             // const loginResponse = await userApi.login(credentials);
 
             return {
                 type: "success",
-                data: loginResponse,
+                data: {
+                    user: user,
+                    token: "fake-jwt-token"
+                },
                 error: "",
             };
 
