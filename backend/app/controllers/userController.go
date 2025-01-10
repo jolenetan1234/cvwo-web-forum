@@ -40,9 +40,10 @@ func (u UserControllerImpl) CreateUser(c *gin.Context) {
 
 	if bindErr != nil {
 		c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
-			Status: resource.Error,
-			Data:   nil,
-			Error:  "Invalid request format",
+			Status:  resource.Error,
+			Message: "Failed to create user",
+			Data:    nil,
+			Error:   "Invalid request format",
 		})
 
 		log.Println("[controllers.UserController.CreateUser] Failed to CREATE user: Invalid request format", bindErr)
@@ -58,16 +59,18 @@ func (u UserControllerImpl) CreateUser(c *gin.Context) {
 		// DON'T KNOW WHY THIS  DOESN'T WORK
 		if err == gorm.ErrDuplicatedKey {
 			c.JSON(http.StatusConflict, resource.APIResponse[error]{
-				Status: resource.Error,
-				Data:   nil,
-				Error:  "Username already exists.",
+				Status:  resource.Error,
+				Message: "Failed to create user",
+				Data:    nil,
+				Error:   "Username already exists.",
 			})
 		} else {
 			// return error response
 			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
-				Status: resource.Error,
-				Data:   nil,
-				Error:  "An unexpected error occurred.",
+				Status:  resource.Error,
+				Message: "Failed to create user",
+				Data:    nil,
+				Error:   "An unexpected error occurred.",
 			})
 		}
 
@@ -76,9 +79,10 @@ func (u UserControllerImpl) CreateUser(c *gin.Context) {
 	} else {
 		// return success response
 		c.JSON(http.StatusOK, resource.APIResponse[resource.User]{
-			Status: resource.Success,
-			Data:   userResource,
-			Error:  "",
+			Status:  resource.Success,
+			Message: "Failed to create user",
+			Data:    userResource,
+			Error:   "",
 		})
 
 		log.Println("[controllers.UserController.CreateUser] Successfully CREATE user: ", userResource)
@@ -94,9 +98,10 @@ func (u UserControllerImpl) GetUserById(c *gin.Context) {
 	if convErr != nil {
 		// return error response
 		c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
-			Status: resource.Error,
-			Data:   nil,
-			Error:  "Invalid user ID format",
+			Status:  resource.Error,
+			Message: "Failed to get user",
+			Data:    nil,
+			Error:   "Invalid user ID format",
 		})
 
 		log.Println("[controllers.UserController.GetUserByID] Conversion error: ", convErr)
@@ -111,16 +116,18 @@ func (u UserControllerImpl) GetUserById(c *gin.Context) {
 		if err == gorm.ErrRecordNotFound {
 			// return error response
 			c.JSON(http.StatusNotFound, resource.APIResponse[error]{
-				Status: resource.Error,
-				Data:   nil,
-				Error:  "User not found",
+				Status:  resource.Error,
+				Message: "Failed to get user",
+				Data:    nil,
+				Error:   "User not found",
 			})
 		} else {
 			// return error response
 			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
-				Status: resource.Error,
-				Data:   nil,
-				Error:  "Internal server error",
+				Status:  resource.Error,
+				Message: "Failed to get user",
+				Data:    nil,
+				Error:   "Internal server error",
 			})
 		}
 		log.Println("[controllers.UserController.GetUserById] Failed to GET user by id: ", err)
@@ -128,9 +135,10 @@ func (u UserControllerImpl) GetUserById(c *gin.Context) {
 	} else {
 		// return success response
 		c.JSON(http.StatusOK, resource.APIResponse[resource.User]{
-			Status: resource.Success,
-			Data:   userResource,
-			Error:  "",
+			Status:  resource.Success,
+			Message: "Successfully get user",
+			Data:    userResource,
+			Error:   "",
 		})
 
 		log.Println("[controllers.UserController.GetUserByID] Successfully GET user by id: ", userResource)

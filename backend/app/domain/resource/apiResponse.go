@@ -10,7 +10,8 @@ const (
 )
 
 type APIResponse[T any] struct {
-	Status Status `json:"status"`
-	Data   T      `json:"data"`
-	Error  string `json:"error"`
+	Status  Status `json:"status"`
+	Message string `json:"message"`
+	Data    T      `json:"data"`
+	Error   string `json:"error"`
 }
