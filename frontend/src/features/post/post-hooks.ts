@@ -144,7 +144,7 @@ export function useCreatePostForm(handleClose: () => void): UseFeatureFormRespon
     };
 }
 
-export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
+export function useEditPostForm(post: Post, handleClose: () => void): UseFeatureFormResponse<UpdatedPost> {
 
     const dispatch = useAppDispatch();
     const token = useSelector(selectUserToken);
@@ -197,6 +197,7 @@ export function useEditPostForm(/*postId: string,*/ post: Post, handleClose: () 
                     handleClose();
                 }
             } catch (err: any) {
+                console.log("[useEditPostForm.handleSubmit] Failed to update post", err);
                 if (typeof err === 'string') {
                     setError(err);
                 } else {

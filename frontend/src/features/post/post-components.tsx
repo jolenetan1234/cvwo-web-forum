@@ -445,6 +445,8 @@ function CreatePostForm(): JSX.Element {
                         loading={loading}
                         sx={{ mt: 2 }}
                         />
+
+                        {error ? <ErrorMessage message={error} /> : <></>}
                     </Box>
                         
 
@@ -585,6 +587,8 @@ function EditPostForm({ post }: {
                         loading={loading}
                         sx={{ mt: 2 }}
                         />
+
+                        {error ? <ErrorMessage message={error} /> : <></>}
                     </Box>
                         
 

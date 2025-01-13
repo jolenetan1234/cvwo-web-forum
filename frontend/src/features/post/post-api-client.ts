@@ -1,7 +1,7 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 
 // types
-import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
+import Post, { NewPost, UpdatedPost } from "./post-types";
 import MockError from "../../common/errors/MockError";
 import { UserState } from "../user/user-slice";
 
@@ -15,20 +15,10 @@ import { ApiResponse } from "../../common/types/common-types";
 class ForumPostClient extends ApiClient<Post> {
     async getAll(): Promise<ApiClientResponse<Post[]>> {
         try {
-            // TODO: replace with axios GET call
-            // const data = await axios.get(")
-            // const res = await getAllPosts();
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
             const apiResponse: ApiResponse<Post[]> = res.data;
             const data = apiResponse.data;
             
-            // const data = res.map(post => ({
-            //     ...post,
-            //     id: post.id.toString(),
-            //     category_id: post.category_id.toString(),
-            //     user_id: post.user_id.toString(),
-            // }));
-
             return {
                 type: "success",
                 data: data,
@@ -136,39 +126,38 @@ class ForumPostClient extends ApiClient<Post> {
 
     async post(newPost: NewPost, token: string): Promise<ApiClientResponse<Post>> {
         try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/posts`, newPost, { withCredentials: true });
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data
 
-            const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
-            // console.log("TEST", test)
+            console.log("[forumPostClient.post] Successfully CREATE new post", res);
 
-            // HARDCODED (the token stored here is fake so doesn't matter)
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to CREATE post: User unauthorised',
-                };
-            };
+            // const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
 
-            // reformat data to send to backend
-            // TODO: reformat based on actual backend needs (Eg. send token in header,)
-            // const token = useSelector(selectUserToken); // CANNOT! Hooks can only be called WITHIN a component.
-            // console.log("[postApi.post] userToken", userToken);
+            // // HARDCODED (the token stored here is fake so doesn't matter)
+            // if (!token) {
+            //     return {
+            //         type: 'error',
+            //         data: null,
+            //         error: 'Failed to CREATE post: User unauthorised',
+            //     };
+            // };
 
-            const sentData = {
-                ...newPost,
-                category_id: parseInt(newPost.category_id),
-            };
+            // const sentData = {
+            //     ...newPost,
+            //     category_id: parseInt(newPost.category_id),
+            // };
 
-            // TODO: replace with actual API call
-            const res = await createPost(sentData);
+            // // TODO: replace with actual API call
+            // const res = await createPost(sentData);
 
-            // TODO: reformat data (if needed) to match `Post`.
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                category_id: res.category_id.toString(),
-                user_id: res.user_id.toString(),
-            };
+            // // TODO: reformat data (if needed) to match `Post`.
+            // const data = {
+            //     ...res,
+            //     id: res.id.toString(),
+            //     category_id: res.category_id.toString(),
+            //     user_id: res.user_id.toString(),
+            // };
 
             return {
                 type: "success",
