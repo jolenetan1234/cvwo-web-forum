@@ -9,7 +9,7 @@ import { UserState } from "../user/user-slice";
 import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost, deletePost } from "../../api/post-api";
 import { useSelector } from "react-redux";
 import { selectUserToken } from "../user/user-slice";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ApiResponse } from "../../common/types/common-types";
 
 class ForumPostClient extends ApiClient<Post> {
@@ -27,15 +27,13 @@ class ForumPostClient extends ApiClient<Post> {
 
         } catch (err: any) {
             let message;
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to logout: An unknown error occured.';
             } else {
-                message = "An unknown error occurred.";
+                message = 'Failed to logout: An unknown error occured.';
             }
-
-            console.log("[ForumPostClient.getAll] Failed to GET all posts", err)
-
+           
             return {
                 type: "error",
                 data: null,
@@ -44,19 +42,23 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
+    // UNUSED; can delete.
+    /*
     async getById(postId: string): Promise<ApiClientResponse<Post>> {
         try {
-            // TODO: replace with axios GET call
-            // const data = await axios.get("API_BASE_URL/post/postId")
+            // console.log("forumPostClient.getById(id)", postId);
+            // const res = await getPostById(parseInt(postId));
+            // const data = {
+            //     ...res,
+            //     id: res.id.toString(),
+            //     category_id: res.category_id.toString(),
+            //     user_id: res.user_id.toString(),
+            // }
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${postId}`);
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data;
 
-            console.log("forumPostClient.getById(id)", postId);
-            const res = await getPostById(parseInt(postId));
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                category_id: res.category_id.toString(),
-                user_id: res.user_id.toString(),
-            }
+            console.log("[forumPostClient.getById] Successfully get post by id", res);
 
             return {
                 type: "success",
@@ -67,13 +69,14 @@ class ForumPostClient extends ApiClient<Post> {
         } catch (err: any) {
             let message;
 
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to logout: An unknown error occured.';
             } else {
-                message = "An unknown error occurred.";
+                message = 'Failed to logout: An unknown error occured.';
             }
 
+            console.log("[forumPostClient.getbyId] Failed to get post by id", err);
+           
             return {
                 type: "error",
                 data: null,
@@ -81,7 +84,10 @@ class ForumPostClient extends ApiClient<Post> {
             };
         }
     }
+        */
 
+    /*
+    // UNUSED; CAN DELETE.
     async getByCategories(categories: string[]): Promise<ApiClientResponse<Post[]>> {
         try {
             // if no categories, simply return everything.
@@ -123,6 +129,7 @@ class ForumPostClient extends ApiClient<Post> {
             };
         }
     }
+        */
 
     async post(newPost: NewPost, token: string): Promise<ApiClientResponse<Post>> {
         try {
@@ -132,33 +139,6 @@ class ForumPostClient extends ApiClient<Post> {
 
             console.log("[forumPostClient.post] Successfully CREATE new post", res);
 
-            // const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
-
-            // // HARDCODED (the token stored here is fake so doesn't matter)
-            // if (!token) {
-            //     return {
-            //         type: 'error',
-            //         data: null,
-            //         error: 'Failed to CREATE post: User unauthorised',
-            //     };
-            // };
-
-            // const sentData = {
-            //     ...newPost,
-            //     category_id: parseInt(newPost.category_id),
-            // };
-
-            // // TODO: replace with actual API call
-            // const res = await createPost(sentData);
-
-            // // TODO: reformat data (if needed) to match `Post`.
-            // const data = {
-            //     ...res,
-            //     id: res.id.toString(),
-            //     category_id: res.category_id.toString(),
-            //     user_id: res.user_id.toString(),
-            // };
-
             return {
                 type: "success",
                 data: data,
@@ -166,15 +146,6 @@ class ForumPostClient extends ApiClient<Post> {
             }
         } catch (err: any) {
             const message = err.message || "An unexpected error occurred.";
-
-            // message = err;
-            /*
-            if (err.status === 401) {
-                message = err.message;
-            } else {
-                message = "An unknown error occurred.";
-            };
-            */
 
             return {
                 type: "error",
