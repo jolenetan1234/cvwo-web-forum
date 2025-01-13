@@ -14,6 +14,7 @@ import (
 // Define interface
 type PostsService interface {
 	GetAll() ([]resource.Post, error)
+	GetById(id string) (resource.Post, error)
 	GetPostsByCategories(catIds []string) ([]resource.Post, error)
 	CreatePost(req resource.CreatePostRequest, userId int) (resource.Post, error)
 }
@@ -51,6 +52,33 @@ func (ps PostsServiceImpl) GetAll() ([]resource.Post, error) {
 		log.Println("[services.PostsService.GetAll] Successfully GET all posts", postsResource)
 		return postsResource, nil
 	}
+}
+
+func (ps PostsServiceImpl) GetById(id string) (resource.Post, error) {
+	var postResource resource.Post
+	var postEntity entity.Post
+	var err error
+
+	// Format ID
+	val, err := strconv.Atoi(id)
+	if err != nil {
+		return resource.Post{}, commonerrors.ErrInvalidReqFormat
+	}
+
+	// Call the repo layer
+	postEntity, err = ps.repo.GetById(val)
+	if err != nil {
+		// If there's an error,
+		// simply return the zero value of `userResource`
+		postResource = resource.Post{}
+
+		log.Println("[services.PostsService.GetByI] Failed to GET post by ID: ", err)
+	} else {
+		// Format the user to Resource
+		postResource = utils.PostMapper(postEntity)
+	}
+
+	return postResource, err
 }
 
 func (ps PostsServiceImpl) GetPostsByCategories(catIds []string) ([]resource.Post, error) {

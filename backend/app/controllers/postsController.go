@@ -9,11 +9,13 @@ import (
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/commonerrors"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/resource"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/services"
+	"gorm.io/gorm"
 )
 
 // Define interface
 type PostsController interface {
 	GetAll(c *gin.Context)
+	GetById(c *gin.Context)
 	// GetPostsByCategories(c *gin.Context)
 	CreatePost(c *gin.Context)
 }
@@ -57,6 +59,50 @@ func (pc PostsControllerImpl) GetAll(c *gin.Context) {
 	}
 
 	log.Println("[controllers.PostsController.GetAll]", posts)
+
+}
+
+func (pc PostsControllerImpl) GetById(c *gin.Context) {
+
+	// Get id off url
+	var id string = c.Param("id")
+
+	// Send request to service layer
+	postResource, err := pc.service.GetById(id)
+
+	// Format response
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// return error response
+			c.JSON(http.StatusNotFound, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to get post",
+				Data:    nil,
+				Error:   "Post not found",
+			})
+		} else {
+			// return error response
+			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to get post",
+				Data:    nil,
+				Error:   "Internal server error",
+			})
+		}
+		log.Println("[controllers.PostsController.GetById] Failed to GET post by id: ", err)
+		return
+	} else {
+		// return success response
+		c.JSON(http.StatusOK, resource.APIResponse[resource.Post]{
+			Status:  resource.Success,
+			Message: "Successfully get post",
+			Data:    postResource,
+			Error:   "",
+		})
+
+		log.Println("[controllers.PostsController.GetById] Successfully GET post by id: ", postResource)
+		return
+	}
 
 }
 

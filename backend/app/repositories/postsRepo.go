@@ -10,6 +10,7 @@ import (
 // Define interface
 type PostsRepo interface {
 	GetAll() ([]entity.Post, error)
+	GetById(id int) (entity.Post, error)
 	GetPostsByCategories(catIds []int) ([]entity.Post, error)
 	CreatePost(entity.Post) (entity.Post, error)
 }
@@ -36,6 +37,18 @@ func (pr PostsRepoImpl) GetAll() ([]entity.Post, error) {
 		return nil, err
 	} else {
 		return posts, nil
+	}
+}
+
+func (pr PostsRepoImpl) GetById(id int) (entity.Post, error) {
+	var post entity.Post
+	err := pr.db.First(&post, id).Error
+
+	if err != nil {
+		log.Println("[repositories.PostsRepo.GetById] Failed to get post by ID", err)
+		return entity.Post{}, err
+	} else {
+		return post, nil
 	}
 }
 
