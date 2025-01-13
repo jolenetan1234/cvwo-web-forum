@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/entity"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/resource"
@@ -12,6 +13,7 @@ import (
 // Define interface
 type CategoriesService interface {
 	GetAll() ([]resource.Category, error)
+	GetById(id string) (resource.Category, error)
 }
 
 // Define implementation struct
@@ -47,4 +49,31 @@ func (cs CategoriesServiceImpl) GetAll() ([]resource.Category, error) {
 		log.Println("[services.CategoriesService.GetAll] Successfully GET all categories", catResource)
 		return catResource, nil
 	}
+}
+
+func (cs CategoriesServiceImpl) GetById(id string) (resource.Category, error) {
+	var catResource resource.Category
+	var catEntity entity.Category
+	var err error
+
+	// convert ID to int
+	val, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		return resource.Category{}, convErr
+	}
+
+	// Call the repo layer
+	catEntity, err = cs.repo.GetById(val)
+	if err != nil {
+		// If there's an error,
+		// simply return the zero value of `userResource`
+		catResource = resource.Category{}
+
+		log.Println("[services.UserService.GetUserByID] Failed to GET user by ID: ", err)
+	} else {
+		// Format the user to Resource
+		catResource = utils.CategoryMapper(catEntity)
+	}
+
+	return catResource, err
 }

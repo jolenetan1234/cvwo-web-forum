@@ -81,7 +81,7 @@ func (u UserControllerImpl) CreateUser(c *gin.Context) {
 		// return success response
 		c.JSON(http.StatusOK, resource.APIResponse[resource.User]{
 			Status:  resource.Success,
-			Message: "Failed to create user",
+			Message: "Successfully created user",
 			Data:    userResource,
 			Error:   "",
 		})

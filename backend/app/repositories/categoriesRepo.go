@@ -10,6 +10,7 @@ import (
 // Define interface
 type CategoriesRepo interface {
 	GetAll() ([]entity.Category, error)
+	GetById(id int) (entity.Category, error)
 }
 
 // Define implementation struct
@@ -32,5 +33,17 @@ func (cr CategoriesRepoImpl) GetAll() ([]entity.Category, error) {
 		return nil, err
 	} else {
 		return categories, nil
+	}
+}
+
+func (cr CategoriesRepoImpl) GetById(id int) (entity.Category, error) {
+	var cat entity.Category
+	err := cr.db.First(&cat, id).Error
+
+	if err != nil {
+		log.Println("[repositories.CategoriesRepo.GetById] Failed to get category by ID", err)
+		return entity.Category{}, err
+	} else {
+		return cat, nil
 	}
 }
