@@ -77,7 +77,6 @@ func (userServiceImpl UserServiceImpl) CreateUser(createUserRequest resource.Cre
 }
 
 func (u UserServiceImpl) GetUserByID(id int) (resource.User, error) {
-	// TODO: pass to repository
 	var userResource resource.User
 	var userEntity entity.User
 	var err error
