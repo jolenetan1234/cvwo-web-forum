@@ -109,7 +109,7 @@ func main() {
 	r.GET("categories", categoriesController.GetAll)
 
 	// Posts
-	r.GET("/posts", postsController.GetAllPosts)
+	r.GET("/posts", postsController.GetAll)
 
 	r.Run()
 

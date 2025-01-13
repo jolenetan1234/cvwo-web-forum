@@ -1,9 +1,16 @@
 package repositories
 
-import "gorm.io/gorm"
+import (
+	"log"
+
+	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/entity"
+	"gorm.io/gorm"
+)
 
 // Define interface
 type PostsRepo interface {
+	GetAll() ([]entity.Post, error)
+	GetPostsByCategories(catIds []int) ([]entity.Post, error)
 }
 
 // Define implementation struct
@@ -19,3 +26,18 @@ func InitPostsRepo(db *gorm.DB) PostsRepoImpl {
 }
 
 // Implement methods
+func (pr PostsRepoImpl) GetAll() ([]entity.Post, error) {
+	var posts []entity.Post
+	err := pr.db.Find(&posts).Error
+
+	if err != nil {
+		log.Println("[repositories.PostsRepo.GetAll] Failed to GET all posts", err)
+		return nil, err
+	} else {
+		return posts, nil
+	}
+}
+
+func (pr PostsRepoImpl) GetPostsByCategories(catIds []int) ([]entity.Post, error) {
+	return make([]entity.Post, 0), nil
+}

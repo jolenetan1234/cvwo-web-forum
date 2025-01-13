@@ -16,7 +16,7 @@ func SyncDB() {
 		&entity.Comment{},
 	)
 	if err != nil {
-		log.Fatalf("[initialisers.SyncDB] Error dropping tables", err)
+		log.Fatalf("[initialisers.SyncDB] Error dropping tables: %v", err)
 	}
 	log.Println("[initialisers.SyncDB] Successfully DROPPED TABLES")
 
@@ -29,7 +29,7 @@ func SyncDB() {
 		&entity.Comment{},
 	)
 	if err != nil {
-		log.Fatalf("[initialiers.SyncDB] Error automigrating", err)
+		log.Fatalf("[initialiers.SyncDB] Error automigrating: %v", err)
 	}
 
 	// `User{}` Creates an instance of the `User` struct with default values for the fields
@@ -37,6 +37,8 @@ func SyncDB() {
 
 	// Seed the DB
 	seed.SeedCategories(DB)
+	seed.SeedUsers(DB)
+	seed.SeedPosts(DB)
 
 	log.Println("[initialisers.SyncDB] Successfully SEEDED the database")
 }
