@@ -10,20 +10,24 @@ import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost, 
 import { useSelector } from "react-redux";
 import { selectUserToken } from "../user/user-slice";
 import axios from "axios";
+import { ApiResponse } from "../../common/types/common-types";
 
 class ForumPostClient extends ApiClient<Post> {
     async getAll(): Promise<ApiClientResponse<Post[]>> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get(")
-            const res = await getAllPosts();
+            // const res = await getAllPosts();
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
+            const apiResponse: ApiResponse<Post[]> = res.data;
+            const data = apiResponse.data;
             
-            const data = res.map(post => ({
-                ...post,
-                id: post.id.toString(),
-                category_id: post.category_id.toString(),
-                user_id: post.user_id.toString(),
-            }));
+            // const data = res.map(post => ({
+            //     ...post,
+            //     id: post.id.toString(),
+            //     category_id: post.category_id.toString(),
+            //     user_id: post.user_id.toString(),
+            // }));
 
             return {
                 type: "success",
@@ -93,6 +97,7 @@ class ForumPostClient extends ApiClient<Post> {
             // if no categories, simply return everything.
             let res;
             if (categories.length <= 0) {
+                // TODO: replace with axios
                res = await getAllPosts();
             } else {
                 // TODO: replace with axios

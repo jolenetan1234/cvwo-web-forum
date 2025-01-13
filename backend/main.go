@@ -107,6 +107,7 @@ func main() {
 
 	// Categories
 	r.GET("categories", categoriesController.GetAll)
+	r.GET("categories/:id", categoriesController.GetById)
 
 	// Posts
 	r.GET("/posts", postsController.GetAll)

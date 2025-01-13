@@ -50,7 +50,7 @@ export function CategoryHeader({ handleCategoryChange, handleCategoryDelete, sel
 
                       {selected.map((catId) => {
                           // we do this to access the label of each category
-                          const category = categories?.find(cat => cat.value === catId);
+                          const category = categories?.find(cat => cat.id === catId);
                           return (
                           <Chip
                           key={catId} 

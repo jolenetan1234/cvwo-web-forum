@@ -31,7 +31,7 @@ func CategoryMapper(cat entity.Category) resource.Category {
 
 func PostMapper(post entity.Post) resource.Post {
 	res := resource.Post{
-		ID:         fmt.Sprintf("$d", post.ID),
+		ID:         fmt.Sprintf("%d", post.ID),
 		Title:      post.Title,
 		Content:    post.Content,
 		CategoryID: fmt.Sprintf("%d", post.CategoryID),

@@ -56,12 +56,12 @@ class CategoryClient extends ApiClient<Category> {
             // const data = await axios.get("API_BASE_URL/category/categoryId")
 
             console.log("categoryClient.getById(id)", categoryId);
-            const res = await getCategorybyId(parseInt(categoryId));
-           
-            const data = {
-                ...res,
-                id: res.id.toString()
-            }
+            // const res = await getCategorybyId(parseInt(categoryId));
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/categories/${categoryId}`);
+            const apiResponse: ApiResponse<Category> = res.data;
+            const data = apiResponse.data;
+            
+            console.log("[categoryClient.getById] Successfully GET category by id", res);
 
             return {
                 type: "success",
