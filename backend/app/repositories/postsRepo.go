@@ -11,6 +11,7 @@ import (
 type PostsRepo interface {
 	GetAll() ([]entity.Post, error)
 	GetPostsByCategories(catIds []int) ([]entity.Post, error)
+	CreatePost(entity.Post) (entity.Post, error)
 }
 
 // Define implementation struct
@@ -40,4 +41,15 @@ func (pr PostsRepoImpl) GetAll() ([]entity.Post, error) {
 
 func (pr PostsRepoImpl) GetPostsByCategories(catIds []int) ([]entity.Post, error) {
 	return make([]entity.Post, 0), nil
+}
+
+func (pr PostsRepoImpl) CreatePost(post entity.Post) (entity.Post, error) {
+	err := pr.db.Create(&post).Error
+
+	if err != nil {
+		log.Println("[repositories.PostsRepo.CreatePost] Failed to CREATE post: ", err)
+		return entity.Post{}, err
+	} else {
+		return post, nil
+	}
 }

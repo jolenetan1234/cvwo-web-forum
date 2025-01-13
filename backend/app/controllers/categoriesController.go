@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/resource"
@@ -57,8 +58,23 @@ func (cc CategoriesControllerImpl) GetById(c *gin.Context) {
 	// Get id off url
 	var id string = c.Param("id")
 
+	// convert ID to int
+	val, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		// return error response
+		c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to get user",
+			Data:    nil,
+			Error:   "Invalid user ID format",
+		})
+
+		log.Println("[controllers.UserController.GetUserByID] Conversion error: ", convErr)
+		return
+	}
+
 	// Send request to service layer
-	catResource, err := cc.service.GetById(id)
+	catResource, err := cc.service.GetById(val)
 
 	// Format response
 	if err != nil {
