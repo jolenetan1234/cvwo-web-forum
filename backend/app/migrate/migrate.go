@@ -14,7 +14,12 @@ func init() {
 
 func main() {
 	// Create table for User in db
-	initialisers.DB.AutoMigrate(&entity.User{})
+	initialisers.DB.AutoMigrate(
+		&entity.Category{},
+		&entity.Comment{},
+		&entity.Post{},
+		&entity.User{},
+	)
 	// `User{}` Creates an instance of the `User` struct with default values for the fields
 	log.Default().Printf("Successfully AUTOMIGRATED")
 }

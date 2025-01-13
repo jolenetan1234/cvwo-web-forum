@@ -4,6 +4,7 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/jolenetan1234/cvwo-web-forum/backend/app/commonerrors"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/entity"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/resource"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/repositories"
@@ -55,14 +56,15 @@ func (userServiceImpl UserServiceImpl) CreateUser(createUserRequest resource.Cre
 		Password: createUserRequest.Password,
 	}
 
-	// Add user to database
+	// ADD USER TO DATABASE
 	// TODO: send to UserRepository
 	userEntity, err = userServiceImpl.userRepo.Create(userEntity)
 
 	if err != nil {
-		// If there's an error,
+		// If there's an error, assume it's because username is taken
 		// simply return the zero value of `userResource`
 		userResource = resource.User{}
+		err = commonerrors.ErrUsernameTaken
 	} else {
 		// Format the user to Resource
 		userResource = resource.User{
@@ -75,7 +77,6 @@ func (userServiceImpl UserServiceImpl) CreateUser(createUserRequest resource.Cre
 }
 
 func (u UserServiceImpl) GetUserByID(id int) (resource.User, error) {
-	// TODO: pass to repository
 	var userResource resource.User
 	var userEntity entity.User
 	var err error

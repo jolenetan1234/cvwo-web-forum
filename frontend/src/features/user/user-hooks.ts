@@ -179,6 +179,8 @@ const useLogout = () => {
         const res = await userClient.logout();
 
         if (res.type === "success") {
+            console.log("")
+
             // REMOVE SESSION FROM COOKIES
             clearSessionInCookies();
 

@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jolenetan1234/cvwo-web-forum/backend/app/commonerrors"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/domain/resource"
 	"github.com/jolenetan1234/cvwo-web-forum/backend/app/services"
 	"gorm.io/gorm"
@@ -57,12 +58,12 @@ func (u UserControllerImpl) CreateUser(c *gin.Context) {
 	if err != nil {
 		// Checking for duplicate username error
 		// DON'T KNOW WHY THIS  DOESN'T WORK
-		if err == gorm.ErrDuplicatedKey {
+		if err == commonerrors.ErrUsernameTaken /*gorm.ErrDuplicatedKey*/ {
 			c.JSON(http.StatusConflict, resource.APIResponse[error]{
 				Status:  resource.Error,
 				Message: "Failed to create user",
 				Data:    nil,
-				Error:   "Username already exists.",
+				Error:   err.Error(),
 			})
 		} else {
 			// return error response

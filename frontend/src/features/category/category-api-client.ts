@@ -5,6 +5,8 @@ import MockError from "../../common/errors/MockError";
 
 // MOCK API ENDPOINTS
 import { getAllCategories, getCategorybyId } from "../../api/category-api";
+import axios from "axios";
+import { ApiResponse } from "../../common/types/common-types";
 
 class CategoryClient extends ApiClient<Category> {
     async getAll(): Promise<ApiClientResponse<Category[]>> {
@@ -12,12 +14,18 @@ class CategoryClient extends ApiClient<Category> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("")
-            const res = await getAllCategories();
-           
-            const data = res.map(cat => ({
-                ...cat,
-                id: cat.id.toString(),
-            }))
+            // const res = await getAllCategories();
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
+            const apiResponse: ApiResponse<Category[]> = res.data;
+          
+            const data = apiResponse.data;
+
+            console.log("[categoryClient.getAll] Successfully GET all categories", res)
+
+            // const data = res.map(cat => ({
+            //     ...cat,
+            //     id: cat.id.toString(),
+            // }))
 
             return {
                 type: "success",

@@ -19,6 +19,7 @@ import (
 func init() {
 	initialisers.LoadEnvVariables()
 	initialisers.ConnectToDB()
+	initialisers.SyncDB()
 }
 
 func generateJWTSecret(length int) string {
@@ -68,17 +69,24 @@ func main() {
 	// Initialise repositories
 	var userRepo repositories.UserRepo = repositories.InitUserRepo(db)
 	var authRepo repositories.AuthRepo = repositories.InitAuthRepo(db)
+	var postsRepo repositories.PostsRepo = repositories.InitPostsRepo(db)
+	var categoriesRepo repositories.CategoriesRepo = repositories.InitCategoriesRepo(db)
 
 	// Initialise services
 	var userService services.UserService = services.InitUserService(userRepo)
 	var authService services.AuthService = services.InitAuthService(authRepo)
+	var postsService services.PostsService = services.InitPostsService(postsRepo)
+	var categoriesService services.CategoriesService = services.InitCategoriesService(categoriesRepo)
 
 	// Initialise controllers
 	var userController controllers.UserController = controllers.InitUserController(userService)
 	var authController controllers.AuthController = controllers.InitAuthController(authService)
+	var postsController controllers.PostsController = controllers.InitPostsController(postsService)
+	var categoriesController controllers.CategoriesController = controllers.InitCategoriesController(categoriesService)
 
 	testController := func(c *gin.Context) {
 		user, _ := c.Get("user")
+		log.Println("[testController] user:", user)
 
 		c.JSON(200, gin.H{
 			"ping": "poing",
@@ -88,12 +96,20 @@ func main() {
 
 	// Routes
 	r.GET("/test", middleware.RequireAuth, testController)
+
+	// User
 	r.POST("/users", userController.CreateUser)
 	r.GET("/users/:id", userController.GetUserById)
 
 	// Auth
 	r.POST("login", authController.Login)
 	r.GET("logout", authController.Logout)
+
+	// Categories
+	r.GET("categories", categoriesController.GetAll)
+
+	// Posts
+	r.GET("/posts", postsController.GetAllPosts)
 
 	r.Run()
 

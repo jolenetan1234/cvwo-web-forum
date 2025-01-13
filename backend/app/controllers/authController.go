@@ -82,22 +82,6 @@ func (ac AuthControllerImpl) Login(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", token, 3600*24*30, "", "", false, true)
 
-	// RETURN SUCCESS RESPONSE
-	/*
-		loginResponse := resource.LoginResponse{
-			User:  userResource,
-			Token: token,
-		}
-	*/
-
-	/*
-		c.JSON(http.StatusOK, resource.APIResponse[resource.LoginResponse]{
-			Status: resource.Success,
-			Data:   loginResponse,
-			Error:  "",
-		})
-	*/
-
 	c.JSON(http.StatusOK, resource.APIResponse[resource.User]{
 		Status:  resource.Success,
 		Message: "Successfully logged in",

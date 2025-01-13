@@ -97,7 +97,7 @@ func RequireAuth(c *gin.Context) {
 		c.Set("user", &userResource)
 
 		// Continue
-
+		log.Println("[middleware.RequireAuth] Successfully authenticated")
 		c.Next()
 
 	} else {
