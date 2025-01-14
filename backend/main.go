@@ -113,7 +113,7 @@ func main() {
 	r.GET("/posts", postsController.GetAll)
 	r.GET("/posts/:id", postsController.GetById)
 	r.POST("/posts", middleware.RequireAuth, postsController.CreatePost)
-	r.PUT("/posts")
+	r.PUT("/posts/:id", middleware.RequireAuth, postsController.UpdatePost)
 
 	r.Run()
 

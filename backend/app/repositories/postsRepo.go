@@ -13,6 +13,7 @@ type PostsRepo interface {
 	GetById(id int) (entity.Post, error)
 	GetPostsByCategories(catIds []int) ([]entity.Post, error)
 	CreatePost(entity.Post) (entity.Post, error)
+	UpdatePost(entity.Post) (entity.Post, error)
 }
 
 // Define implementation struct
@@ -61,6 +62,17 @@ func (pr PostsRepoImpl) CreatePost(post entity.Post) (entity.Post, error) {
 
 	if err != nil {
 		log.Println("[repositories.PostsRepo.CreatePost] Failed to CREATE post: ", err)
+		return entity.Post{}, err
+	} else {
+		return post, nil
+	}
+}
+
+func (pr PostsRepoImpl) UpdatePost(post entity.Post) (entity.Post, error) {
+	err := pr.db.Save(&post).Error
+
+	if err != nil {
+		log.Println("[repositories.PostsRepo.UpdatePost] Failed to UPDATE post: ", err)
 		return entity.Post{}, err
 	} else {
 		return post, nil

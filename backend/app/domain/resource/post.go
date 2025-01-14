@@ -17,3 +17,11 @@ type CreatePostRequest struct {
 	Content    string `json:"content"`
 	CategoryID string `json:"category_id"`
 }
+
+// The shape of the data from the frontend
+// needed to update an existing post.
+type UpdatePostRequest struct {
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	CategoryID string `json:"category_id"`
+}

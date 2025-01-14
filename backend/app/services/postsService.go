@@ -17,6 +17,7 @@ type PostsService interface {
 	GetById(id string) (resource.Post, error)
 	GetPostsByCategories(catIds []string) ([]resource.Post, error)
 	CreatePost(req resource.CreatePostRequest, userId int) (resource.Post, error)
+	UpdatePost(req resource.UpdatePostRequest, userId string, postId string) (resource.Post, error)
 }
 
 // Define implementation struct
@@ -117,6 +118,59 @@ func (ps PostsServiceImpl) CreatePost(req resource.CreatePostRequest, userId int
 		// Convert post to Resource form and return it
 		postResource = utils.PostMapper(postEntity)
 		err = nil
+	}
+
+	return postResource, err
+}
+
+func (ps PostsServiceImpl) UpdatePost(req resource.UpdatePostRequest, userId string, postId string) (resource.Post, error) {
+	var postEntity entity.Post
+	var postResource resource.Post
+	var err error
+
+	// Convert postId to int
+	val, _ := strconv.Atoi(postId)
+
+	// Find the existing post
+	existingPost, err := ps.repo.GetById(val)
+
+	if err != nil {
+		postResource = resource.Post{}
+		log.Println("[services.PostsService.UpdatePost] Failed to UPDATE post: ", err)
+		return postResource, err
+	}
+
+	// Check if userID matches that in the existing post
+	val, _ = strconv.Atoi(userId)
+	if val != existingPost.UserID {
+		return resource.Post{}, commonerrors.ErrUnauthorised
+	}
+
+	// If all good, update the indiv fields of existingPost and pass to repo to update
+	catId, err := strconv.Atoi(req.CategoryID)
+	if err != nil {
+		log.Println("[services.PostsService.UpdatePost] Failed to UPDATE post: ", err)
+		return resource.Post{}, commonerrors.ErrInvalidReqFormat
+	}
+
+	// Update indiv fields of existingPost
+	existingPost.Title = req.Title
+	existingPost.Content = req.Content
+	existingPost.CategoryID = catId
+
+	// Pass to repo to update
+	postEntity, err = ps.repo.UpdatePost(existingPost)
+
+	if err != nil {
+		// If there's an error, assume it's because username is taken
+		// simply return the zero value of `userResource`
+		postResource = resource.Post{}
+		log.Println("[services.PostsService.UpdatePost] Failed to UPDATE post: ", err)
+	} else {
+		// Format the user to Resource
+		postResource = utils.PostMapper(postEntity)
+		err = nil
+		log.Println("[services.PostsService.UpdatePost] Successfully UPDATE post: ", postResource)
 	}
 
 	return postResource, err
