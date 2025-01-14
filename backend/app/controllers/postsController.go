@@ -19,6 +19,7 @@ type PostsController interface {
 	// GetPostsByCategories(c *gin.Context)
 	CreatePost(c *gin.Context)
 	UpdatePost(c *gin.Context)
+	DeletePost(c *gin.Context)
 }
 
 // Define implementation struct
@@ -277,10 +278,7 @@ func (pc PostsControllerImpl) UpdatePost(c *gin.Context) {
 		return
 	}
 
-	// Send the request to service layer
-	// userId, _ := strconv.Atoi(user.ID)
-	// postResource, err := pc.service.UpdatePost(createPostRequest, userId)
-
+	// Send request to service layer
 	postResource, err := pc.service.UpdatePost(updatePostRequest, user.ID, postId)
 
 	// Format response
@@ -331,5 +329,92 @@ func (pc PostsControllerImpl) UpdatePost(c *gin.Context) {
 		})
 
 		log.Println("[controllers.PostsController.UpdatePost] Successfully UPDATE post: ", postResource)
+	}
+}
+
+func (pc PostsControllerImpl) DeletePost(c *gin.Context) {
+	// get params from id
+	var postId string = c.Param("id")
+
+	// Obtain user from cookie (should be inside if we are authenticated)
+	// Retrieve the user from the Gin context
+	value, exists := c.Get("user")
+	if !exists {
+		// Handle the case where "user" is not set in the context
+		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to UPDATE post",
+			Data:    nil,
+			Error:   "Unauthorised",
+		})
+		return
+	}
+
+	// Perform a type assertion to convert `any` to `resource.User`
+	user, ok := value.(*resource.User)
+	if !ok {
+		// Handle the case where the type assertion fails
+		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to UPDATE post",
+			Data:    nil,
+			Error:   "Unauthorised",
+		})
+
+		log.Println("[controllers.PostsController.CreatePost] Failed to UPDATE post: Could not convert `user` to type `resource.User`")
+		return
+	}
+
+	// Send request to service layer
+	postResource, err := pc.service.DeletePost(user.ID, postId)
+
+	// Format response
+	if err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete post",
+				Data:    nil,
+				Error:   "Post not found",
+			})
+
+		// case commonerrors.ErrInvalidReqFormat:
+		// 	c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+		// 		Status:  resource.Error,
+		// 		Message: "Failed to update post",
+		// 		Data:    nil,
+		// 		Error:   err.Error(),
+		// 	})
+
+		case commonerrors.ErrUnauthorised:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete post",
+				Data:    nil,
+				Error:   err.Error(),
+			})
+
+		default:
+			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete post",
+				Data:    nil,
+				Error:   "An unexpected error occurred.",
+			})
+		}
+
+		log.Println("[controllers.PostsController.DeletePost] Failed to DELETE post: ", err)
+		return
+	} else {
+		// return success response
+		c.JSON(http.StatusOK, resource.APIResponse[resource.Post]{
+			Status:  resource.Success,
+			Message: "Successfully deleted post",
+			Data:    postResource,
+			Error:   "",
+		})
+
+		log.Println("[controllers.PostsController.DeletePost] Successfully DELETE post: ", postResource)
 	}
 }

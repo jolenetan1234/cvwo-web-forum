@@ -114,6 +114,7 @@ func main() {
 	r.GET("/posts/:id", postsController.GetById)
 	r.POST("/posts", middleware.RequireAuth, postsController.CreatePost)
 	r.PUT("/posts/:id", middleware.RequireAuth, postsController.UpdatePost)
+	r.DELETE("/posts/:id", middleware.RequireAuth, postsController.DeletePost)
 
 	r.Run()
 

@@ -18,6 +18,7 @@ type PostsService interface {
 	GetPostsByCategories(catIds []string) ([]resource.Post, error)
 	CreatePost(req resource.CreatePostRequest, userId int) (resource.Post, error)
 	UpdatePost(req resource.UpdatePostRequest, userId string, postId string) (resource.Post, error)
+	DeletePost(userId string, postId string) (resource.Post, error)
 }
 
 // Define implementation struct
@@ -171,6 +172,46 @@ func (ps PostsServiceImpl) UpdatePost(req resource.UpdatePostRequest, userId str
 		postResource = utils.PostMapper(postEntity)
 		err = nil
 		log.Println("[services.PostsService.UpdatePost] Successfully UPDATE post: ", postResource)
+	}
+
+	return postResource, err
+}
+
+func (ps PostsServiceImpl) DeletePost(userId string, postId string) (resource.Post, error) {
+	var postResource resource.Post
+	var err error
+
+	// Convert postId to int
+	val, _ := strconv.Atoi(postId)
+
+	// Find the existing post
+	existingPost, err := ps.repo.GetById(val)
+
+	if err != nil {
+		postResource = resource.Post{}
+		log.Println("[services.PostsService.DeletePost] Failed to DELETE post: ", err)
+		return postResource, err
+	}
+
+	// Check if userID matches that in the existing post
+	val, _ = strconv.Atoi(userId)
+	if val != existingPost.UserID {
+		return resource.Post{}, commonerrors.ErrUnauthorised
+	}
+
+	// Pass to repo to delete
+	err = ps.repo.DeletePost(val)
+
+	if err != nil {
+		// If there's an error, assume it's because username is taken
+		// simply return the zero value of `userResource`
+		postResource = resource.Post{}
+		log.Println("[services.PostsService.DeletePost] Failed to DELETE post: ", err)
+	} else {
+		// Format the user to Resource
+		postResource = utils.PostMapper(existingPost)
+		err = nil
+		log.Println("[services.PostsService.DeletePost] Successfully DELETE post: ", existingPost)
 	}
 
 	return postResource, err
