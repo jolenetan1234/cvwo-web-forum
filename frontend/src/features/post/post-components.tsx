@@ -299,23 +299,6 @@ const PostDetails = ({ post }: {
                 editButton={<EditPostButton postId={postId}/>}
                 deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
                 />
-
-                // <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-                //     <PostCardHeader 
-                //         post={post as Post}
-                //         editButton={<EditPostButton postId={postId}/>}
-                //         // deleteButton={<DeletePostButton postId={postId} />}
-                //         deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
-                //     />
-
-                //     {/* Post Content */}
-                //     <CardContent sx={{ mt: -3 }}>
-                //         <Typography>
-                //             {post?.content}
-                //         </Typography>
-                //     </CardContent>
-
-                // </Card>
         );
 //    }
 }
