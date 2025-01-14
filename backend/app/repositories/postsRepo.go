@@ -14,7 +14,7 @@ type PostsRepo interface {
 	GetPostsByCategories(catIds []int) ([]entity.Post, error)
 	CreatePost(entity.Post) (entity.Post, error)
 	UpdatePost(entity.Post) (entity.Post, error)
-	DeletePost(postId int) error
+	DeletePost(postId int) (entity.Post, error)
 }
 
 // Define implementation struct
@@ -80,14 +80,19 @@ func (pr PostsRepoImpl) UpdatePost(post entity.Post) (entity.Post, error) {
 	}
 }
 
-func (pr PostsRepoImpl) DeletePost(postId int) error {
+func (pr PostsRepoImpl) DeletePost(postId int) (entity.Post, error) {
+	// Store the deleted post in `post`
+	var post entity.Post
+	pr.db.First(&post, postId)
+
 	err := pr.db.Delete(&entity.Post{}, postId).Error
 
 	if err != nil {
 		log.Println("[repositories.PostsRepo.DeletePost] Failed to DELETE post: ", err)
+		return entity.Post{}, err
 	} else {
 		log.Println("[repositories.PostsRepo.DeletePost] Successfully DELETE post")
+		return post, nil
 	}
 
-	return err
 }

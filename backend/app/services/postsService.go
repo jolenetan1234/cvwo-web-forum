@@ -179,13 +179,14 @@ func (ps PostsServiceImpl) UpdatePost(req resource.UpdatePostRequest, userId str
 
 func (ps PostsServiceImpl) DeletePost(userId string, postId string) (resource.Post, error) {
 	var postResource resource.Post
+	var postEntity entity.Post
 	var err error
 
 	// Convert postId to int
-	val, _ := strconv.Atoi(postId)
+	postIdInt, _ := strconv.Atoi(postId)
 
 	// Find the existing post
-	existingPost, err := ps.repo.GetById(val)
+	existingPost, err := ps.repo.GetById(postIdInt)
 
 	if err != nil {
 		postResource = resource.Post{}
@@ -194,13 +195,13 @@ func (ps PostsServiceImpl) DeletePost(userId string, postId string) (resource.Po
 	}
 
 	// Check if userID matches that in the existing post
-	val, _ = strconv.Atoi(userId)
+	val, _ := strconv.Atoi(userId)
 	if val != existingPost.UserID {
 		return resource.Post{}, commonerrors.ErrUnauthorised
 	}
 
 	// Pass to repo to delete
-	err = ps.repo.DeletePost(val)
+	postEntity, err = ps.repo.DeletePost(postIdInt)
 
 	if err != nil {
 		// If there's an error, assume it's because username is taken
@@ -209,7 +210,7 @@ func (ps PostsServiceImpl) DeletePost(userId string, postId string) (resource.Po
 		log.Println("[services.PostsService.DeletePost] Failed to DELETE post: ", err)
 	} else {
 		// Format the user to Resource
-		postResource = utils.PostMapper(existingPost)
+		postResource = utils.PostMapper(postEntity)
 		err = nil
 		log.Println("[services.PostsService.DeletePost] Successfully DELETE post: ", existingPost)
 	}
