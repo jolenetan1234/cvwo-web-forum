@@ -35,9 +35,13 @@ class UserClient extends ApiClient<User> {
 
     async getById(userId: string): Promise<ApiClientResponse<User>> {
         try {
-            // TODO: replace with axios GET call
-            // const data = await axios.get("API_BASE_URL/user/userId")
-            const data = await userApi.getUserById(parseInt(userId));
+            const res = await axios.get<ApiResponse<User>>(
+                `${import.meta.env.VITE_API_URL}/users/${userId}`
+            )
+            const apiResponse = res.data;
+            const data = apiResponse.data;
+
+            console.log("[userClient.getById] Successfully GET user by id", res);
 
             return {
                 type: "success",
@@ -47,18 +51,20 @@ class UserClient extends ApiClient<User> {
 
         } catch (err: any) {
             let message;
-            // TODO: replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to get user: An unexpected error occured.';
             } else {
-                message = "An unknown error occurred.";
+                message = 'Failed to get user: An unexpected error occured.';
             }
 
+            console.log("[userClient.getById] Failed to GET user", err);
+           
             return {
                 type: "error",
                 data: null,
                 error: message,
-            } as ApiClientResponse<User>;
+            };
         }
     }
 
@@ -105,15 +111,11 @@ class UserClient extends ApiClient<User> {
     // TODO: refactor to just include user
     async login(credentials: LoginData): Promise<ApiClientResponse<LoginResponse>> {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, credentials, { withCredentials: true })
-
-            // const apiResponse: ApiResponse<LoginResponse> = res.data;
-            const apiResponse: ApiResponse<User> = res.data;
-
+            const res = await axios.post<ApiResponse<User>>(`${import.meta.env.VITE_API_URL}/login`, credentials, { withCredentials: true })
+            const apiResponse = res.data;
             const user = apiResponse.data;
-            // const loginResponse = apiResponse.data;
 
-            // const loginResponse = await userApi.login(credentials);
+            console.log("[userClient.logout] Successfully login", res);
 
             return {
                 type: "success",
