@@ -1,7 +1,7 @@
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 
 // types
-import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
+import Post, { NewPost, UpdatedPost } from "./post-types";
 import MockError from "../../common/errors/MockError";
 import { UserState } from "../user/user-slice";
 
@@ -9,26 +9,18 @@ import { UserState } from "../user/user-slice";
 import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost, deletePost } from "../../api/post-api";
 import { useSelector } from "react-redux";
 import { selectUserToken } from "../user/user-slice";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ApiResponse } from "../../common/types/common-types";
 
 class ForumPostClient extends ApiClient<Post> {
     async getAll(): Promise<ApiClientResponse<Post[]>> {
         try {
-            // TODO: replace with axios GET call
-            // const data = await axios.get(")
-            // const res = await getAllPosts();
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
             const apiResponse: ApiResponse<Post[]> = res.data;
             const data = apiResponse.data;
-            
-            // const data = res.map(post => ({
-            //     ...post,
-            //     id: post.id.toString(),
-            //     category_id: post.category_id.toString(),
-            //     user_id: post.user_id.toString(),
-            // }));
 
+            console.log("[forumPostClient.getAll] Successfully GET all posts", res);
+            
             return {
                 type: "success",
                 data: data,
@@ -37,15 +29,15 @@ class ForumPostClient extends ApiClient<Post> {
 
         } catch (err: any) {
             let message;
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to get all posts: An unexpected error occured.';
             } else {
-                message = "An unknown error occurred.";
+                message = 'Failed to get all posts: An unexpected error occured.';
             }
 
-            console.log("[ForumPostClient.getAll] Failed to GET all posts", err)
-
+            console.log("[forumPostClient.getAll] Failed to GET all posts", err);
+           
             return {
                 type: "error",
                 data: null,
@@ -54,19 +46,23 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
+    // UNUSED; can delete.
+    /*
     async getById(postId: string): Promise<ApiClientResponse<Post>> {
         try {
-            // TODO: replace with axios GET call
-            // const data = await axios.get("API_BASE_URL/post/postId")
+            // console.log("forumPostClient.getById(id)", postId);
+            // const res = await getPostById(parseInt(postId));
+            // const data = {
+            //     ...res,
+            //     id: res.id.toString(),
+            //     category_id: res.category_id.toString(),
+            //     user_id: res.user_id.toString(),
+            // }
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${postId}`);
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data;
 
-            console.log("forumPostClient.getById(id)", postId);
-            const res = await getPostById(parseInt(postId));
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                category_id: res.category_id.toString(),
-                user_id: res.user_id.toString(),
-            }
+            console.log("[forumPostClient.getById] Successfully get post by id", res);
 
             return {
                 type: "success",
@@ -77,13 +73,14 @@ class ForumPostClient extends ApiClient<Post> {
         } catch (err: any) {
             let message;
 
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to logout: An unknown error occured.';
             } else {
-                message = "An unknown error occurred.";
+                message = 'Failed to logout: An unknown error occured.';
             }
 
+            console.log("[forumPostClient.getbyId] Failed to get post by id", err);
+           
             return {
                 type: "error",
                 data: null,
@@ -91,7 +88,10 @@ class ForumPostClient extends ApiClient<Post> {
             };
         }
     }
+        */
 
+    /*
+    // UNUSED; CAN DELETE.
     async getByCategories(categories: string[]): Promise<ApiClientResponse<Post[]>> {
         try {
             // if no categories, simply return everything.
@@ -133,42 +133,15 @@ class ForumPostClient extends ApiClient<Post> {
             };
         }
     }
+        */
 
     async post(newPost: NewPost, token: string): Promise<ApiClientResponse<Post>> {
         try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/posts`, newPost, { withCredentials: true });
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data
 
-            const test = await axios.get(`${import.meta.env.VITE_API_URL}/test`, { withCredentials: true })
-            // console.log("TEST", test)
-
-            // HARDCODED (the token stored here is fake so doesn't matter)
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to CREATE post: User unauthorised',
-                };
-            };
-
-            // reformat data to send to backend
-            // TODO: reformat based on actual backend needs (Eg. send token in header,)
-            // const token = useSelector(selectUserToken); // CANNOT! Hooks can only be called WITHIN a component.
-            // console.log("[postApi.post] userToken", userToken);
-
-            const sentData = {
-                ...newPost,
-                category_id: parseInt(newPost.category_id),
-            };
-
-            // TODO: replace with actual API call
-            const res = await createPost(sentData);
-
-            // TODO: reformat data (if needed) to match `Post`.
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                category_id: res.category_id.toString(),
-                user_id: res.user_id.toString(),
-            };
+            console.log("[forumPostClient.post] Successfully CREATE new post", res);
 
             return {
                 type: "success",
@@ -176,16 +149,15 @@ class ForumPostClient extends ApiClient<Post> {
                 error: "",
             }
         } catch (err: any) {
-            const message = err.message || "An unexpected error occurred.";
+            let message;
 
-            // message = err;
-            /*
-            if (err.status === 401) {
-                message = err.message;
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to update post: An unknown error occured.';
             } else {
-                message = "An unknown error occurred.";
-            };
-            */
+                message = 'Failed to update post: An unexpected error occured.';
+            }
+           
+            console.log("[forumPostClient.post] Failed to CREATE post", err);
 
             return {
                 type: "error",
@@ -196,43 +168,16 @@ class ForumPostClient extends ApiClient<Post> {
     }
 
     async put(updatedPost: UpdatedPost, postId: string, token: string): Promise<ApiClientResponse<Post>> {
-        // TODO:
-        // After backend is actually implemented,
-        // IN THE TRY BLOCK, check if `res.ok` or smt like that,
-        // and return the respective 'success' / 'error' objects.
-        // IN THE CATCH BLOCK, you can keep it as it is here.
         try {
+            const res = await axios.put(
+                `${import.meta.env.VITE_API_URL}/posts/${postId}`, 
+                updatedPost,
+                { withCredentials: true },
+            );
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data;
 
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to UPDATE post: User unauthorised',
-                };
-            };
-
-            // TODO: send actual API call,
-            // and include token in headers, for backend authentication.
-            
-            // converting data to match backend requirements
-            const sentData  =  {
-                ...updatedPost,
-                category_id: parseInt(updatedPost.category_id),
-            };
-
-            const res = await updatePost(sentData, parseInt(postId));
-
-            // TODO: check res.ok. If not ok, 
-            // return { type: 'error', data: null, error: res.message, }
-            // Else if ok, just do the same as below.
-
-            // convert to frontend format (where IDs are strings)
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                category_id: res.category_id.toString(),
-                user_id: res.user_id.toString(),
-            }
+            console.log("[forumPostClient.post] Successfully UPDATE post", res);
 
             return {
                 type: 'success',
@@ -240,18 +185,36 @@ class ForumPostClient extends ApiClient<Post> {
                 error: "",
             }
         } catch (err: any) {
-            const message = err.message || "An unexpected error occurred.";
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to update post: An unknown error occured.';
+            } else {
+                message = 'Failed to update post: An unexpected error occured.';
+            }
+           
+            console.log("[forumPostClient.put] Failed to UPDATE post", err);
 
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
-            }
+            };
         }
     }
 
     async delete(postId: string, token: string): Promise<ApiClientResponse<Post>> {
         try {
+            const res = await axios.delete(
+                `${import.meta.env.VITE_API_URL}/posts/${postId}`,
+                { withCredentials: true, },
+            );
+            // Extract API response from axios
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data;
+
+            console.log("[forumPostClient.delete] Successfully DELETE post", res);
+            /*
             if (!token) {
                 return {
                     type: 'error',
@@ -273,6 +236,7 @@ class ForumPostClient extends ApiClient<Post> {
                 category_id: backendPost.category_id.toString(),
                 user_id: backendPost.user_id.toString(),
             };
+            */
 
             return {
                 type: 'success',
@@ -280,10 +244,18 @@ class ForumPostClient extends ApiClient<Post> {
                 error: '',
             };
         } catch (err: any) {
-            const message = err.message || 'Failed to DELETE post: An unexpected error occurred.';
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to delete post: An unknown error occured.';
+            } else {
+                message = 'Failed to delete post: An unexpected error occured.';
+            }
+           
+            console.log("[forumPostClient.delete] Failed to DELETE post", err);
 
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
             };

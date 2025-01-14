@@ -9,3 +9,19 @@ type Post struct {
 	CreatedAt  string `json:"created_at"`
 	UpdatedAt  string `json:"updated_at"`
 }
+
+// The shape of the data from the frontend
+// needed to create a new post.
+type CreatePostRequest struct {
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	CategoryID string `json:"category_id"`
+}
+
+// The shape of the data from the frontend
+// needed to update an existing post.
+type UpdatePostRequest struct {
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	CategoryID string `json:"category_id"`
+}

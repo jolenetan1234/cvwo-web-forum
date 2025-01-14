@@ -156,23 +156,6 @@ export const deletePost = createAsyncThunk<
         };
     },
 )
-/*
-export const getPostById = createAsyncThunk<
-    Post, // Payload type of `fulfilled` action
-    string, // argument type
-    { rejectValue: string /*Payload type of `rejected` action` */ /*}
->(
-    'posts/getPostById',
-    async (postId: string, { rejectWithValue }) => {
-        const res = await forumPostClient.getById(postId);
-        if (res.type === 'success') {
-            return res.data as Post;
-        } else {
-            return rejectWithValue(res.error);
-        };
-    }
-)
-    */
 
 // SLICE
 const postsSlice = createSlice({

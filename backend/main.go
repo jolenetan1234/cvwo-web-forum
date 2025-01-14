@@ -69,20 +69,20 @@ func main() {
 	// Initialise repositories
 	var userRepo repositories.UserRepo = repositories.InitUserRepo(db)
 	var authRepo repositories.AuthRepo = repositories.InitAuthRepo(db)
-	var postsRepo repositories.PostsRepo = repositories.InitPostsRepo(db)
 	var categoriesRepo repositories.CategoriesRepo = repositories.InitCategoriesRepo(db)
+	var postsRepo repositories.PostsRepo = repositories.InitPostsRepo(db)
 
 	// Initialise services
 	var userService services.UserService = services.InitUserService(userRepo)
 	var authService services.AuthService = services.InitAuthService(authRepo)
-	var postsService services.PostsService = services.InitPostsService(postsRepo)
 	var categoriesService services.CategoriesService = services.InitCategoriesService(categoriesRepo)
+	var postsService services.PostsService = services.InitPostsService(postsRepo)
 
 	// Initialise controllers
 	var userController controllers.UserController = controllers.InitUserController(userService)
 	var authController controllers.AuthController = controllers.InitAuthController(authService)
-	var postsController controllers.PostsController = controllers.InitPostsController(postsService)
 	var categoriesController controllers.CategoriesController = controllers.InitCategoriesController(categoriesService)
+	var postsController controllers.PostsController = controllers.InitPostsController(postsService)
 
 	testController := func(c *gin.Context) {
 		user, _ := c.Get("user")
@@ -111,6 +111,10 @@ func main() {
 
 	// Posts
 	r.GET("/posts", postsController.GetAll)
+	r.GET("/posts/:id", postsController.GetById)
+	r.POST("/posts", middleware.RequireAuth, postsController.CreatePost)
+	r.PUT("/posts/:id", middleware.RequireAuth, postsController.UpdatePost)
+	r.DELETE("/posts/:id", middleware.RequireAuth, postsController.DeletePost)
 
 	r.Run()
 
