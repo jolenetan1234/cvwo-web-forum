@@ -293,7 +293,6 @@ const PostDetails = ({ post }: {
     }
 
             return (
-
                 <GenericPostCard
                 post={post}
                 editButton={<EditPostButton postId={postId}/>}
