@@ -156,43 +156,16 @@ class ForumPostClient extends ApiClient<Post> {
     }
 
     async put(updatedPost: UpdatedPost, postId: string, token: string): Promise<ApiClientResponse<Post>> {
-        // TODO:
-        // After backend is actually implemented,
-        // IN THE TRY BLOCK, check if `res.ok` or smt like that,
-        // and return the respective 'success' / 'error' objects.
-        // IN THE CATCH BLOCK, you can keep it as it is here.
         try {
+            const res = await axios.put(
+                `${import.meta.env.VITE_API_URL}/posts/${postId}`, 
+                updatedPost,
+                { withCredentials: true },
+            );
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data;
 
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to UPDATE post: User unauthorised',
-                };
-            };
-
-            // TODO: send actual API call,
-            // and include token in headers, for backend authentication.
-            
-            // converting data to match backend requirements
-            const sentData  =  {
-                ...updatedPost,
-                category_id: parseInt(updatedPost.category_id),
-            };
-
-            const res = await updatePost(sentData, parseInt(postId));
-
-            // TODO: check res.ok. If not ok, 
-            // return { type: 'error', data: null, error: res.message, }
-            // Else if ok, just do the same as below.
-
-            // convert to frontend format (where IDs are strings)
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                category_id: res.category_id.toString(),
-                user_id: res.user_id.toString(),
-            }
+            console.log("[forumPostClient.post] Successfully UPDATE post", res);
 
             return {
                 type: 'success',
@@ -200,13 +173,19 @@ class ForumPostClient extends ApiClient<Post> {
                 error: "",
             }
         } catch (err: any) {
-            const message = err.message || "An unexpected error occurred.";
+            let message;
 
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to update post: An unknown error occured.';
+            } else {
+                message = 'Failed to update post: An unknown error occured.';
+            }
+           
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
-            }
+            };
         }
     }
 

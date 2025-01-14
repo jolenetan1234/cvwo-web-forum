@@ -40,6 +40,12 @@ export interface NewPost {
     category_id: string;
 }
 
+/**
+ * @interface UpdatedPost - The shape of the data needed to updated a post.
+ * @property {string} title - The title of the post.
+ * @property {string} content - The content of the post.
+ * @property {string} category_id - The category ID of the post.
+ */
 export interface UpdatedPost {
     title: string;
     content: string;
