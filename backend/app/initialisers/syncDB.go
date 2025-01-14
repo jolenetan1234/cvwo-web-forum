@@ -39,6 +39,7 @@ func SyncDB() {
 	seed.SeedCategories(DB)
 	seed.SeedUsers(DB)
 	seed.SeedPosts(DB)
+	seed.SeedComments(DB)
 
 	log.Println("[initialisers.SyncDB] Successfully SEEDED the database")
 }
