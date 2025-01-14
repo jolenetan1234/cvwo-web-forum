@@ -18,6 +18,8 @@ class ForumPostClient extends ApiClient<Post> {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
             const apiResponse: ApiResponse<Post[]> = res.data;
             const data = apiResponse.data;
+
+            console.log("[forumPostClient.getAll] Successfully GET all posts", res);
             
             return {
                 type: "success",
@@ -29,10 +31,12 @@ class ForumPostClient extends ApiClient<Post> {
             let message;
 
             if (err instanceof AxiosError) {
-                message = err.response?.data.error ?? 'Failed to logout: An unknown error occured.';
+                message = err.response?.data.error ?? 'Failed to get all posts: An unexpected error occured.';
             } else {
-                message = 'Failed to logout: An unknown error occured.';
+                message = 'Failed to get all posts: An unexpected error occured.';
             }
+
+            console.log("[forumPostClient.getAll] Failed to GET all posts", err);
            
             return {
                 type: "error",
@@ -145,7 +149,15 @@ class ForumPostClient extends ApiClient<Post> {
                 error: "",
             }
         } catch (err: any) {
-            const message = err.message || "An unexpected error occurred.";
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to update post: An unknown error occured.';
+            } else {
+                message = 'Failed to update post: An unexpected error occured.';
+            }
+           
+            console.log("[forumPostClient.post] Failed to CREATE post", err);
 
             return {
                 type: "error",
@@ -178,9 +190,11 @@ class ForumPostClient extends ApiClient<Post> {
             if (err instanceof AxiosError) {
                 message = err.response?.data.error ?? 'Failed to update post: An unknown error occured.';
             } else {
-                message = 'Failed to update post: An unknown error occured.';
+                message = 'Failed to update post: An unexpected error occured.';
             }
            
+            console.log("[forumPostClient.put] Failed to UPDATE post", err);
+
             return {
                 type: "error",
                 data: null,
@@ -191,6 +205,16 @@ class ForumPostClient extends ApiClient<Post> {
 
     async delete(postId: string, token: string): Promise<ApiClientResponse<Post>> {
         try {
+            const res = await axios.delete(
+                `${import.meta.env.VITE_API_URL}/posts/${postId}`,
+                { withCredentials: true, },
+            );
+            // Extract API response from axios
+            const apiResponse: ApiResponse<Post> = res.data;
+            const data = apiResponse.data;
+
+            console.log("[forumPostClient.delete] Successfully DELETE post", res);
+            /*
             if (!token) {
                 return {
                     type: 'error',
@@ -212,6 +236,7 @@ class ForumPostClient extends ApiClient<Post> {
                 category_id: backendPost.category_id.toString(),
                 user_id: backendPost.user_id.toString(),
             };
+            */
 
             return {
                 type: 'success',
@@ -219,10 +244,18 @@ class ForumPostClient extends ApiClient<Post> {
                 error: '',
             };
         } catch (err: any) {
-            const message = err.message || 'Failed to DELETE post: An unexpected error occurred.';
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to delete post: An unknown error occured.';
+            } else {
+                message = 'Failed to delete post: An unexpected error occured.';
+            }
+           
+            console.log("[forumPostClient.delete] Failed to DELETE post", err);
 
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
             };
