@@ -124,35 +124,43 @@ class CommentClient extends ApiClient<Comment> {
     async post(formData: NewComment, token: string): Promise<ApiClientResponse<Comment>> {
         try {
 
-            // check for token
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to CREATE comment: User unauthorised',
-                };
-            };
+            // // check for token
+            // if (!token) {
+            //     return {
+            //         type: 'error',
+            //         data: null,
+            //         error: 'Failed to CREATE comment: User unauthorised',
+            //     };
+            // };
 
-            // format data to fit backend requirements
-            const sentData = {
-                content: formData.content,
-                post_id: parseInt(formData.post_id),
-            }
+            // // format data to fit backend requirements
+            // const sentData = {
+            //     content: formData.content,
+            //     post_id: parseInt(formData.post_id),
+            // }
 
-            // TODO: replace with actual API call and pass in token
-            const res = await createComment(sentData);
+            // // TODO: replace with actual API call and pass in token
+            // const res = await createComment(sentData);
             
-            // TODO: reformat data sent from backend (if needed) to match `Comment`.
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                post_id: res.post_id.toString(),
-                user_id: res.user_id.toString(),
-            }
+            // // TODO: reformat data sent from backend (if needed) to match `Comment`.
+            // const data = {
+            //     ...res,
+            //     id: res.id.toString(),
+            //     post_id: res.post_id.toString(),
+            //     user_id: res.user_id.toString(),
+            // }
+            const postId = formData.post_id;
+            const res = await axios.post<ApiResponse<Comment>>(
+                `${import.meta.env.VITE_API_URL}/posts/${postId}/comments`,
+                formData,
+                { withCredentials: true }
+            )
+            const apiResponse = res.data;
+            const comment = apiResponse.data;
 
             return {
                 type: 'success',
-                data: data,
+                data: comment,
                 error: '',
             }
 

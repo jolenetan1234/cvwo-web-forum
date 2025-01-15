@@ -8,3 +8,9 @@ type Comment struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
+
+// The shape of the data from the frontend
+// needed to create a new comment.
+type CreateCommentRequest struct {
+	Content string `json:"content"`
+}

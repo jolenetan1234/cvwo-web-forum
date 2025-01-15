@@ -235,7 +235,6 @@ func (pc PostsControllerImpl) UpdatePost(c *gin.Context) {
 
 	var updatePostRequest resource.UpdatePostRequest
 	bindErr := c.ShouldBindJSON(&updatePostRequest)
-	log.Println("WOIEFJIOEWJFIEJ CAN BIND")
 
 	if bindErr != nil {
 		c.JSON(http.StatusBadRequest, resource.APIResponse[error]{

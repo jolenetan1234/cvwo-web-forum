@@ -18,7 +18,7 @@ import (
 func RequireAuth(c *gin.Context) {
 	log.Println("in middleware")
 
-	// Get the cookie off req
+	// 1) Get the cookie off req
 	tokenString, err := c.Cookie("Authorization")
 
 	if err != nil {
@@ -27,11 +27,12 @@ func RequireAuth(c *gin.Context) {
 			Data:   nil,
 			Error:  "Unauthorised",
 		})
+		c.Abort()
 		log.Println("[middleware.RequireAuth] Failed to get cookie from req: ", err)
 		return
 	}
 
-	// Decode/validate it
+	// 2) Decode/validate it
 	// Parse takes the token string and a function for looking up the key. The latter is especially
 	// useful if you use multiple keys for your application.  The standard is to use 'kid' in the
 	// head of the token to identify which key to use, but the parsed token (head and claims) is provided
@@ -53,27 +54,29 @@ func RequireAuth(c *gin.Context) {
 			Data:   nil,
 			Error:  "Unauthorised",
 		})
+		c.Abort()
 		log.Println("[middleware.RequireAuth] Failed to parse req cookie: ", err)
 		return
 	}
 
-	// Retrieve claims (ie. the payload of the token)
+	// 3) Retrieve claims (ie. the payload of the token)
 	// Here it's asserted as `jwt.MapClaims` - basically key-value pairs
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		fmt.Println(claims["foo"], claims["nbf"])
 
-		// Check expiration
+		// 4) Check expiration
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
 				Status: resource.Error,
 				Data:   nil,
 				Error:  "Unauthorised",
 			})
+			c.Abort()
 			log.Println("[middleware.RequireAuth] token expired")
 			return
 		}
 
-		// Find the user with the corresponding userID in token
+		// 5) Find the user with the corresponding userID in token
 		// log.Println("BEFORE ERROR", claims["sub"])
 		userID := claims["sub"].(float64)
 		// log.Println("AFTER ERROR")
@@ -89,23 +92,26 @@ func RequireAuth(c *gin.Context) {
 				Data:   nil,
 				Error:  "Unauthorised",
 			})
+			c.Abort()
 			log.Println("[middleware.RequireAuth] Failed to find user by ID: ", err)
 			return
 		}
 
-		// Attach to req
+		// 6) Attach to req
 		c.Set("user", &userResource)
 
-		// Continue
+		// 7) Continue
 		log.Println("[middleware.RequireAuth] Successfully authenticated")
 		c.Next()
 
 	} else {
+		// Else if claims not ok, just abort
 		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
 			Status: resource.Error,
 			Data:   nil,
 			Error:  "Unauthorised",
 		})
+		c.Abort()
 		log.Println("[middleware.RequireAuth] Failed to parse req cookie: ", err)
 		return
 	}
