@@ -16,6 +16,7 @@ type CommentsController interface {
 	Get(c *gin.Context)
 	GetByPostId(c *gin.Context)
 	Create(c *gin.Context)
+	Update(c *gin.Context)
 }
 
 // Define implementation struct
@@ -242,5 +243,113 @@ func (cc CommentsControllerImpl) Create(c *gin.Context) {
 		})
 
 		log.Println("[controllers.CommentsController.Create] Successfully CREATE comment: ", comment)
+	}
+}
+
+func (cc CommentsControllerImpl) Update(c *gin.Context) {
+
+	// Initialise variables
+	var comment resource.Comment
+	var err error
+
+	// Get params from id
+	var commentId string = c.Param("id")
+
+	// Check request format
+	var updateCommentRequest resource.UpdateCommentRequest
+	bindErr := c.ShouldBindJSON(&updateCommentRequest)
+
+	if bindErr != nil {
+		c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to update comment",
+			Data:    nil,
+			Error:   commonerrors.ErrInvalidReqFormat.Error(),
+		})
+
+		log.Println("[controllers.CommentsController.Update] Failed to UPDATE comment: Invalid request format ", bindErr)
+		return
+	}
+
+	// Obtain user from cookie (should be inside if we are authenticated)
+	// Retrieve the user from the Gin context
+	value, exists := c.Get("user")
+	if !exists {
+		// Handle the case where "user" is not set in the context
+		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to UPDATE post",
+			Data:    nil,
+			Error:   "Unauthorised",
+		})
+		return
+	}
+
+	// Perform a type assertion to convert `any` to `resource.User`
+	user, ok := value.(*resource.User)
+	if !ok {
+		// Handle the case where the type assertion fails
+		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to UPDATE post",
+			Data:    nil,
+			Error:   "Unauthorised",
+		})
+
+		log.Println("[controllers.PostsController.CreatePost] Failed to UPDATE post: Could not convert `user` to type `resource.User`")
+		return
+	}
+
+	// Send request to service layer
+	comment, err = cc.service.Update(updateCommentRequest, user.ID, commentId)
+
+	// Format response
+	if err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to update comment",
+				Data:    nil,
+				Error:   "Comment not found",
+			})
+
+		case commonerrors.ErrInvalidReqFormat:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to update comment",
+				Data:    nil,
+				Error:   err.Error(),
+			})
+
+		case commonerrors.ErrUnauthorised:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to update comment",
+				Data:    nil,
+				Error:   err.Error(),
+			})
+
+		default:
+			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to update comment",
+				Data:    nil,
+				Error:   "An unexpected error occurred.",
+			})
+		}
+
+		log.Println("[controllers.CommentsController.Update] Failed to UPDATE comment: ", err)
+		return
+	} else {
+		// return success response
+		c.JSON(http.StatusOK, resource.APIResponse[resource.Comment]{
+			Status:  resource.Success,
+			Message: "Successfully updated comment",
+			Data:    comment,
+			Error:   "",
+		})
+
+		log.Println("[controllers.CommentsController.Update] Successfully UPDATE comment: ", comment)
 	}
 }

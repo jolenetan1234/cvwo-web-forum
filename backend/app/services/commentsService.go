@@ -17,6 +17,7 @@ type CommentsService interface {
 	GetAll() ([]resource.Comment, error)
 	GetByPostId(postId string) ([]resource.Comment, error)
 	Create(req resource.CreateCommentRequest, userId string, postId string) (resource.Comment, error)
+	Update(req resource.UpdateCommentRequest, userId string, commentId string) (resource.Comment, error)
 }
 
 // Define implementation struct
@@ -85,6 +86,7 @@ func (cs CommentsServiceImpl) GetByPostId(postId string) ([]resource.Comment, er
 
 func (cs CommentsServiceImpl) Create(req resource.CreateCommentRequest, userId string, postId string) (resource.Comment, error) {
 
+	// Initialise variables
 	var cmtEntity entity.Comment
 	var cmtResource resource.Comment
 	var err error
@@ -125,6 +127,51 @@ func (cs CommentsServiceImpl) Create(req resource.CreateCommentRequest, userId s
 		err = nil
 
 		log.Println("[services.CommentsService.Create] Successfully CREATE comment", cmtResource)
+	}
+
+	return cmtResource, err
+}
+
+func (cs CommentsServiceImpl) Update(req resource.UpdateCommentRequest, userId string, commentId string) (resource.Comment, error) {
+
+	// Initalise variables
+	var cmtEntity entity.Comment
+	var cmtResource resource.Comment
+	var err error
+
+	// Convert postId to int
+	cmtIdInt, _ := strconv.Atoi(commentId)
+
+	// Find the existing post
+	existingCmt, err := cs.repo.GetById(cmtIdInt)
+
+	if err != nil {
+		cmtResource = resource.Comment{}
+		log.Println("[services.CommentsService.Update] Failed to UPDATE comment: ", err)
+		return cmtResource, err
+	}
+
+	// Check if userID matches that in the existing comment
+	userIdInt, _ := strconv.Atoi(userId)
+	if userIdInt != existingCmt.UserID {
+		return resource.Comment{}, commonerrors.ErrUnauthorised
+	}
+
+	// If all good, update the indiv fields of existingComment and pass to repo to update
+	// Update indiv fields of existingComment
+	existingCmt.Content = req.Content
+
+	// Pass to repo to update
+	cmtEntity, err = cs.repo.Update(existingCmt)
+
+	if err != nil {
+		cmtResource = resource.Comment{}
+		log.Println("[services.CommentsService.Update] Failed to UPDATE comment: ", err)
+	} else {
+		// Format the user to Resource
+		cmtResource = utils.CommentMapper(cmtEntity)
+		err = nil
+		log.Println("[services.CommentsService.Update] Successfully UPDATE comment: ", cmtResource)
 	}
 
 	return cmtResource, err

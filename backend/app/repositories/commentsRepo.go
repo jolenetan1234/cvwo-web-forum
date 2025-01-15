@@ -10,8 +10,10 @@ import (
 // Define interface
 type CommentsRepo interface {
 	GetAll() ([]entity.Comment, error)
+	GetById(cmtId int) (entity.Comment, error)
 	GetByPostId(postId int) ([]entity.Comment, error)
 	Create(entity.Comment) (entity.Comment, error)
+	Update(entity.Comment) (entity.Comment, error)
 }
 
 // Define implementation struct
@@ -41,6 +43,18 @@ func (cr CommentsRepoImpl) GetAll() ([]entity.Comment, error) {
 	}
 }
 
+func (cr CommentsRepoImpl) GetById(cmtId int) (entity.Comment, error) {
+	var comment entity.Comment
+	err := cr.db.First(&comment, cmtId).Error
+
+	if err != nil {
+		log.Println("[repositories.CommentsRepo.GetById] Failed to GET comment by ID", err)
+		return entity.Comment{}, err
+	} else {
+		return comment, nil
+	}
+}
+
 func (cr CommentsRepoImpl) GetByPostId(postId int) ([]entity.Comment, error) {
 	var comments []entity.Comment
 	err := cr.db.Where("post_id = ?", postId).Find(&comments).Error
@@ -62,6 +76,17 @@ func (cr CommentsRepoImpl) Create(comment entity.Comment) (entity.Comment, error
 		return entity.Comment{}, err
 	} else {
 		log.Println("[repositories.CommentsRepo.Create] Successfully CREATE comment", err)
+		return comment, nil
+	}
+}
+
+func (cr CommentsRepoImpl) Update(comment entity.Comment) (entity.Comment, error) {
+	err := cr.db.Save(&comment).Error
+
+	if err != nil {
+		log.Println("[repositories.PostsRepo.UpdatePost] Failed to UPDATE post: ", err)
+		return entity.Comment{}, err
+	} else {
 		return comment, nil
 	}
 }

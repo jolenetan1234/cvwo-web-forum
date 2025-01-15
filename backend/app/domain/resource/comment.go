@@ -14,3 +14,9 @@ type Comment struct {
 type CreateCommentRequest struct {
 	Content string `json:"content"`
 }
+
+// The shape of the data from the frontend
+// needed to update an existing comment.
+type UpdateCommentRequest struct {
+	Content string `json:"content"`
+}
