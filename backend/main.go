@@ -121,7 +121,9 @@ func main() {
 
 	// Comments
 	// Note that the controller for this route handles query parameters.
-	r.GET("/comments", commentsController.GetComments)
+	r.GET("/comments", commentsController.Get)
+	// r.GET("/posts/:postId/comments", commentsController.GetByPostId)
+	r.POST("/posts/:postId/comments", middleware.RequireAuth, commentsController.Create)
 
 	r.Run()
 

@@ -11,6 +11,7 @@ import (
 type CommentsRepo interface {
 	GetAll() ([]entity.Comment, error)
 	GetByPostId(postId int) ([]entity.Comment, error)
+	Create(entity.Comment) (entity.Comment, error)
 }
 
 // Define implementation struct
@@ -35,6 +36,7 @@ func (cr CommentsRepoImpl) GetAll() ([]entity.Comment, error) {
 		log.Println("[repositories.CommentsRepo.GetAll] Failed to GET all comments", err)
 		return nil, err
 	} else {
+		log.Println("[repositories.CommentsRepo.GetAll] Successfully GET all comments", err)
 		return comments, nil
 	}
 }
@@ -49,5 +51,17 @@ func (cr CommentsRepoImpl) GetByPostId(postId int) ([]entity.Comment, error) {
 	} else {
 		log.Println("[repositories.CommentsRepo.GetByPostId] Successfully GET comments", err)
 		return comments, nil
+	}
+}
+
+func (cr CommentsRepoImpl) Create(comment entity.Comment) (entity.Comment, error) {
+	err := cr.db.Create(&comment).Error
+
+	if err != nil {
+		log.Println("[repositories.CommentsRepo.Create] Failed to CREATE comment: ", err)
+		return entity.Comment{}, err
+	} else {
+		log.Println("[repositories.CommentsRepo.Create] Successfully CREATE comment", err)
+		return comment, nil
 	}
 }
