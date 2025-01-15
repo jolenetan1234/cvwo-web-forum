@@ -5,37 +5,33 @@ import Comment, { NewComment, UpdatedComment } from "./comment-types";
 // MOCK API ENDPOINTS
 import { createComment, deleteComment, getAllComments, getCommentById, getCommentsByPostId, updateComment } from "../../api/comment-api";
 import MockError from "../../common/errors/MockError";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ApiResponse } from "../../common/types/common-types";
 
 class CommentClient extends ApiClient<Comment> {
     async getAll() {
         try {
-            // TODO: replace with axios GET call
-            // const data = await axios.get()
-            const res = await getAllComments();
-            
-            const data = res.map(comment => ({
-                ...comment,
-                id: comment.id.toString(),
-                post_id: comment.post_id.toString(),
-                user_id: comment.user_id.toString()
-            }))           
+            const res = await axios.get<ApiResponse<Comment[]>>(`${import.meta.env.VITE_API_URL}/comments`)
+            const apiResponse = res.data;
+            const comments = apiResponse.data;
 
+            console.log("[commentClient.getAll] Successfully GET all comments", res);
             return {
                 type: "success",
-                data: data,
+                data: comments,
                 error: "",
             } as ApiClientResponse<Comment[]>;
 
         } catch (err: any) {
             let message;
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to get comments: An unexpected error occured.';
             } else {
-                message = "An unknown error occurred";
+                message = 'Failed to get comments: An unexpected error occured.';
             }
+           
+            console.log("[commentClient.All] Failed to GET all comments", err);
 
             return {
                 type: "error",
@@ -84,19 +80,11 @@ class CommentClient extends ApiClient<Comment> {
     
     async getByPostId(postId: string) {
         try {
-            // TODO: replace with axios GET call
-            // const data =a await axios.get("API_BASE_URL/comment/?postId=postId")
-            // const res = await getCommentsByPostId(parseInt(postId));
-            
-            // const data = res.map(comment => ({
-            //     ...comment,
-            //     id: comment.id.toString(),
-            //     post_id: comment.post_id.toString(),
-            //     user_id: comment.user_id.toString(),
-            // }));
             const res = await axios.get<ApiResponse<Comment[]>>(`${import.meta.env.VITE_API_URL}/posts/${postId}/comments`);
             const apiResponse = res.data;
             const comments = apiResponse.data;
+
+            console.log("[commentClient.getByPostId] Successfully GET comments by post id", res);
            
             return {
                 type: "success",
@@ -106,49 +94,24 @@ class CommentClient extends ApiClient<Comment> {
         } catch (err: any) {
             let message;
 
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to get comments: An unexpected error occured.';
             } else {
-                message = "An unknown error occurred.";
+                message = 'Failed to get comments: An unexpected error occured.';
             }
+           
+            console.log("[commentClient.getByPostId] Failed to GET comments by post id", err);
 
             return {
                 type: "error",
                 data: null,
                 error: message,
-            } as ApiClientResponse<Comment[]>;
+            };
         }
     }
 
     async post(formData: NewComment, token: string): Promise<ApiClientResponse<Comment>> {
         try {
-
-            // // check for token
-            // if (!token) {
-            //     return {
-            //         type: 'error',
-            //         data: null,
-            //         error: 'Failed to CREATE comment: User unauthorised',
-            //     };
-            // };
-
-            // // format data to fit backend requirements
-            // const sentData = {
-            //     content: formData.content,
-            //     post_id: parseInt(formData.post_id),
-            // }
-
-            // // TODO: replace with actual API call and pass in token
-            // const res = await createComment(sentData);
-            
-            // // TODO: reformat data sent from backend (if needed) to match `Comment`.
-            // const data = {
-            //     ...res,
-            //     id: res.id.toString(),
-            //     post_id: res.post_id.toString(),
-            //     user_id: res.user_id.toString(),
-            // }
             const postId = formData.post_id;
             const res = await axios.post<ApiResponse<Comment>>(
                 `${import.meta.env.VITE_API_URL}/posts/${postId}/comments`,
@@ -158,6 +121,8 @@ class CommentClient extends ApiClient<Comment> {
             const apiResponse = res.data;
             const comment = apiResponse.data;
 
+            console.log("[commentClient.post] Successfully CREATE comment", res);
+
             return {
                 type: 'success',
                 data: comment,
@@ -165,10 +130,18 @@ class CommentClient extends ApiClient<Comment> {
             }
 
         } catch (err: any) {
-            const message = err.message ?? 'Failed to CREATE comment: An unexpected error occurred.'
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to create comment: An unexpected error occured.';
+            } else {
+                message = 'Failed to create comment: An unexpected error occured.';
+            }
+           
+            console.log("[commentClient.post] Failed to CREATE comment", err);
 
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
             };
@@ -177,41 +150,34 @@ class CommentClient extends ApiClient<Comment> {
 
     async put(commentId: string, formData: UpdatedComment, token: string): Promise<ApiClientResponse<Comment>> {
         try {
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to DELETE comment: User unauthorised',
-                };
-            }
+            const res = await axios.put<ApiResponse<Comment>>(
+                `${import.meta.env.VITE_API_URL}/comments/${commentId}`,
+                formData,
+                { withCredentials: true },
+            )
+            const apiResponse = res.data;
+            const comment = apiResponse.data;
 
-            // Format data to suit backend requirements
-            const sentData = {
-                ...formData,
-            };
-
-            // TODO: send PUT req to API_BASE_URL/comments/${commentId}
-            // And include token in request headers.
-            const res = await updateComment(sentData, parseInt(commentId));
-
-            // Format BackendComment into Comment
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                post_id: res.post_id.toString(),
-                user_id: res.user_id.toString(),
-            };
+            console.log("[commentClient.put] Successfully UPDATE comment", res);
 
             return {
                 type: 'success',
-                data: data,
+                data: comment,
                 error: '',
             };
         } catch (err: any) {
-            const message = err.message ?? 'Failed to UPDATE comment: An unexpected error occurred.';
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to update comment: An unexpected error occured.';
+            } else {
+                message = 'Failed to update comment: An unexpected error occured.';
+            }
+           
+            console.log("[commentClient.put] Failed to UPDATE comment", err);
 
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
             };
