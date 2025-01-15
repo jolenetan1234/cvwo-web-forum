@@ -96,7 +96,7 @@ func (cc CommentsControllerImpl) GetByPostId(c *gin.Context) {
 	var err error
 
 	// Get postId from params
-	var postId string = c.Param("postId")
+	var postId string = c.Param("id")
 
 	comments, err = cc.service.GetByPostId(postId)
 
@@ -150,7 +150,7 @@ func (cc CommentsControllerImpl) Create(c *gin.Context) {
 	var err error
 
 	// Get postId from params
-	var postId string = c.Param("postId")
+	var postId string = c.Param("id")
 
 	// Get data from request body,
 	// and check if it adheres to the required format

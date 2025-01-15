@@ -94,7 +94,7 @@ class CommentClient extends ApiClient<Comment> {
             //     post_id: comment.post_id.toString(),
             //     user_id: comment.user_id.toString(),
             // }));
-            const res = await axios.get<ApiResponse<Comment[]>>(`${import.meta.env.VITE_API_URL}/comments?postId=${postId}`);
+            const res = await axios.get<ApiResponse<Comment[]>>(`${import.meta.env.VITE_API_URL}/posts/${postId}/comments`);
             const apiResponse = res.data;
             const comments = apiResponse.data;
            
