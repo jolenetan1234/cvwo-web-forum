@@ -71,18 +71,21 @@ func main() {
 	var authRepo repositories.AuthRepo = repositories.InitAuthRepo(db)
 	var categoriesRepo repositories.CategoriesRepo = repositories.InitCategoriesRepo(db)
 	var postsRepo repositories.PostsRepo = repositories.InitPostsRepo(db)
+	var commentsRepo repositories.CommentsRepo = repositories.InitCommentsRepo(db)
 
 	// Initialise services
 	var userService services.UserService = services.InitUserService(userRepo)
 	var authService services.AuthService = services.InitAuthService(authRepo)
 	var categoriesService services.CategoriesService = services.InitCategoriesService(categoriesRepo)
 	var postsService services.PostsService = services.InitPostsService(postsRepo)
+	var commentsService services.CommentsService = services.InitCommentsService(commentsRepo)
 
 	// Initialise controllers
 	var userController controllers.UserController = controllers.InitUserController(userService)
 	var authController controllers.AuthController = controllers.InitAuthController(authService)
 	var categoriesController controllers.CategoriesController = controllers.InitCategoriesController(categoriesService)
 	var postsController controllers.PostsController = controllers.InitPostsController(postsService)
+	var commentsController controllers.CommentsController = controllers.InitCommentsController(commentsService)
 
 	testController := func(c *gin.Context) {
 		user, _ := c.Get("user")
@@ -115,6 +118,10 @@ func main() {
 	r.POST("/posts", middleware.RequireAuth, postsController.CreatePost)
 	r.PUT("/posts/:id", middleware.RequireAuth, postsController.UpdatePost)
 	r.DELETE("/posts/:id", middleware.RequireAuth, postsController.DeletePost)
+
+	// Comments
+	// Note that the controller for this route handles query parameters.
+	r.GET("/comments", commentsController.GetComments)
 
 	r.Run()
 

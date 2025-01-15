@@ -5,6 +5,8 @@ import Comment, { NewComment, UpdatedComment } from "./comment-types";
 // MOCK API ENDPOINTS
 import { createComment, deleteComment, getAllComments, getCommentById, getCommentsByPostId, updateComment } from "../../api/comment-api";
 import MockError from "../../common/errors/MockError";
+import axios from "axios";
+import { ApiResponse } from "../../common/types/common-types";
 
 class CommentClient extends ApiClient<Comment> {
     async getAll() {
@@ -84,18 +86,21 @@ class CommentClient extends ApiClient<Comment> {
         try {
             // TODO: replace with axios GET call
             // const data =a await axios.get("API_BASE_URL/comment/?postId=postId")
-            const res = await getCommentsByPostId(parseInt(postId));
+            // const res = await getCommentsByPostId(parseInt(postId));
             
-            const data = res.map(comment => ({
-                ...comment,
-                id: comment.id.toString(),
-                post_id: comment.post_id.toString(),
-                user_id: comment.user_id.toString(),
-            }));
+            // const data = res.map(comment => ({
+            //     ...comment,
+            //     id: comment.id.toString(),
+            //     post_id: comment.post_id.toString(),
+            //     user_id: comment.user_id.toString(),
+            // }));
+            const res = await axios.get<ApiResponse<Comment[]>>(`${import.meta.env.VITE_API_URL}/comments?postId=${postId}`);
+            const apiResponse = res.data;
+            const comments = apiResponse.data;
            
             return {
                 type: "success",
-                data: data,
+                data: comments,
                 error: "",
             } as ApiClientResponse<Comment[]>;
         } catch (err: any) {
