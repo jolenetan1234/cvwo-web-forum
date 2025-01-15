@@ -163,8 +163,6 @@ func (ps PostsServiceImpl) UpdatePost(req resource.UpdatePostRequest, userId str
 	postEntity, err = ps.repo.UpdatePost(existingPost)
 
 	if err != nil {
-		// If there's an error, assume it's because username is taken
-		// simply return the zero value of `userResource`
 		postResource = resource.Post{}
 		log.Println("[services.PostsService.UpdatePost] Failed to UPDATE post: ", err)
 	} else {
