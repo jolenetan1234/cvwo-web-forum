@@ -187,40 +187,55 @@ class CommentClient extends ApiClient<Comment> {
 
     async delete(commentId: string, token: string): Promise<ApiClientResponse<Comment>> {    
         try {
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to DELETE comment: User unauthorised',
-                };
-            };
+            // if (!token) {
+            //     return {
+            //         type: 'error',
+            //         data: null,
+            //         error: 'Failed to DELETE comment: User unauthorised',
+            //     };
+            // };
 
-            // TODO: replace with actual API call and pass in token
-            const res = await deleteComment(parseInt(commentId));
-            const deletedComment = res;
+            // // TODO: replace with actual API call and pass in token
+            // const res = await deleteComment(parseInt(commentId));
+            // const deletedComment = res;
 
-            // TODO: check if res is ok. if not, return error
-            // format data
-            const data = {
-                ...deletedComment,
-                id: deletedComment.id.toString(),
-                post_id: deletedComment.post_id.toString(),
-                user_id: deletedComment.user_id.toString(),
-            };
+            // // TODO: check if res is ok. if not, return error
+            // // format data
+            // const data = {
+            //     ...deletedComment,
+            //     id: deletedComment.id.toString(),
+            //     post_id: deletedComment.post_id.toString(),
+            //     user_id: deletedComment.user_id.toString(),
+            // };
 
-            console.log('[commentClient.delete] Successfully DELETE post', data)
+            const res = await axios.delete<ApiResponse<Comment>>(
+                `${import.meta.env.VITE_API_URL}/comments/${commentId}`,
+                { withCredentials: true },
+            );
+            const apiResponse = res.data;
+            const comment = apiResponse.data;
+
+            console.log('[commentClient.delete] Successfully DELETE comment', res)
            
             return {
                 type: "success",
-                data: data,
+                data: comment,
                 error: "",
             } as ApiClientResponse<Comment>;
 
         } catch (err: any) {
-            const message = err.message || 'Failed to DELETE comment: An unexpected error occured.';
+            let message;
+
+            if (err instanceof AxiosError) {
+                message = err.response?.data.error ?? 'Failed to delete comment: An unexpected error occured.';
+            } else {
+                message = 'Failed to delete comment: An unexpected error occured.';
+            }
+           
+            console.log("[commentClient.delete] Failed to DELETE comment", err);
 
             return {
-                type: 'error',
+                type: "error",
                 data: null,
                 error: message,
             };
