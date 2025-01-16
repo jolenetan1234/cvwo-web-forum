@@ -17,6 +17,7 @@ type CommentsController interface {
 	GetByPostId(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
+	Delete(c *gin.Context)
 }
 
 // Define implementation struct
@@ -351,5 +352,94 @@ func (cc CommentsControllerImpl) Update(c *gin.Context) {
 		})
 
 		log.Println("[controllers.CommentsController.Update] Successfully UPDATE comment: ", comment)
+	}
+}
+
+func (cc CommentsControllerImpl) Delete(c *gin.Context) {
+	// get params from id
+	var cmtId string = c.Param("id")
+	var comment resource.Comment
+	var err error
+
+	// Obtain user from cookie (should be inside if we are authenticated)
+	// Retrieve the user from the Gin context
+	value, exists := c.Get("user")
+	if !exists {
+		// Handle the case where "user" is not set in the context
+		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to DELETE post",
+			Data:    nil,
+			Error:   "unauthorised",
+		})
+		return
+	}
+
+	// Perform a type assertion to convert `any` to `resource.User`
+	user, ok := value.(*resource.User)
+	if !ok {
+		// Handle the case where the type assertion fails
+		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
+			Status:  resource.Error,
+			Message: "Failed to DELETE post",
+			Data:    nil,
+			Error:   "unauthorised",
+		})
+
+		log.Println("[controllers.CommentsController.Delete] Failed to DELETE post: Could not convert `user` to type `resource.User`")
+		return
+	}
+
+	// Send request to service layer
+	comment, err = cc.service.Delete(user.ID, cmtId)
+
+	// Format response
+	if err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete comment",
+				Data:    nil,
+				Error:   "Comment not found",
+			})
+
+		case commonerrors.ErrInvalidReqFormat:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete comment",
+				Data:    nil,
+				Error:   err.Error(),
+			})
+
+		case commonerrors.ErrUnauthorised:
+			c.JSON(http.StatusBadRequest, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete comment",
+				Data:    nil,
+				Error:   err.Error(),
+			})
+
+		default:
+			c.JSON(http.StatusInternalServerError, resource.APIResponse[error]{
+				Status:  resource.Error,
+				Message: "Failed to delete comment",
+				Data:    nil,
+				Error:   "An unexpected error occurred.",
+			})
+		}
+
+		log.Println("[controllers.CommentsController.Delete] Failed to DELETE comment: ", err)
+		return
+	} else {
+		// return success response
+		c.JSON(http.StatusOK, resource.APIResponse[resource.Comment]{
+			Status:  resource.Success,
+			Message: "Successfully deleted comment",
+			Data:    comment,
+			Error:   "",
+		})
+
+		log.Println("[controllers.PostsController.DeletePost] Successfully DELETE comment: ", comment)
 	}
 }

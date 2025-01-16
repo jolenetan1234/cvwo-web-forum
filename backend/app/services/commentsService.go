@@ -18,6 +18,7 @@ type CommentsService interface {
 	GetByPostId(postId string) ([]resource.Comment, error)
 	Create(req resource.CreateCommentRequest, userId string, postId string) (resource.Comment, error)
 	Update(req resource.UpdateCommentRequest, userId string, commentId string) (resource.Comment, error)
+	Delete(userId string, commentId string) (resource.Comment, error)
 }
 
 // Define implementation struct
@@ -172,6 +173,50 @@ func (cs CommentsServiceImpl) Update(req resource.UpdateCommentRequest, userId s
 		cmtResource = utils.CommentMapper(cmtEntity)
 		err = nil
 		log.Println("[services.CommentsService.Update] Successfully UPDATE comment: ", cmtResource)
+	}
+
+	return cmtResource, err
+}
+
+func (cs CommentsServiceImpl) Delete(userId string, commentId string) (resource.Comment, error) {
+	var cmtResource resource.Comment
+	var cmtEntity entity.Comment
+	var err error
+
+	// Convert postId to int
+	cmtIdInt, err := strconv.Atoi(commentId)
+
+	if err != nil {
+		log.Println("[services.CommentsService.Delete] Failed to DELETE comment: ", err)
+		return resource.Comment{}, commonerrors.ErrInvalidReqFormat
+	}
+
+	// Find the existing comment
+	existingCmt, err := cs.repo.GetById(cmtIdInt)
+
+	if err != nil {
+		cmtResource = resource.Comment{}
+		log.Println("[services.CommentsService.Delete] Failed to DELETE comment: ", err)
+		return cmtResource, err
+	}
+
+	// Check if userID matches that in the existing post
+	val, _ := strconv.Atoi(userId)
+	if val != existingCmt.UserID {
+		return resource.Comment{}, commonerrors.ErrUnauthorised
+	}
+
+	// Pass to repo to delete
+	cmtEntity, err = cs.repo.Delete(cmtIdInt)
+
+	if err != nil {
+		cmtResource = resource.Comment{}
+		log.Println("[services.CommentsService.Delete] Failed to DELETE comment: ", err)
+	} else {
+		// Format the comment to Resource
+		cmtResource = utils.CommentMapper(cmtEntity)
+		err = nil
+		log.Println("[services.CommentsService.Delete] Successfully DELETE comment: ", cmtEntity)
 	}
 
 	return cmtResource, err

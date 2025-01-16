@@ -125,6 +125,7 @@ func main() {
 	r.GET("/posts/:id/comments", commentsController.GetByPostId)
 	r.POST("/posts/:id/comments", middleware.RequireAuth, commentsController.Create)
 	r.PUT("/comments/:id", middleware.RequireAuth, commentsController.Update)
+	r.DELETE("/comments/:id", middleware.RequireAuth, commentsController.Delete)
 
 	r.Run()
 

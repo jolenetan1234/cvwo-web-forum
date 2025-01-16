@@ -342,7 +342,7 @@ func (pc PostsControllerImpl) DeletePost(c *gin.Context) {
 		// Handle the case where "user" is not set in the context
 		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
 			Status:  resource.Error,
-			Message: "Failed to UPDATE post",
+			Message: "Failed to DELETE post",
 			Data:    nil,
 			Error:   "Unauthorised",
 		})
@@ -355,12 +355,12 @@ func (pc PostsControllerImpl) DeletePost(c *gin.Context) {
 		// Handle the case where the type assertion fails
 		c.JSON(http.StatusUnauthorized, resource.APIResponse[error]{
 			Status:  resource.Error,
-			Message: "Failed to UPDATE post",
+			Message: "Failed to DELETE post",
 			Data:    nil,
 			Error:   "Unauthorised",
 		})
 
-		log.Println("[controllers.PostsController.CreatePost] Failed to UPDATE post: Could not convert `user` to type `resource.User`")
+		log.Println("[controllers.PostsController.DeletePost] Failed to DELETE post: Could not convert `user` to type `resource.User`")
 		return
 	}
 
