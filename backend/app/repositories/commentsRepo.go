@@ -14,6 +14,7 @@ type CommentsRepo interface {
 	GetByPostId(postId int) ([]entity.Comment, error)
 	Create(entity.Comment) (entity.Comment, error)
 	Update(entity.Comment) (entity.Comment, error)
+	Delete(cmtId int) (entity.Comment, error)
 }
 
 // Define implementation struct
@@ -88,5 +89,21 @@ func (cr CommentsRepoImpl) Update(comment entity.Comment) (entity.Comment, error
 		return entity.Comment{}, err
 	} else {
 		return comment, nil
+	}
+}
+
+func (cr CommentsRepoImpl) Delete(commentId int) (entity.Comment, error) {
+	// Store the deleted comment in `cmt`
+	var cmt entity.Comment
+	cr.db.First(&cmt, commentId)
+
+	err := cr.db.Delete(&entity.Comment{}, commentId).Error
+
+	if err != nil {
+		log.Println("[repositories.CommentsRepo.Delete] Failed to DELETE comment: ", err)
+		return entity.Comment{}, err
+	} else {
+		log.Println("[repositories.CommentsRepo.Delete] Successfully DELETE comment")
+		return cmt, nil
 	}
 }
