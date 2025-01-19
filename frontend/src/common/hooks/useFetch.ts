@@ -2,11 +2,6 @@ import { useEffect, useState } from "react"
 
 // types
 import { ApiClientResponse } from "../../api/ApiClient";
-
-// MOCK APIs
-import { getAllPosts, getPostById } from "../../api/post-api";
-import { getCommentsByPostId, getCommentById } from "../../api/comment-api";
-
 interface useFetchResponse<T> {
     // data will only be null in the case of an error. 
     // Empty arrays will still be here.
@@ -44,7 +39,7 @@ function useFetch<T>(
                 }
             // catch unknown errors (NOT AXIOS ERRORS! Those already caught in APIClient)
             } catch (err) {
-                setError("An unknown error occured.");
+                setError(`An unknown error occured: ${err}`);
             } finally {
                 setLoading(false);
             }

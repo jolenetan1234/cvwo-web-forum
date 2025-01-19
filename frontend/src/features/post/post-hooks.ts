@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { UseFeatureFormResponse } from "../../common/hooks/useForm";
-import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types";
+import Post, { NewPost, UpdatedPost } from "./post-types";
 import useForm from "../../common/hooks/useForm";
-import forumPostClient from "./post-api-client";
 import { useSelector } from "react-redux";
-import { selectUser, selectUserToken } from "../user/user-slice";
+import { selectUserToken } from "../user/user-slice";
 import { addNewPost, deletePost, fetchAllPosts, selectAllPosts, selectPostsError, selectPostsStatus, updatePost } from "./post-slice";
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks";
 import { isDifferent } from "../../common/utils";
@@ -92,7 +91,7 @@ export function useCreatePostForm(handleClose: () => void): UseFeatureFormRespon
                     // unwrapping it returns a NEW Promise
                     // with either the `action.payload` value from a `fulfilled` action
                     // or throw an error if it's the `rejected ` action.
-                    await dispatch(addNewPost({ newPost: formData, token })).unwrap();
+                    await dispatch(addNewPost({ newPost: formData })).unwrap();
                     // close and reset form
                     handleClose();
                 }
@@ -190,7 +189,6 @@ export function useEditPostForm(post: Post, handleClose: () => void): UseFeature
                     await dispatch(updatePost({ 
                         updatedPost: formData,
                         postId: post.id,
-                        token
                     })).unwrap();
 
                     // close the form
@@ -240,7 +238,7 @@ export function usePostDelete(postId: string | null, handleClose: () => void) {
                 } else if (!token) {
                     setError('401 Unauthorised');
                 } else {
-                    const deletedPost = await dispatch(deletePost({ postId, token })).unwrap();
+                    const deletedPost = await dispatch(deletePost({ postId })).unwrap();
                     console.log(`[usePostDelete.handleDelete] Successfully deleted post ${postId}`, deletedPost);
                     handleClose();
                 }

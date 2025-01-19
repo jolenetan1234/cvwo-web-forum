@@ -3,10 +3,10 @@ import { Dialog, Paper, Stack, Typography } from "@mui/material"
 import { Delete } from "@mui/icons-material"
 import StyledButton from "./StyledButton";
 import { StyledHeader } from "./Form";
+import ErrorMessage from "./ErrorMessage";
 
 
-export const DeleteItemButton = ({ itemId, handleDeleteOpen, sx }: { 
-    itemId: string, 
+export const DeleteItemButton = ({ handleDeleteOpen, sx }: { 
     handleDeleteOpen: () => void,
     sx?: object
 }): JSX.Element => {
@@ -53,11 +53,13 @@ export function ConfirmDelete({ title, isOpen, confirmDeleteText, handleClose, h
                     />
 
                     <StyledButton
-                    content='Yes'
+                    content={loading ? 'Loading' : 'Yes'}
                     onClick={handleDelete}
                     sx={{ backgroundColor: 'red' }}
                     />
                 </Stack>
+
+                {error && <ErrorMessage message={error} />}
             </Paper>
         </Dialog>
     )

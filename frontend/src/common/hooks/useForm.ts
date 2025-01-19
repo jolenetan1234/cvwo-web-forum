@@ -1,3 +1,5 @@
+import { OutlinedInputProps } from "@mui/material";
+import { SelectInputProps } from "@mui/material/Select/SelectInput";
 import { useState } from "react";
 
 /**
@@ -10,7 +12,7 @@ import { useState } from "react";
  */
 interface useFormResponse<T> {
     data: T,
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>/*React.ChangeEvent<HTMLInputElement | HTMLSelectElement>*/) => void,
+    handleChange: (e: OutlinedInputProps['onChange'] | SelectInputProps['onChange']) => void,
     resetForm: () => void,
 }
 
@@ -30,7 +32,7 @@ export interface UseFeatureFormResponse<T> {
     data: T,
     loading: boolean,
     error: string | null,
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>/*React.ChangeEvent<HTMLInputElement | HTMLSelectElement>*/) => void,
+    handleChange: (e: OutlinedInputProps['onChange']) => void,
     handleSubmit: (e: React.FormEvent) => void,
 }
 
@@ -48,10 +50,10 @@ function useForm<T>(
         setData(initialData);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> /*React.ChangeEvent<HTMLInputElement | HTMLSelectElement>*/): void => {
+    const handleChange = (e: OutlinedInputProps['onChange'] | SelectInputProps['onChange']): void => {
         setData(prevData => ({
             ...prevData,
-            [e.target.name]: e.target.value,
+            [(e as any).target.name]: (e as any).target.value
         }));
     };
 

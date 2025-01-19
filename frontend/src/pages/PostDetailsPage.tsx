@@ -1,4 +1,4 @@
-import { ConfirmPostDelete, EditPostForm, PostDetails } from "../features/post/post-components";
+import { EditPostForm, PostDetails } from "../features/post/post-components";
 
 // hooks
 import { useIsLoginOpen } from "../common/contexts/IsLoginOpenContext";
@@ -46,7 +46,7 @@ export default function PostDetailsPage(): JSX.Element {
         error: deleteCommentError, 
         handleDelete: handleCommentDelete 
     } = useCommentDelete(
-        commentId,
+        commentId ?? '',
         () => toggleDeleteCommentOpen()
     );
 

@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store";
 
-// SLICE INTERFACE
-interface ThemeState {
-    theme: 'light' | 'dark'
-};
 
 // INITIAL STATE
 const initialState = {

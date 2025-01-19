@@ -53,63 +53,6 @@ export const useGetCommentsByPostId = (postId: string) => {
 
     }, [dispatch, postId, commentsByPostId]);
 
-    // IMPLEMENTATION #2:
-    /*
-    useEffect(() => {
-        // if postId not in the hash map `commentsByPostId`, it has not been fetched yet.
-        if (!(postId in commentsByPostId)) {
-
-            const fetchCommentsByPostId = async () => {
-                console.log('[CommentSectionComponent.fetchCommentsByPostId]');
-                setLoading(true);
-
-                try {
-                    const res = await dispatch(getCommentsByPostId(postId)).unwrap();
-                    setComments(res);
-                } catch (err: any) {
-                    setError(err);
-                } finally {
-                    setLoading(false);
-                }
-            }
-
-            fetchCommentsByPostId();
-            
-        } else {
-            // If already fetched, just read directly from the store.
-            setComments(commentsByPostId[postId]);
-        };
-
-    }, [dispatch, postId, commentsByPostId]);
-    */
-
-    // WRONG IMPLEMENTATION:
-    /*
-    useEffect(() => {
-
-        console.log("[useGetCommentsByPostId] WRONG IMPLEMENTATION");
-
-        if (!(postId in commentsByPostId)) {
-            dispatch(getCommentsByPostId(postId));
-        }
-
-        const comments = commentsByPostId[postId].comments; // undefined
-        const status = commentsByPostId[postId].status; // undefined
-        const error = commentsByPostId[postId].error; // undefined
-
-
-        if (status === 'success') {
-            setComments(comments as Comment[]);
-            setLoading(false);
-        } else if (status === 'loading') {
-            setLoading(true);
-        } else if (status === 'error') {
-            setError(error ?? `[useGetCommentsByPostId] Failed to get comments for post ${postId}`);
-        }
-
-    }, [dispatch, postId, commentsByPostId]);
-    */
-
     return {
         data: comments,
         loading,
@@ -165,7 +108,7 @@ export const useCreateCommentForm = (postId: string, handleClose: () => void): U
                 } else {
                     // await the async thunk dispatch
                     setLoading(true);
-                    const newComment = await dispatch(addNewComment({ formData, token }));
+                    const newComment = await dispatch(addNewComment({ formData }));
                     handleClose();
 
                     console.log('[useCreateCommentForm.handleSubmit] Successfully CREATE comment', newComment);
@@ -230,7 +173,7 @@ export const useEditCommentForm = (handleClose: () => void): UseFeatureFormRespo
                 } else {
                     setLoading(true);
                     // unwrap the thunk promise
-                    const updatedComment = await dispatch(updateComment({ commentId: comment.id, formData, token }));
+                    const updatedComment = await dispatch(updateComment({ commentId: comment.id, formData }));
                     handleClose();
 
                     console.log('[useEditCommentForm.handleSubmit] Successfully UPDATED comment', updatedComment);
@@ -295,7 +238,7 @@ export const useCommentDelete = (
                     setError('Failed to DELETE comment: Comment ID is null');
                 } else {
                     setLoading(true);
-                    await dispatch(deleteComment({ commentId, token })).unwrap();
+                    await dispatch(deleteComment({ commentId })).unwrap();
                     handleClose();
                 };
             } catch (err: any) {

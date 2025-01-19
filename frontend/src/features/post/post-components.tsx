@@ -1,11 +1,11 @@
 // components
-import { Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Link, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Chip, Dialog, FormControl, InputLabel,  MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
 
 // types
 // import Post from "../../types/Post.ts";
-import Post, { CreatePostData, NewPost, UpdatedPost } from "./post-types.ts";
+import Post, { NewPost, UpdatedPost } from "./post-types.ts";
 import { FormField } from "../../common/types/common-types.ts";
 
 // hooks
@@ -20,14 +20,13 @@ import { useSelector } from "react-redux";
 import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
-import { useAllPosts, useCreatePostForm, useEditPostForm, usePostDelete } from "./post-hooks.ts";
+import { useAllPosts, useCreatePostForm, useEditPostForm } from "./post-hooks.ts";
 import userClient from "../user/user-api-client.ts";
 import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.tsx";
-import { isAuthor } from "./post-utils.ts";
+import { useUtils } from "./post-utils.ts";
 import { useIsDeletePostOpen } from "../../common/contexts/IsDeletePostOpen.tsx";
 import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
-import { AddCircle, Delete, Edit, PostAdd } from "@mui/icons-material";
-import CreateItemButton from "../../common/components/CreateItem.tsx";
+import { AddCircle, Edit, PostAdd } from "@mui/icons-material";
 import { isEdited } from "../../common/utils.ts";
 import { SeeMore } from "../../common/components/SeeMore.tsx";
 import { useNavigate } from "react-router-dom";
@@ -72,6 +71,8 @@ const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }:
 
     // For title link
     const navigate = useNavigate();
+
+    const { isAuthor } = useUtils();
 
     return (
         <CardHeader
@@ -221,18 +222,6 @@ const Posts = ({ posts }: { posts: Post[] }): JSX.Element => {
 }
 
 /**
- * A right bar containing other information(?)
- * @returns {JSX.Element} A component containing the right bar of the Feed.
- */
-const RightBar = (): JSX.Element => {
-    return (
-        <Box bgcolor="purple" flex={1}>
-            RightBar
-        </Box>
-    )
-}
-
-/**
  * The main feature of our app.
  * Displays all forum posts, that can be filtered based on category and search keywords.
  * @param {Object} props - Properties passed to the Feed component.
@@ -284,7 +273,7 @@ const PostDetails = ({ post }: {
 
     const postId = post.id;
 
-    const { isDeletePostOpen, toggleDeletePostOpen } = useIsDeletePostOpen();
+    const { toggleDeletePostOpen } = useIsDeletePostOpen();
     /**
      * @function handleDeleteOpen - handles the event where the "Delete" button is pressed.
      */
@@ -296,7 +285,7 @@ const PostDetails = ({ post }: {
                 <GenericPostCard
                 post={post}
                 editButton={<EditPostButton postId={postId}/>}
-                deleteButton={<DeleteItemButton itemId={postId} handleDeleteOpen={handleDeleteOpen} />}
+                deleteButton={<DeleteItemButton handleDeleteOpen={handleDeleteOpen} />}
                 />
         );
 //    }
@@ -304,17 +293,15 @@ const PostDetails = ({ post }: {
 
 // FEATURE: CREATE POST
 const CreatePostButton = (): JSX.Element => {
-    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
-    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+    const { toggleLoginOpen } = useIsLoginOpen();
+    const { toggleCreateOpen } = useIsCreateOpen();
     const isLoggedIn = useSelector(selectUserIsLoggedIn);
 
     /** Conditionally render either the CreatePostForm
      * or the LoginForm,
      * based on the logged in status of the user.
      */
-    const handleCreatePostOpen = () => {
-        isLoggedIn ? toggleCreateOpen() : toggleLoginOpen();
-    };
+    const handleCreatePostOpen = isLoggedIn ? toggleCreateOpen : toggleLoginOpen;
 
     return (
         <StyledButton
@@ -392,7 +379,7 @@ function CreatePostForm(): JSX.Element {
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
                             value={data[field.name as keyof NewPost]} // Eg. data[username], data[password]
-                            onChange={handleChange}
+                            onChange={handleChange as any}
                             />
                             :
                             
@@ -402,7 +389,7 @@ function CreatePostForm(): JSX.Element {
                                 key={field.name}
                                 name={field.name}
                                 value={data[field.name as keyof NewPost]}
-                                onChange={handleChange}
+                                onChange={handleChange as any}
                                 input={<OutlinedInput label={field.placeholder} />}
                                 required={field.required}
                                 renderValue={selected => {
@@ -440,7 +427,7 @@ function CreatePostForm(): JSX.Element {
 
 // FEATURE: EDIT POST
 function EditPostButton({ postId }: { postId: string }): JSX.Element {
-    const { isEditPostOpen, toggleEditPostOpen } = useIsEditPostOpen();
+    const { toggleEditPostOpen } = useIsEditPostOpen();
 
     const handleClick = () => {
         toggleEditPostOpen(postId); 
@@ -460,7 +447,7 @@ function EditPostButton({ postId }: { postId: string }): JSX.Element {
 function EditPostForm({ post }: {
     post: Post,
 }): JSX.Element {
-    const { isEditPostOpen, toggleEditPostOpen, postId } = useIsEditPostOpen();
+    const { isEditPostOpen, toggleEditPostOpen } = useIsEditPostOpen();
 
     const handleClose = () => {
         toggleEditPostOpen();
@@ -528,7 +515,7 @@ function EditPostForm({ post }: {
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
                             value={formData[field.name as keyof UpdatedPost]} // Eg. data[username], data[password]
-                            onChange={handleChange}
+                            onChange={handleChange as any}
                             />
                             :
                             <FormControl fullWidth>
@@ -544,7 +531,7 @@ function EditPostForm({ post }: {
                                     key={field.name}
                                     name={field.name}
                                     value={formData[field.name as keyof UpdatedPost]}
-                                    onChange={handleChange}
+                                    onChange={handleChange as any}
                                     input={<OutlinedInput label={field.placeholder} />}
                                     required={field.required}
                                     renderValue={selected => {
@@ -579,47 +566,5 @@ function EditPostForm({ post }: {
         </Dialog>
     )
 }
-
-// FEATURE: DELETE
-// export function ConfirmPostDelete(): JSX.Element {
-//     const { isDeletePostOpen, toggleDeletePostOpen, postId } = useIsDeletePostOpen();
-
-//     const handleClose = () => {
-//         toggleDeletePostOpen();
-//     }
-
-//     const confirmDeleteText = 'Are you sure you want to delete this post?';
-
- 
-//     const { loading, error, handleDelete } = usePostDelete(postId, handleClose);
-
-//     return (
-//         <Dialog open={isDeletePostOpen} maxWidth="xs" onClose={handleClose}>
-//             <Paper elevation={8} sx={{p: 2}}>
-
-//                 <StyledHeader
-//                 avatar={<Delete />}
-//                 title='Delete Post'
-//                 />
-
-//                 <Typography>{confirmDeleteText}</Typography>
-
-//                 <Stack direction='row' justifyContent='space-between'>
-//                     <StyledButton
-//                     content='Cancel'
-//                     onClick={handleClose}
-//                     />
-
-//                     <StyledButton
-//                     content='Yes'
-//                     bgColor='red'
-//                     onClick={handleDelete}
-//                     />
-//                 </Stack>
-//             </Paper>
-//         </Dialog>
-//     )
-// }
-
 
 export { Feed, PostDetails, CreatePostButton, CreatePostForm, EditPostForm };

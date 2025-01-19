@@ -25,7 +25,7 @@ function useFilter<T>(
     apiClient: ApiClient<T>,
     filterFunction: (filters: any[]) => Promise<ApiClientResponse<T[]>>
 ): useFilterResponse<T>{
-    const [data, setData] = useState<T[]>([]);
+    const [data, setData] = useState<T[] | null>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
@@ -46,7 +46,7 @@ function useFilter<T>(
                 console.log("[useFilter]: filterData()", res);
 
                 // set states based on response status
-                if (res.type === "success") {
+                if (res.type === "success" && res.data) {
                     setData(res.data);
                 } else {
                     setError(res.error);
@@ -55,6 +55,7 @@ function useFilter<T>(
             // catch unknown errors (NOT AXIOS ERRORS! Those already caught in APIClient)
             } catch (err) {
                 setError("An unknown error occurred.");
+                console.log(err)
             } finally {
                 setLoading(false);
             }

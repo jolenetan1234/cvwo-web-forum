@@ -3,7 +3,6 @@ import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 import Comment, { NewComment, UpdatedComment } from "./comment-types";
 
 // MOCK API ENDPOINTS
-import { createComment, deleteComment, getAllComments, getCommentById, getCommentsByPostId, updateComment } from "../../api/comment-api";
 import MockError from "../../common/errors/MockError";
 import axios, { AxiosError } from "axios";
 import { ApiResponse } from "../../common/types/common-types";
@@ -45,18 +44,20 @@ class CommentClient extends ApiClient<Comment> {
         try {
             // TODO: replace with axios GET call
             // const data = await axios.get("API_BASE_URL/comment/commentId")
-            const res = await getCommentById(parseInt(commentId));
-            
-            const data = {
-                ...res,
-                id: res.id.toString(),
-                post_id: res.post_id.toString(),
-                user_id: res.user_id.toString(),
+            // Backend has not implemented getCommentById yet (because frontend doesn't actually need it).
+            // So for now just hard code a comment.
+            const comment: Comment = {
+                id: commentId,
+                content: "hi",
+                post_id: "1",
+                user_id: "1",
+                created_at: Date(),
+                updated_at: Date(),
             }
-
+            
             return {
                 type: "success",
-                data: data,
+                data: comment,
                 error: "",
             } as ApiClientResponse<Comment>;
 
@@ -110,7 +111,7 @@ class CommentClient extends ApiClient<Comment> {
         }
     }
 
-    async post(formData: NewComment, token: string): Promise<ApiClientResponse<Comment>> {
+    async post(formData: NewComment): Promise<ApiClientResponse<Comment>> {
         try {
             const postId = formData.post_id;
             const res = await axios.post<ApiResponse<Comment>>(
@@ -148,7 +149,7 @@ class CommentClient extends ApiClient<Comment> {
         };
     }
 
-    async put(commentId: string, formData: UpdatedComment, token: string): Promise<ApiClientResponse<Comment>> {
+    async put(commentId: string, formData: UpdatedComment): Promise<ApiClientResponse<Comment>> {
         try {
             const res = await axios.put<ApiResponse<Comment>>(
                 `${import.meta.env.VITE_API_URL}/comments/${commentId}`,
@@ -185,28 +186,8 @@ class CommentClient extends ApiClient<Comment> {
 
     }
 
-    async delete(commentId: string, token: string): Promise<ApiClientResponse<Comment>> {    
+    async delete(commentId: string): Promise<ApiClientResponse<Comment>> {    
         try {
-            // if (!token) {
-            //     return {
-            //         type: 'error',
-            //         data: null,
-            //         error: 'Failed to DELETE comment: User unauthorised',
-            //     };
-            // };
-
-            // // TODO: replace with actual API call and pass in token
-            // const res = await deleteComment(parseInt(commentId));
-            // const deletedComment = res;
-
-            // // TODO: check if res is ok. if not, return error
-            // // format data
-            // const data = {
-            //     ...deletedComment,
-            //     id: deletedComment.id.toString(),
-            //     post_id: deletedComment.post_id.toString(),
-            //     user_id: deletedComment.user_id.toString(),
-            // };
 
             const res = await axios.delete<ApiResponse<Comment>>(
                 `${import.meta.env.VITE_API_URL}/comments/${commentId}`,
@@ -243,5 +224,5 @@ class CommentClient extends ApiClient<Comment> {
     }
 }
 
-const commentClient = new CommentClient("");
+const commentClient = new CommentClient();
 export default commentClient;

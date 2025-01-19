@@ -57,7 +57,7 @@ const userSlice = createSlice({
         },
         restoreSession: (state) => {
             // obtain user & token from cookies
-            const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
+            const user = Cookies.get('user') ? JSON.parse(Cookies.get('user') ?? "") : null;
             const token = Cookies.get('token') || null;
             if (user && token) {
                 state.user = user;

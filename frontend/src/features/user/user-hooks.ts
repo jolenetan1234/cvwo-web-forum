@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import userClient from "./user-api-client";
 
 // redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 // userActions
 import { login, logout } from "./user-slice";
 import { clearSessionInCookies, storeSessionInCookies } from "./user-utils";
@@ -56,7 +56,6 @@ const useLoginForm = (handleClose: () => void): UseFeatureFormResponse<LoginData
 
                 if (res.type === "success" && res.data?.user) {
                     const user = res.data.user;
-                    const token = res.data.token;
                     // TODO: store the session and stuff
                    
                     console.log("[useLoginForm.handleSubmit] LOGIN SUCCESS", user);
@@ -78,6 +77,7 @@ const useLoginForm = (handleClose: () => void): UseFeatureFormResponse<LoginData
                 }
             } catch (err: any) {
                 setError("An unknown error occurred.");
+                console.log("[useLoginForm.handleSubmit] Failed to login", err);
             } finally {
                 setLoading(false);
                 // reset form data
@@ -149,6 +149,7 @@ const useSignUpForm = (handleClose: () => void): UseFeatureFormResponse<SignUpDa
                 
             } catch (err: any) {
                 setError("An unknown error occurred.");
+                console.log("[useSignUpForm.handleSubmit] Failed to CREATE user", err);
             } finally {
                 setLoading(false);
                 // close and reset form data

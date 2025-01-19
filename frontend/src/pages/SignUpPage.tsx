@@ -3,7 +3,7 @@ import { useIsLoginOpen } from "../common/contexts/IsLoginOpenContext";
 import { LoginForm, SignupForm } from "../features/user/user-components";
 
 export default function SignUpPage(): JSX.Element {
-    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    const { isLoginOpen, toggleLoginOpen: _ } = useIsLoginOpen();
     return (
         <Box>
             <SignupForm />

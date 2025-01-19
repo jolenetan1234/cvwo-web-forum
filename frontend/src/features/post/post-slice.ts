@@ -101,13 +101,17 @@ export const fetchAllPosts = createAsyncThunk<
 
 export const addNewPost = createAsyncThunk<
     Post, // Payload type of `fulfilled` action
-    { newPost: NewPost, token: string }, // Argument types
+    { 
+        newPost: NewPost, 
+    }, // Argument types
     { rejectValue: string }
 >(
     'posts/addNewPost',
     // PAYLOAD CREATOR (the thunk)
-    async ({ newPost, token }: { newPost: NewPost, token: string }, { rejectWithValue }) => {
-        const res = await forumPostClient.post(newPost, token);
+    async ({ newPost }: { 
+        newPost: NewPost 
+    }, { rejectWithValue }) => {
+        const res = await forumPostClient.post(newPost);
         if (res.type === 'success') {
             return res.data as Post;
         } else {
@@ -118,17 +122,19 @@ export const addNewPost = createAsyncThunk<
 
 export const updatePost = createAsyncThunk<
     Post, // Payload type of `fulfilled` action
-    { updatedPost: UpdatedPost, postId: string, token: string }, // Argument types
+    { 
+        updatedPost: UpdatedPost, 
+        postId: string, 
+    }, // Argument types
     { rejectValue: string }
 >(
     'posts/updatePost',
     // PAYLOAD CREATOR (the thunk)
-    async ({ updatedPost, postId, token }: {
+    async ({ updatedPost, postId }: {
         updatedPost: UpdatedPost,
-        postId: string
-        token: string,
+        postId: string,
     }, { rejectWithValue }) => {
-        const res = await forumPostClient.put(updatedPost, postId, token);
+        const res = await forumPostClient.put(updatedPost, postId);
         if (res.type === 'success') {
             return res.data as Post;
         } else {
@@ -139,16 +145,17 @@ export const updatePost = createAsyncThunk<
 
 export const deletePost = createAsyncThunk<
     Post, // Payload type of `fulfilled  action
-    { postId: string, token: string, }, // Argument types
+    { 
+        postId: string, 
+    }, // Argument types
     { rejectValue: string }
 >(
     'posts/deletePost',
     // PAYLOAD CREATOR (the thunk)
-    async ({ postId, token }: {
+    async ({ postId }: {
         postId: string,
-        token: string,
     }, { rejectWithValue }) => {
-        const res = await forumPostClient.delete(postId, token);
+        const res = await forumPostClient.delete(postId);
         if (res.type === 'success') {
             return res.data as Post;
         } else {
@@ -177,7 +184,7 @@ const postsSlice = createSlice({
         // addCase(actionCreator, reducer)
         builder
         // LISTEN FOR FETCH ALL POSTS
-        .addCase(fetchAllPosts.pending, (state, action) => {
+        .addCase(fetchAllPosts.pending, (state) => {
             state.status = 'loading';
         })
         .addCase(fetchAllPosts.fulfilled, (state, action) => {
@@ -185,7 +192,7 @@ const postsSlice = createSlice({
             state.status = 'success';
             state.allPosts = allPosts;
         })
-        .addCase(fetchAllPosts.rejected, (state, action) => {
+        .addCase(fetchAllPosts.rejected, (state) => {
             state.status = 'failed';
         })
         // LISTEN FOR CREATE POST
@@ -212,21 +219,6 @@ const postsSlice = createSlice({
             const deletedPost = action.payload;
             state.allPosts = state.allPosts.filter(post => post.id != deletedPost.id);
         })
-        /*
-        .addCase(filterPostsByCategories.pending, (state, action) => {
-            state.status = "loading";
-        })
-        .addCase(filterPostsByCategories.fulfilled, (state, action) => {
-            state.status = "success";
-            console.log("[postsSlice] filterPostsByCategories.filfilled", action.payload)
-            // ADD ANY FETCHED POSTS TO THE ARRAY
-            state.filteredPosts.push(...action.payload);
-        })
-        .addCase(filterPostsByCategories.rejected, (state, action) => {
-            state.status = "failed";
-            state.error = action.payload ?? "An unknown error occurred";
-        })
-        */
     }
 })
 
