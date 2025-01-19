@@ -5,7 +5,9 @@ const IsEditPostOpenContext = createContext(
     {
         // DEFAULT VALUES (fallback if eg. someone tires to consume this context outside its scope)
         isEditPostOpen: false,
-        toggleEditPostOpen: (postId?: string) => {}, // optional postId
+        toggleEditPostOpen: (postId?: string) => {
+            console.log(postId);
+        }, // optional postId
         postId: ''
     }
 );
@@ -18,9 +20,9 @@ export const IsEditPostOpenProvider = ({ children }: {
     const [isEditPostOpen, setIsEditPostOpen] = useState(false);
     const [postId, setPostId] = useState<string>('');
 
-    const toggleEditPostOpen = (postId: string) => {
+    const toggleEditPostOpen = (postId?: string) => {
         setIsEditPostOpen(prev => !prev);
-        setPostId(postId ?? null);
+        setPostId(postId ?? '');
     }
 
     return (

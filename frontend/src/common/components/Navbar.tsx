@@ -2,20 +2,16 @@
 import { useNavigate } from "react-router-dom";
 
 // components
-import { AppBar, Box, Button, Stack, styled, Toolbar, alpha, InputBase, Typography, IconButton } from "@mui/material";
+import { AppBar, Box, Stack, styled, Toolbar, alpha, InputBase, Typography } from "@mui/material";
 import { Home } from '@mui/icons-material';
 import StyledButton from "./StyledButton.tsx";
-import SearchIcon from "@mui/icons-material/Search";
 import { LoginButton, LogoutButton } from "../../features/user/user-components.tsx";
 
 // hooks
-import { useIsLoginOpen } from "../contexts/IsLoginOpenContext.tsx";
-import { useIsCreateOpen } from "../contexts/IsCreateOpenContext.tsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 // types
-import { logout, selectUserIsLoggedIn } from "../../features/user/user-slice.ts";
-import { clearSessionInCookies } from "../../features/user/user-utils.ts";
+import { selectUserIsLoggedIn } from "../../features/user/user-slice.ts";
 import { ToggleThemeButton } from "../../features/theme/theme-components.tsx";
 
 /**

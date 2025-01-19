@@ -1,5 +1,5 @@
-import { Cancel, LockOutlined } from "@mui/icons-material";
-import { Avatar, Box, Button, Checkbox, Container, Dialog, FormControl, FormControlLabel, Grid2, Link, Paper, Stack, TextField, Typography } from "@mui/material";
+import { LockOutlined } from "@mui/icons-material";
+import { Avatar, Box, Dialog, Paper, Stack, TextField, Typography } from "@mui/material";
 import { StyledHeader, SubmitButton } from "../../common/components/Form";
 
 // contexts
@@ -7,22 +7,17 @@ import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext";
 
 // hooks
 import { useLoginForm, useLogout, useSignUpForm } from "./user-hooks";
-import { useDispatch } from "react-redux";
 
 // types
 import { LoginData, SignUpData } from "./user-types";
 import { FormField } from "../../common/types/common-types";
 import StyledButton from "../../common/components/StyledButton";
 
-// utils
-import { clearSessionInCookies } from "./user-utils";
-
 // action creators
-import { logout } from "./user-slice";
 import { useNavigate } from "react-router-dom";
 
 export function LoginButton(): JSX.Element {
-    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
+    const { toggleLoginOpen } = useIsLoginOpen();
     const onClick = () => {
         toggleLoginOpen();
     }
@@ -34,17 +29,7 @@ export function LoginButton(): JSX.Element {
 
 export function LogoutButton(): JSX.Element {
 
-    const { loading, error, handleLogout } = useLogout();
-
-    // const dispatch = useDispatch();
-
-    // const onClick = () => {
-    //     // REMOVE SESSION FROM COOKIES
-    //     clearSessionInCookies();
-
-    //     // UPDATE REDUX STORE
-    //     dispatch(logout());
-    // }
+    const { handleLogout } = useLogout();
 
     return (
         <StyledButton content="Logout" onClick = {handleLogout} />
@@ -112,7 +97,7 @@ export function LoginForm(): JSX.Element {
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
                             value={data[field.name as keyof LoginData]} // Eg. data[username], data[password]
-                            onChange={handleChange}
+                            onChange={handleChange as any}
                             />
                             );
                     })}
@@ -218,13 +203,10 @@ export function SignupForm(): JSX.Element {
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
                             value={data[field.name as keyof SignUpData]} // Eg. data[username], data[password]
-                            onChange={handleChange}
+                            onChange={handleChange as any}
                             />
                             );
                     })}
-
-                        {/* confirm password */}
-
 
                         <Stack alignItems='center'>
                             <SubmitButton 

@@ -33,7 +33,7 @@ export function CategoryHeader({ handleCategoryChange, handleCategoryDelete, sel
         () => categoryClient.getAll()
     );
     */
-   const { data, error, loading } = useFetch(fetchAllCategories);
+   const { data } = useFetch(fetchAllCategories);
     const categories = data;
     
     return (

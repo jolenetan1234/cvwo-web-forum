@@ -9,7 +9,7 @@ export function useCategory<T>(): {
     const [selectedCategories, setSelectedCategories] = useState<T[]>([]);
 
     const handleCategoryChange = (event: SelectChangeEvent<T[]>): void => {
-        setSelectedCategories(event.target.value); // event.target.value is of type T[]
+        setSelectedCategories(event.target.value as T[]); // event.target.value is of type T[]
         console.log("[useCategory.handleCategoryChange] selectedCategories", selectedCategories);
     }
 

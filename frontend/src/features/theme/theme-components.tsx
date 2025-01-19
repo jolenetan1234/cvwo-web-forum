@@ -1,4 +1,3 @@
-import { IconButton } from "@mui/material"
 import StyledButton from "../../common/components/StyledButton"
 import { useAppDispatch, useAppSelector } from "../../store/store-hooks"
 import { selectTheme, toggleTheme } from "./theme-slice";

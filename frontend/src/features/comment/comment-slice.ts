@@ -49,17 +49,15 @@ export const deleteComment = createAsyncThunk<
     Comment, // Payload type of `fulfilled` action
     { 
         commentId: string, 
-        token: string, 
     }, // Argument types
     { rejectValue: string }
 >(
     'comments/deleteComment',
     // PAYLOAD CREATOR (the thunk)
-    async ({ commentId, token }: {
+    async ({ commentId }: {
         commentId: string,
-        token: string,
     }, { rejectWithValue }) => {
-        const res = await commentClient.delete(commentId, token);
+        const res = await commentClient.delete(commentId);
         if (res.type === 'success') {
             return res.data as Comment;
         } else {
@@ -72,17 +70,15 @@ export const addNewComment = createAsyncThunk<
     Comment, // Payload type of `fulfilled` action
     {
         formData: NewComment,
-        token: string,
     }, // Argument types
     { rejectValue: string }
 >(
     'comments/createComment',
     // PAYLOAD CREATOR (the thunk)
-    async ({ formData, token }: {
+    async ({ formData }: {
         formData: NewComment,
-        token: string,
     }, { rejectWithValue }) => {
-        const res = await commentClient.post(formData, token);
+        const res = await commentClient.post(formData);
         if (res.type === 'success') {
             return res.data as Comment;
         } else {
@@ -99,18 +95,16 @@ export const updateComment = createAsyncThunk<
     {
         commentId: string,
         formData: UpdatedComment,
-        token: string,
     }, // Argument types
     { rejectValue: string }
 >(
     'comments/updateComment',
     // PAYLOAD CREATOR (the thunk)
-    async ({ commentId, formData, token }: {
+    async ({ commentId, formData }: {
         commentId: string,
         formData: UpdatedComment,
-        token: string
     }, { rejectWithValue }) => {
-        const res = await commentClient.put(commentId, formData, token);
+        const res = await commentClient.put(commentId, formData);
         if (res.type === 'success') {
             return res.data as Comment;
         } else {

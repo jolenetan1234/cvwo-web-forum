@@ -1,10 +1,6 @@
 import axios, { AxiosError } from "axios";
 import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 
-// MOCK API ENDPOINTS
-import userApi from "../../api/user-api";
-import MockError from "../../common/errors/MockError";
-
 // types
 import User, { LoginData, LoginResponse, SignUpData } from "./user-types";
 import { ApiResponse } from "../../common/types/common-types";
@@ -174,5 +170,5 @@ class UserClient extends ApiClient<User> {
     }
 }
 
-const userClient = new UserClient("");
+const userClient = new UserClient();
 export default userClient;

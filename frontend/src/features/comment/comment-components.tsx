@@ -1,5 +1,5 @@
 // components
-import { Box, Card, CardContent, CardHeader, Chip, Dialog, Divider, FormControl, InputLabel, Paper, Stack, styled, TextField, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Dialog, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
 import { AddComment, Edit, Delete } from "@mui/icons-material";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Loading from "../../common/components/Loading.tsx";
@@ -10,44 +10,24 @@ import Comment, { NewComment, UpdatedComment } from "../comment/comment-types.ts
 
 // hooks
 import useFetch from "../../common/hooks/useFetch";
-import { useAppDispatch, useAppSelector } from "../../store/store-hooks.ts";
-import { useCallback, useEffect, useState } from "react";
+import { useAppSelector } from "../../store/store-hooks.ts";
+import { useCallback } from "react";
 
 // API clients
-import commentClient from "./comment-api-client.ts";
 import userClient from "../user/user-api-client.ts";
 
-// thunks/actions
-import { getCommentsByPostId, selectCommentsByAllPostId, selectCommentsByPostIdError, selectCommentsByPostIdStatus } from "./comment-slice.ts";
-
 // selectors
-import { selectCommentsByPostId } from "./comment-slice.ts";
 import { useCreateCommentForm, useEditCommentForm, useGetCommentsByPostId } from "./comment-hooks.ts";
-import { DeleteItemButton } from "../../common/components/DeleteItem.tsx";
-import { isAuthor } from "../post/post-utils.ts";
+import { useUtils } from "../post/post-utils.ts";
 import { useIsDeleteCommentOpen } from "../../common/contexts/IsDeleteCommentOpen.tsx";
-import CreateItemButton from "../../common/components/CreateItem.tsx";
 import { useIsCreateCommentOpen } from "../../common/contexts/IsCreateCommentOpenContext.tsx";
 import { FormField } from "../../common/types/common-types.ts";
 import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
-import { selectUserIsLoggedIn, selectUserToken } from "../user/user-slice.ts";
+import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { useIsEditCommentOpen } from "../../common/contexts/IsEditCommentOpenContext.tsx";
 import { isEdited } from "../../common/utils.ts";
 import { SeeMore } from "../../common/components/SeeMore.tsx";
-
-// styled
-const StyledCommentBox = styled(Box)({
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-})
-
-function PostCommentBar(): JSX.Element {
-    return (
-        <>new comment..</>
-    )
-}
 
 // FEATURE: VIEW COMMENTS
 /**
@@ -64,10 +44,9 @@ const CommentCard = ({ comment }: { comment: Comment, }): JSX.Element => {
         [comment]
     )
 
-    const { data: user, error, loading } = useFetch(fetchUser);
+    const { isAuthor } = useUtils();
 
-    const [expanded, setExpanded] = useState(false);
-
+    const { data: user } = useFetch(fetchUser);
 
     return (
         <Stack direction='row' justifyContent='space-between'>
@@ -280,7 +259,7 @@ const CreateCommentForm = ({ postId }: {
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
                             value={data[field.name as keyof NewComment]} // Eg. value = data[content]
-                            onChange={handleChange}
+                            onChange={handleChange as any}
                             />
                         ))}
 
@@ -371,7 +350,7 @@ const EditCommentForm = (): JSX.Element => {
                             {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
                             name={field.name}
                             value={data[field.name as keyof UpdatedComment]} // Eg. value = data[content]
-                            onChange={handleChange}
+                            onChange={handleChange as any}
                             />
                         ))}
 

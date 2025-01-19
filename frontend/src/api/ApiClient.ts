@@ -13,14 +13,9 @@ export interface ApiClientResponse<T> {
 }
 
 abstract class ApiClient<T> {
-    private token: string;
-
-    constructor(token: string) {
-        this.token = token;
-    }
 
     abstract getAll(): Promise<ApiClientResponse<T[]>>
-    abstract getById(id: any): Promise<ApiClientResponse<T>>
+    abstract getById(id: string): Promise<ApiClientResponse<T>>
     // abstract post(content: any, token: any): Promise<ApiClientResponse<T>>
 }
 

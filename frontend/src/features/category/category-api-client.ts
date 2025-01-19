@@ -4,7 +4,6 @@ import Category from "./category-types";
 import MockError from "../../common/errors/MockError";
 
 // MOCK API ENDPOINTS
-import { getAllCategories, getCategorybyId } from "../../api/category-api";
 import axios from "axios";
 import { ApiResponse } from "../../common/types/common-types";
 
@@ -88,5 +87,5 @@ class CategoryClient extends ApiClient<Category> {
     }
 }
 
-const categoryClient = new CategoryClient("");
+const categoryClient = new CategoryClient();
 export default categoryClient;

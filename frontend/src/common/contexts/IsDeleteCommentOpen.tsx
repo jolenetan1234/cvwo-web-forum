@@ -8,8 +8,10 @@ const IsDeleteCommentOpenContext = createContext<{
 }
 >({
     isDeleteCommentOpen: false,
-    toggleDeleteCommentOpen: (commentId?:  string) => {},
-    commentId: null,
+    toggleDeleteCommentOpen: (commentId?:  string) => {
+        console.log(commentId);
+    },
+    commentId: '',
 });
 
 // Context provider
@@ -21,7 +23,7 @@ export const IsDeleteCommentOpenProvider = ({ children }: {
     
     const toggleDeleteCommentOpen = (commentId?: string) => {
         setIsDeleteCommentOpen(prev => !prev);
-        setCommentId(commentId ?? null);
+        setCommentId(commentId ?? '');
     }
 
     return (

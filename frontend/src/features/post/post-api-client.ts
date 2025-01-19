@@ -2,13 +2,8 @@ import ApiClient, { ApiClientResponse } from "../../api/ApiClient";
 
 // types
 import Post, { NewPost, UpdatedPost } from "./post-types";
-import MockError from "../../common/errors/MockError";
-import { UserState } from "../user/user-slice";
 
 // MOCK API ENDPOINTS
-import { getAllPosts, getPostById, getPostByCategories, createPost, updatePost, deletePost } from "../../api/post-api";
-import { useSelector } from "react-redux";
-import { selectUserToken } from "../user/user-slice";
 import axios, { AxiosError } from "axios";
 import { ApiResponse } from "../../common/types/common-types";
 
@@ -46,18 +41,8 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    // UNUSED; can delete.
-    /*
     async getById(postId: string): Promise<ApiClientResponse<Post>> {
         try {
-            // console.log("forumPostClient.getById(id)", postId);
-            // const res = await getPostById(parseInt(postId));
-            // const data = {
-            //     ...res,
-            //     id: res.id.toString(),
-            //     category_id: res.category_id.toString(),
-            //     user_id: res.user_id.toString(),
-            // }
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${postId}`);
             const apiResponse: ApiResponse<Post> = res.data;
             const data = apiResponse.data;
@@ -88,54 +73,8 @@ class ForumPostClient extends ApiClient<Post> {
             };
         }
     }
-        */
 
-    /*
-    // UNUSED; CAN DELETE.
-    async getByCategories(categories: string[]): Promise<ApiClientResponse<Post[]>> {
-        try {
-            // if no categories, simply return everything.
-            let res;
-            if (categories.length <= 0) {
-                // TODO: replace with axios
-               res = await getAllPosts();
-            } else {
-                // TODO: replace with axios
-                res = await getPostByCategories(categories.map(cat => parseInt(cat)));
-            }
-            
-            const data = res.map(post => ({
-                ...post,
-                id: post.id.toString(),
-                category_id: post.category_id.toString(),
-                user_id: post.user_id.toString(),
-            }))
-            
-            return {
-                type: "success",
-                data: data,
-                error: "",
-            };
-            
-        } catch (err: any) {
-            let message;
-
-            // TODO: Replace MockError with AxiosError or something
-            if (err instanceof MockError) {
-                message = err.message;
-            } else {
-                message = "An unknown error occurred.";
-            }
-            return {
-                type: "error",
-                data: null,
-                error: message,
-            };
-        }
-    }
-        */
-
-    async post(newPost: NewPost, token: string): Promise<ApiClientResponse<Post>> {
+    async post(newPost: NewPost): Promise<ApiClientResponse<Post>> {
         try {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/posts`, newPost, { withCredentials: true });
             const apiResponse: ApiResponse<Post> = res.data;
@@ -167,7 +106,7 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async put(updatedPost: UpdatedPost, postId: string, token: string): Promise<ApiClientResponse<Post>> {
+    async put(updatedPost: UpdatedPost, postId: string): Promise<ApiClientResponse<Post>> {
         try {
             const res = await axios.put(
                 `${import.meta.env.VITE_API_URL}/posts/${postId}`, 
@@ -203,7 +142,7 @@ class ForumPostClient extends ApiClient<Post> {
         }
     }
 
-    async delete(postId: string, token: string): Promise<ApiClientResponse<Post>> {
+    async delete(postId: string): Promise<ApiClientResponse<Post>> {
         try {
             const res = await axios.delete(
                 `${import.meta.env.VITE_API_URL}/posts/${postId}`,
@@ -214,29 +153,6 @@ class ForumPostClient extends ApiClient<Post> {
             const data = apiResponse.data;
 
             console.log("[forumPostClient.delete] Successfully DELETE post", res);
-            /*
-            if (!token) {
-                return {
-                    type: 'error',
-                    data: null,
-                    error: 'Failed to DELETE post: User unauthorised',
-                };
-            };
-
-            // TODO: send actual backend API call.
-            const res = await deletePost(parseInt(postId));
-            // TODO: check is (res.ok) or something like that
-            // If not ok, return failed response
-
-            // mock the extraction of the data we need
-            const backendPost = res;            
-            const data = {
-                ...backendPost,
-                id: backendPost.id.toString(),
-                category_id: backendPost.category_id.toString(),
-                user_id: backendPost.user_id.toString(),
-            };
-            */
 
             return {
                 type: 'success',
@@ -264,5 +180,5 @@ class ForumPostClient extends ApiClient<Post> {
 
 }
 
-const forumPostClient = new ForumPostClient("");
+const forumPostClient = new ForumPostClient();
 export default forumPostClient;

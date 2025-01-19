@@ -11,8 +11,8 @@ import { useIsCreateOpen } from "../common/contexts/IsCreateOpenContext";
 export default function HomePage(): JSX.Element {
     // hooks
     const { selectedCategories, handleCategoryChange, handleCategoryDelete } = useCategory<string>();
-    const { isLoginOpen, toggleLoginOpen } = useIsLoginOpen();
-    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+    const { isLoginOpen } = useIsLoginOpen();
+    const { isCreateOpen } = useIsCreateOpen();
             
     return (
         <Box>
