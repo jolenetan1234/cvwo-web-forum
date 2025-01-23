@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -39,7 +41,7 @@ func generateJWTSecret(length int) string {
 func main() {
 	secret := generateJWTSecret(32)
 	log.Println("HIIHI", secret)
-
+	log.Println(strings.Split(os.Getenv("ALLOWED_CORS"), ","))
 	r := gin.Default()
 
 	// Enable CORS for all origins (for local dev purposes)
@@ -47,7 +49,7 @@ func main() {
 	// CORS config
 	config := cors.DefaultConfig()
 	// config.AllowAllOrigins = true
-	config.AllowOrigins = []string{"http://localhost:3000"} // For dev purposes
+	config.AllowOrigins = strings.Split(os.Getenv("ALLOWED_CORS"), ",")
 	config.AllowMethods = []string{"POST", "GET", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
 	config.ExposeHeaders = []string{"Content-Length"}
