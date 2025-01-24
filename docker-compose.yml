@@ -15,6 +15,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args: 
+        VITE_APP_URL: "http://13.237.169.162:3000/"
+        VITE_API_URL: "http://13.237.169.162:8080"
     env_file:
       - ./frontend/.env
     depends_on:

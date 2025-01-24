@@ -1,6 +1,14 @@
 # Stage 1: Build the application
 FROM node:18 AS builder
 
+# Define build arguments for environment variables
+ARG VITE_APP_URL
+ARG VITE_API_URL
+
+# Set env variables during build process
+ENV VITE_APP_URL=$VITE_APP_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Set working directory
 WORKDIR /app
 
