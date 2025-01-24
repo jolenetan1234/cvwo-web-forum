@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { UseFeatureFormResponse } from "../../common/hooks/useForm";
 import Post, { NewPost, UpdatedPost } from "./post-types";
 import useForm from "../../common/hooks/useForm";
@@ -95,33 +96,6 @@ export function useCreatePostForm(handleClose: () => void): UseFeatureFormRespon
                     // close and reset form
                     handleClose();
                 }
-                /*
-                // TODO: do await dispatch(addPost(post, token)) then .unwrap() instead.
-                // unwrap() returns a NEW Promise
-                // contains either `action.payload` from a fulfilled action,
-                // OR throws an error if its a `re
-                const res = await forumPostClient.post(data, userToken);
-
-                // if successfully posted
-                if (res.type === "success") {
-                    const newPost = res.data;
-                    console.log("[useCreatePostForm.handleSubmit.createPost] SUCCESSFULLY CREATED POST", newPost);
-
-                    // TODO: need add userId into formData and into forumPostClient.
-                    // TODO: dispatch(postAdded(formData))
-                    // postAdded(formData) will send a POST request to the server,
-                    // then update the `postsSlice` state with the returned post object.
-                } else {
-                    setError(res.error);
-                    console.log("[useCreatePostForm.handleSubmit.createPost] FAILED TO CREATE POST", res.error);
-                }
-                
-                
-                // JUST DISPATCH postAdded
-
-                // tbh idk how to handle the error lol
-                // error = useSelector(selectPostError)
-                */
             } catch (err: any) {
                 setError(err) ;
             } finally {
@@ -223,6 +197,7 @@ export function usePostDelete(postId: string | null, handleClose: () => void) {
 
     const dispatch = useAppDispatch();
     const token = useAppSelector(selectUserToken);
+    const navigate = useNavigate();
 
     // states
     const [loading, setLoading] = useState(false);
@@ -240,6 +215,7 @@ export function usePostDelete(postId: string | null, handleClose: () => void) {
                 } else {
                     const deletedPost = await dispatch(deletePost({ postId })).unwrap();
                     console.log(`[usePostDelete.handleDelete] Successfully deleted post ${postId}`, deletedPost);
+                    navigate("/");
                     handleClose();
                 }
             } catch (err: any) {
@@ -262,28 +238,3 @@ export function usePostDelete(postId: string | null, handleClose: () => void) {
         handleDelete
     }
 }
-
-/*
-export function useStoreFilter<T>(): {
-    data: T[],
-    error: string,
-    loading: boolean,
-} {
-    // const data = useSelector(filteredListSelector)
-    // only ask redux store to fetch filtered list from backend
-    // and update posts[]
-
-    // const categoryIds = useSelector(filterSelector())
-    // in this case, filterSelector = eg. `() => state.post.categoryIds` 
-
-    // TODO: `dispatch(filterPostsByCategories(categoryIds: string[])) => updates state of `post/filteredPosts`
-    // TODO: fetch posts and return as `data` - const data = useSelector(filteredListSelector()) - eg. () => state.post.filteredPosts
-    // TODO: fetch error from 
-
-    return {
-        data,
-        error,
-        loading,
-    }
-}
-    */
