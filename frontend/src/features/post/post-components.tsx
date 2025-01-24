@@ -1,5 +1,21 @@
 // components
-import { Box, Card, CardContent, CardHeader, Chip, Dialog, FormControl, InputLabel,  MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Dialog,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ErrorMessage from "../../common/components/ErrorMessage.tsx";
 import Loading from "../../common/components/Loading.tsx";
 
@@ -20,7 +36,11 @@ import { useSelector } from "react-redux";
 import { selectUserIsLoggedIn } from "../user/user-slice.ts";
 import { useIsLoginOpen } from "../../common/contexts/IsLoginOpenContext.tsx";
 import { StyledHeader, SubmitButton } from "../../common/components/Form.tsx";
-import { useAllPosts, useCreatePostForm, useEditPostForm } from "./post-hooks.ts";
+import {
+  useAllPosts,
+  useCreatePostForm,
+  useEditPostForm,
+} from "./post-hooks.ts";
 import userClient from "../user/user-api-client.ts";
 import { useIsEditPostOpen } from "../../common/contexts/IsEditPostOpenContext.tsx";
 import { useUtils } from "./post-utils.ts";
@@ -34,153 +54,155 @@ import { useNavigate } from "react-router-dom";
 // FEATURE: VIEW POST
 /**
  * Header for a single PostCard.
- * Dynamic, based on whether the title needs to be a Link or not. 
- * @param param0 
- * @returns 
+ * Dynamic, based on whether the title needs to be a Link or not.
+ * @param param0
+ * @returns
  */
-const PostCardHeader = ({ post, linkUrl, editButton, deleteButton }: 
-    { 
-        post: Post,
-        linkUrl?: string,
-        editButton?: React.ReactNode,
-        deleteButton?: React.ReactNode,
-    }
-): JSX.Element => {
+const PostCardHeader = ({
+  post,
+  linkUrl,
+  editButton,
+  deleteButton,
+}: {
+  post: Post;
+  linkUrl?: string;
+  editButton?: React.ReactNode;
+  deleteButton?: React.ReactNode;
+}): JSX.Element => {
+  // memoize the callback
+  // otherwise everytime the return value is deemed to be different
+  // (eg. return object is alw a DIFF REFERENCE even tho it's semantically the same)
+  // then useFetch() will keep on being called.
 
-    // memoize the callback
-    // otherwise everytime the return value is deemed to be different
-    // (eg. return object is alw a DIFF REFERENCE even tho it's semantically the same)
-    // then useFetch() will keep on being called.
-    
-    // fetch category
-    console.log('HELLO', post)
-    const fetchCategory = useCallback(
-        () => categoryClient.getById(post.category_id),
-        [post]
-    );
-    const { data } = useFetch(fetchCategory);
-    const category = data;
-    console.log("BELLO", category)
+  // fetch category
+  console.log("HELLO", post);
+  const fetchCategory = useCallback(
+    () => categoryClient.getById(post.category_id),
+    [post]
+  );
+  const { data } = useFetch(fetchCategory);
+  const category = data;
+  console.log("BELLO", category);
 
-    // fetch username
-    const fetchUser = useCallback(
-        () => userClient.getById(post.user_id),
-        []
-    );
-    const fetchUserResponse = useFetch(fetchUser);
+  // fetch username
+  const fetchUser = useCallback(() => userClient.getById(post.user_id), []);
+  const fetchUserResponse = useFetch(fetchUser);
 
-    // For title link
-    const navigate = useNavigate();
+  // For title link
+  const navigate = useNavigate();
 
-    const { isAuthor } = useUtils();
+  const { isAuthor } = useUtils();
 
-    return (
-        <CardHeader
-        title={
-            <Stack>
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
+  return (
+    <CardHeader
+      title={
+        <Stack>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            {/* flexbox for title and category chip */}
+            <Stack direction="row" alignItems="center">
+              {linkUrl ? (
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    textDecorationLine: "underline",
+                  }}
+                  onClick={() => navigate(linkUrl)}
+                >
+                  {post.title}
+                </Typography>
+              ) : (
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {post.title}
+                </Typography>
+              )}
 
-                    {/* flexbox for title and category chip */}
-                    <Stack direction="row" alignItems="center">
-                        {linkUrl ? (
-                            <Typography
-                            variant='h6'
-                            sx={{ fontWeight: "bold", cursor: "pointer", textDecorationLine: "underline" }}
-                            onClick={() => navigate(linkUrl)}
-                            >
-                                {post.title}
-                            </Typography>
-                        ) : (
-                            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                                {post.title}
-                            </Typography>
-                        )}
-                        
-                        {/* Category chip */}
-                        <Chip
-                        label={category?.label}
-                        size="small"
-                        color="primary"
-                        sx={{ ml: 1 }} // Add some margin to the left
-                        />
-                    </Stack>
-
-                    {/* Edit and delete button */}
-                    <Stack direction='row'>
-                        {editButton && isAuthor(post) ? editButton : <></>}
-                        {deleteButton && isAuthor(post) ? deleteButton : <></>}
-                    </Stack>
-                </Stack>
-
-                {/* username */}
-                { fetchUserResponse.loading ? <Loading /> 
-                : 
-                <>{fetchUserResponse.data?.username}</>}
+              {/* Category chip */}
+              <Chip
+                label={category?.label}
+                size="small"
+                color="primary"
+                sx={{ ml: 1 }} // Add some margin to the left
+              />
             </Stack>
-        }
-        />
-    )
-}
+
+            {/* Edit and delete button */}
+            <Stack direction="row">
+              {editButton && isAuthor(post) ? editButton : <></>}
+              {deleteButton && isAuthor(post) ? deleteButton : <></>}
+            </Stack>
+          </Stack>
+
+          {/* username */}
+          {fetchUserResponse.loading ? (
+            <Loading />
+          ) : (
+            <>{fetchUserResponse.data?.username}</>
+          )}
+        </Stack>
+      }
+    />
+  );
+};
 
 /**
- * Template for a PostCard. 
+ * Template for a PostCard.
  * @param
- * @returns 
+ * @returns
  */
-const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
-    post: Post,
-    linkUrl?: string,
-    editButton?: React.ReactNode,
-    deleteButton?: React.ReactNode,
+const GenericPostCard = ({
+  post,
+  linkUrl,
+  editButton,
+  deleteButton,
+}: {
+  post: Post;
+  linkUrl?: string;
+  editButton?: React.ReactNode;
+  deleteButton?: React.ReactNode;
 }) => {
-    return (
-        <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
-            <Stack direction='row' alignItems='center'>
-                {/* Right side with post title and post content */}
-                <Stack width='80%'>
-                    {/* Header with title */}
-                    <PostCardHeader 
-                    post={post} 
-                    {...(linkUrl && { linkUrl: linkUrl })}
-                    {...(editButton && { editButton: editButton })}
-                    {...(deleteButton && { deleteButton: deleteButton })}
-                    />
+  return (
+    <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
+      <Stack direction="row" alignItems="center">
+        {/* Right side with post title and post content */}
+        <Stack width="80%">
+          {/* Header with title */}
+          <PostCardHeader
+            post={post}
+            {...(linkUrl && { linkUrl: linkUrl })}
+            {...(editButton && { editButton: editButton })}
+            {...(deleteButton && { deleteButton: deleteButton })}
+          />
 
-                    {/* Post content */}
-                    <CardContent sx={{ mt: -3 }}>
-                        <SeeMore
-                        content={post.content}
-                        maxLength={100}
-                        />
-                    </CardContent>
-                </Stack>
+          {/* Post content */}
+          <CardContent sx={{ mt: -3 }}>
+            <SeeMore content={post.content} maxLength={100} />
+          </CardContent>
+        </Stack>
 
-                {/* Left side with date and edited status */}
-                <Stack alignItems='center' width='20%'>
-                    {/* Created date */}
-                    <Typography 
-                    variant='subtitle2'
-                    sx={{ fontWeight: 'bold', }}
-                    >
-                        {post.created_at}
-                    </Typography>
+        {/* Left side with date and edited status */}
+        <Stack alignItems="center" width="20%">
+          {/* Created date */}
+          <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+            {post.created_at}
+          </Typography>
 
-                    {/* Edited status */}
-                    {isEdited(post) ?
-                    <Typography
-                    variant='subtitle2'
-                    >
-                        Edited
-                    </Typography>
-                    :
-                    <></>
-                    }
-                </Stack>
-            </Stack>
-
-        </Card>
-    )
-}
+          {/* Edited status */}
+          {isEdited(post) ? (
+            <Typography variant="subtitle2">Edited</Typography>
+          ) : (
+            <></>
+          )}
+        </Stack>
+      </Stack>
+    </Card>
+  );
+};
 
 /**
  * Card view of a Post.
@@ -191,17 +213,12 @@ const GenericPostCard = ({ post, linkUrl, editButton, deleteButton, }: {
  * @param {string} props.content - Post content.
  * @returns {JSX.Element} A component displaying a Post.
  */
-const PostCard = ({ post }: { post: Post, }): JSX.Element => {
-    // link to another URL to show post details
-    const linkUrl = `/posts/${post.id}`;
+const PostCard = ({ post }: { post: Post }): JSX.Element => {
+  // link to another URL to show post details
+  const linkUrl = `/posts/${post.id}`;
 
-    return (
-        <GenericPostCard
-        post={post}
-        linkUrl={linkUrl}
-        />
-    )
-}
+  return <GenericPostCard post={post} linkUrl={linkUrl} />;
+};
 
 /**
  * A list view of forum posts.
@@ -210,16 +227,16 @@ const PostCard = ({ post }: { post: Post, }): JSX.Element => {
  * @returns {JSX.Element} A component containing the forum posts.
  */
 const Posts = ({ posts }: { posts: Post[] }): JSX.Element => {
-    return (
-        <Box flex={3} >
-            { posts.length == 0 ? 
-            <Typography>"No posts :(</Typography>
-            : posts.map(post => (
-                <PostCard key={post.id} post={post} />
-            ))}
-        </Box>
-    )
-}
+  return (
+    <Box flex={3}>
+      {posts.length == 0 ? (
+        <Typography m={4}>No posts :(</Typography>
+      ) : (
+        posts.map((post) => <PostCard key={post.id} post={post} />)
+      )}
+    </Box>
+  );
+};
 
 /**
  * The main feature of our app.
@@ -228,343 +245,323 @@ const Posts = ({ posts }: { posts: Post[] }): JSX.Element => {
  * @param {Post[]} props.posts - Array of Post to be displayed.
  * @returns {JSX.Element} A component that displays the Feed.
  */
-const Feed = ({ selectedCategories }: {
-    selectedCategories: string[],
+const Feed = ({
+  selectedCategories,
+}: {
+  selectedCategories: string[];
 }): JSX.Element => {
-    // states
-    const { allPosts, loading, error } = useAllPosts();
-    const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+  // states
+  const { allPosts, loading, error } = useAllPosts();
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
-    // filter posts by categories
-    useEffect(() => {
-        if (selectedCategories.length <= 0) {
-            setFilteredPosts(allPosts);
-        } else {
-            const filtered = allPosts.filter(post => selectedCategories.includes(post.category_id));
-            setFilteredPosts(filtered);
-        }
-    }, [selectedCategories, allPosts]);
-
-    console.log("[post-components: Feed] allPosts", allPosts);
-
-    if (loading) {
-        return <Loading />
-    } else if (error) {
-        return <ErrorMessage message={error} />;
+  // filter posts by categories
+  useEffect(() => {
+    if (selectedCategories.length <= 0) {
+      setFilteredPosts(allPosts);
+    } else {
+      const filtered = allPosts.filter((post) =>
+        selectedCategories.includes(post.category_id)
+      );
+      setFilteredPosts(filtered);
     }
+  }, [selectedCategories, allPosts]);
 
-    return (
-        <Stack>
-            <Stack direction="row" justifyContent="space-between">
-                <Posts posts={filteredPosts}/>
-                {/* <RightBar /> */}
-            </Stack>
-        </Stack> 
-    )
-}
+  console.log("[post-components: Feed] allPosts", allPosts);
+
+  if (loading) {
+    return <Loading />;
+  } else if (error) {
+    return <ErrorMessage message={error} />;
+  }
+
+  return (
+    <Stack>
+      <Stack direction="row" justifyContent="space-between">
+        <Posts posts={filteredPosts} />
+        {/* <RightBar /> */}
+      </Stack>
+    </Stack>
+  );
+};
 
 /**
- * Displays the expanded, detailed view of a post. 
- * @returns 
+ * Displays the expanded, detailed view of a post.
+ * @returns
  */
-const PostDetails = ({ post }: { 
-    post: Post
-}): JSX.Element => {
+const PostDetails = ({ post }: { post: Post }): JSX.Element => {
+  const postId = post.id;
 
-    const postId = post.id;
+  const { toggleDeletePostOpen } = useIsDeletePostOpen();
+  /**
+   * @function handleDeleteOpen - handles the event where the "Delete" button is pressed.
+   */
+  const handleDeleteOpen = () => {
+    toggleDeletePostOpen(postId);
+  };
 
-    const { toggleDeletePostOpen } = useIsDeletePostOpen();
-    /**
-     * @function handleDeleteOpen - handles the event where the "Delete" button is pressed.
-     */
-    const handleDeleteOpen = () => {
-        toggleDeletePostOpen(postId);
-    }
-
-            return (
-                <GenericPostCard
-                post={post}
-                editButton={<EditPostButton postId={postId}/>}
-                deleteButton={<DeleteItemButton handleDeleteOpen={handleDeleteOpen} />}
-                />
-        );
-//    }
-}
+  return (
+    <GenericPostCard
+      post={post}
+      editButton={<EditPostButton postId={postId} />}
+      deleteButton={<DeleteItemButton handleDeleteOpen={handleDeleteOpen} />}
+    />
+  );
+  //    }
+};
 
 // FEATURE: CREATE POST
 const CreatePostButton = (): JSX.Element => {
-    const { toggleLoginOpen } = useIsLoginOpen();
-    const { toggleCreateOpen } = useIsCreateOpen();
-    const isLoggedIn = useSelector(selectUserIsLoggedIn);
+  const { toggleLoginOpen } = useIsLoginOpen();
+  const { toggleCreateOpen } = useIsCreateOpen();
+  const isLoggedIn = useSelector(selectUserIsLoggedIn);
 
-    /** Conditionally render either the CreatePostForm
-     * or the LoginForm,
-     * based on the logged in status of the user.
-     */
-    const handleCreatePostOpen = isLoggedIn ? toggleCreateOpen : toggleLoginOpen;
+  /** Conditionally render either the CreatePostForm
+   * or the LoginForm,
+   * based on the logged in status of the user.
+   */
+  const handleCreatePostOpen = isLoggedIn ? toggleCreateOpen : toggleLoginOpen;
 
-    return (
-        <StyledButton
-        content={<AddCircle />}
-        onClick={handleCreatePostOpen}
-        sx={{ color: 'primary.main' }}
-        />
-    );
-}
+  return (
+    <StyledButton
+      content={<AddCircle />}
+      onClick={handleCreatePostOpen}
+      sx={{ color: "primary.main" }}
+    />
+  );
+};
 
 function CreatePostForm(): JSX.Element {
-    
-    const handleClose = () => {
-        toggleCreateOpen();
-    }
+  const handleClose = () => {
+    toggleCreateOpen();
+  };
 
-    const fields: FormField[] = [
-        {
-            fieldType: "input",
-            placeholder: "Title",
-            name: "title",
-            required: true,
-        }, {
-            fieldType: "input",
-            placeholder: "Type a post!",
-            name: "content",
-            required: true,
-        }, {
-            fieldType: "select",
-            placeholder: "Category",
-            name: "category_id",
-            required: true,
-        }
-    ];
+  const fields: FormField[] = [
+    {
+      fieldType: "input",
+      placeholder: "Title",
+      name: "title",
+      required: true,
+    },
+    {
+      fieldType: "input",
+      placeholder: "Type a post!",
+      name: "content",
+      required: true,
+    },
+    {
+      fieldType: "select",
+      placeholder: "Category",
+      name: "category_id",
+      required: true,
+    },
+  ];
 
-    // HOOKS
-    // consume IsCreateOpen context
-    const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
-    const { data, loading, error, handleChange, handleSubmit } = useCreatePostForm(handleClose);
+  // HOOKS
+  // consume IsCreateOpen context
+  const { isCreateOpen, toggleCreateOpen } = useIsCreateOpen();
+  const { data, loading, error, handleChange, handleSubmit } =
+    useCreatePostForm(handleClose);
 
-    // Fetch categories to fill up the "Select Categories" button
-    // TODO: replace with REDUX!
-    const fetchAllCategories = useCallback(
-        () => categoryClient.getAll(), []
-    );
+  // Fetch categories to fill up the "Select Categories" button
+  // TODO: replace with REDUX!
+  const fetchAllCategories = useCallback(() => categoryClient.getAll(), []);
 
-    const { data: categories } = useFetch(fetchAllCategories);
+  const { data: categories } = useFetch(fetchAllCategories);
 
-    return (
-        // dialog box
-        <Dialog open={isCreateOpen} maxWidth="xs" onClose={handleClose}>
+  return (
+    // dialog box
+    <Dialog open={isCreateOpen} maxWidth="xs" onClose={handleClose}>
+      <Paper elevation={8} sx={{ p: 2 }}>
+        <StyledHeader
+          avatar={<PostAdd />}
+          title="Create post"
+          handleClose={handleClose}
+        />
 
-                <Paper elevation={8} sx={{p: 2}}>
-                    <StyledHeader
-                    avatar={<PostAdd />}
-                    title="Create post"
-                    handleClose={handleClose}
-                    />
-                    
-                    {/* form component  */}
-                    <Box
-                    component="form"
-                    onSubmit={handleSubmit}>
-                        {fields.map(field => {
+        {/* form component  */}
+        <Box component="form" onSubmit={handleSubmit}>
+          {fields.map((field) => {
+            return field.fieldType === "input" ? (
+              <TextField
+                key={field.name}
+                fullWidth
+                placeholder={
+                  field.required ? `${field.placeholder}*` : field.placeholder
+                }
+                required={field.required}
+                sx={{ mb: 2 }}
+                autoFocus
+                {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                name={field.name}
+                value={data[field.name as keyof NewPost]} // Eg. data[username], data[password]
+                onChange={handleChange as any}
+              />
+            ) : (
+              <FormControl fullWidth>
+                <InputLabel>{field.placeholder}</InputLabel>
+                <Select
+                  key={field.name}
+                  name={field.name}
+                  value={data[field.name as keyof NewPost]}
+                  onChange={handleChange as any}
+                  input={<OutlinedInput label={field.placeholder} />}
+                  required={field.required}
+                  renderValue={(selected) => {
+                    const category = categories?.find(
+                      (cat) => cat.id === selected
+                    );
+                    return <>{category?.label}</>;
+                  }}
+                >
+                  {categories?.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            );
+          })}
 
-                            return ( 
-                                field.fieldType === "input" ? 
-                            <TextField
-                            key={field.name}
-                            fullWidth
-                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
-                            required={field.required}
-                            sx={{ mb: 2 }}
-                            autoFocus
-                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
-                            name={field.name}
-                            value={data[field.name as keyof NewPost]} // Eg. data[username], data[password]
-                            onChange={handleChange as any}
-                            />
-                            :
-                            
-                            <FormControl fullWidth>
-                                <InputLabel>{field.placeholder}</InputLabel>
-                                <Select
-                                key={field.name}
-                                name={field.name}
-                                value={data[field.name as keyof NewPost]}
-                                onChange={handleChange as any}
-                                input={<OutlinedInput label={field.placeholder} />}
-                                required={field.required}
-                                renderValue={selected => {
-                                    const category = categories?.find(cat => cat.id === selected);
-                                    return <>{category?.label}</>;
-                                }}
-                                >
-                                    {categories?.map(cat => (
-                                        <MenuItem key={cat.id} value={cat.id}>
-                                            {cat.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+          <SubmitButton
+            submitButtonText={<>Create post</>}
+            loading={loading}
+            sx={{ mt: 2 }}
+          />
 
-                            );
-                    })}
-
-
-                        <SubmitButton
-                        submitButtonText={<>Create post</>}
-                        loading={loading}
-                        sx={{ mt: 2 }}
-                        />
-
-                        {error ? <ErrorMessage message={error} /> : <></>}
-                    </Box>
-                        
-
-                </Paper>
-
-        </Dialog>
-    )
+          {error ? <ErrorMessage message={error} /> : <></>}
+        </Box>
+      </Paper>
+    </Dialog>
+  );
 }
 
 // FEATURE: EDIT POST
 function EditPostButton({ postId }: { postId: string }): JSX.Element {
-    const { toggleEditPostOpen } = useIsEditPostOpen();
+  const { toggleEditPostOpen } = useIsEditPostOpen();
 
-    const handleClick = () => {
-        toggleEditPostOpen(postId); 
-    }
-    return (
-        <StyledButton
-        content="Edit"
-        onClick={handleClick}
-        />
-    );
+  const handleClick = () => {
+    toggleEditPostOpen(postId);
+  };
+  return <StyledButton content="Edit" onClick={handleClick} />;
 }
 
 /**
- * 
+ *
  * @returns The form to edit a post.
  */
-function EditPostForm({ post }: {
-    post: Post,
-}): JSX.Element {
-    const { isEditPostOpen, toggleEditPostOpen } = useIsEditPostOpen();
+function EditPostForm({ post }: { post: Post }): JSX.Element {
+  const { isEditPostOpen, toggleEditPostOpen } = useIsEditPostOpen();
 
-    const handleClose = () => {
-        toggleEditPostOpen();
-    }
+  const handleClose = () => {
+    toggleEditPostOpen();
+  };
 
-    const { 
-        data: formData, 
-        loading, 
-        error, 
-        handleChange, 
-        handleSubmit 
-    } = useEditPostForm(post, handleClose);
+  const {
+    data: formData,
+    loading,
+    error,
+    handleChange,
+    handleSubmit,
+  } = useEditPostForm(post, handleClose);
 
-    // TODO: replace with REDUX!
-    const fetchAllCategories = useCallback(
-        () => categoryClient.getAll(), []
-    );
-    const { data: categories, loading: fetchCategoriesLoading } = useFetch(fetchAllCategories);
+  // TODO: replace with REDUX!
+  const fetchAllCategories = useCallback(() => categoryClient.getAll(), []);
+  const { data: categories, loading: fetchCategoriesLoading } =
+    useFetch(fetchAllCategories);
 
-    // form fields
-    const fields: FormField[] = [
-        {
-            fieldType: "input",
-            placeholder: "Title",
-            name: "title",
-            required: true,
-        }, {
-            fieldType: "input",
-            placeholder: "Type a post!",
-            name: "content",
-            required: true,
-        }, {
-            fieldType: "select",
-            placeholder: "Category",
-            name: "category_id",
-            required: true,
-        }
-    ];
-    return (
-        // dialog box
-        <Dialog open={isEditPostOpen} maxWidth="xs" onClose={handleClose}>
+  // form fields
+  const fields: FormField[] = [
+    {
+      fieldType: "input",
+      placeholder: "Title",
+      name: "title",
+      required: true,
+    },
+    {
+      fieldType: "input",
+      placeholder: "Type a post!",
+      name: "content",
+      required: true,
+    },
+    {
+      fieldType: "select",
+      placeholder: "Category",
+      name: "category_id",
+      required: true,
+    },
+  ];
+  return (
+    // dialog box
+    <Dialog open={isEditPostOpen} maxWidth="xs" onClose={handleClose}>
+      <Paper elevation={8} sx={{ p: 2 }}>
+        <StyledHeader
+          avatar={<Edit />}
+          title="Edit post"
+          handleClose={handleClose}
+        />
 
-                <Paper elevation={8} sx={{p: 2}}>
-                    <StyledHeader
-                    avatar={<Edit />}
-                    title="Edit post"
-                    handleClose={handleClose}
-                    />
-                    
-                    {/* form component  */}
-                    <Box
-                    component="form"
-                    onSubmit={handleSubmit}>
-                        {fields.map(field => {
+        {/* form component  */}
+        <Box component="form" onSubmit={handleSubmit}>
+          {fields.map((field) => {
+            return field.fieldType === "input" ? (
+              <TextField
+                key={field.name}
+                fullWidth
+                placeholder={
+                  field.required ? `${field.placeholder}*` : field.placeholder
+                }
+                required={field.required}
+                sx={{ mb: 2 }}
+                autoFocus
+                {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
+                name={field.name}
+                value={formData[field.name as keyof UpdatedPost]} // Eg. data[username], data[password]
+                onChange={handleChange as any}
+              />
+            ) : (
+              <FormControl fullWidth>
+                <InputLabel>{field.placeholder}</InputLabel>
+                {/* Conditionally render based on loading state of categories */}
+                {fetchCategoriesLoading ? (
+                  <Select value="" />
+                ) : (
+                  <Select
+                    key={field.name}
+                    name={field.name}
+                    value={formData[field.name as keyof UpdatedPost]}
+                    onChange={handleChange as any}
+                    input={<OutlinedInput label={field.placeholder} />}
+                    required={field.required}
+                    renderValue={(selected) => {
+                      const category = categories?.find(
+                        (cat) => cat.id === selected
+                      );
+                      return <>{category?.label}</>;
+                    }}
+                  >
+                    {categories?.map((cat) => (
+                      <MenuItem key={cat.id} value={cat.id}>
+                        {cat.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              </FormControl>
+            );
+          })}
 
-                            return ( 
-                                field.fieldType === "input" ? 
-                            <TextField
-                            key={field.name}
-                            fullWidth
-                            placeholder={field.required ? `${field.placeholder}*` : field.placeholder}
-                            required={field.required}
-                            sx={{ mb: 2 }}
-                            autoFocus
-                            {...(field.type ? { type: field.type } : {})} // Conditionally add the type attribute
-                            name={field.name}
-                            value={formData[field.name as keyof UpdatedPost]} // Eg. data[username], data[password]
-                            onChange={handleChange as any}
-                            />
-                            :
-                            <FormControl fullWidth>
-                                <InputLabel>{field.placeholder}</InputLabel>
-                                {/* Conditionally render based on loading state of categories */}
-                                {fetchCategoriesLoading
-                                    ?
-                                    <Select 
-                                    value=''
-                                    />
-                                    :
-                                    <Select
-                                    key={field.name}
-                                    name={field.name}
-                                    value={formData[field.name as keyof UpdatedPost]}
-                                    onChange={handleChange as any}
-                                    input={<OutlinedInput label={field.placeholder} />}
-                                    required={field.required}
-                                    renderValue={selected => {
-                                        const category = categories?.find(cat => cat.id === selected);
-                                        return <>{category?.label}</>;
-                                    }}
-                                    >
-                                        {categories?.map(cat => (
-                                            <MenuItem key={cat.id} value={cat.id}>
-                                                {cat.label}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                }
-                            </FormControl>
-                            );
-                    })}
+          <SubmitButton
+            submitButtonText={<>Save</>}
+            loading={loading}
+            sx={{ mt: 2 }}
+          />
 
-
-                        <SubmitButton
-                        submitButtonText={<>Save</>}
-                        loading={loading}
-                        sx={{ mt: 2 }}
-                        />
-
-                        {error ? <ErrorMessage message={error} /> : <></>}
-                    </Box>
-                        
-
-                </Paper>
-
-        </Dialog>
-    )
+          {error ? <ErrorMessage message={error} /> : <></>}
+        </Box>
+      </Paper>
+    </Dialog>
+  );
 }
 
 export { Feed, PostDetails, CreatePostButton, CreatePostForm, EditPostForm };
