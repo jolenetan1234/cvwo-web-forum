@@ -75,14 +75,12 @@ const PostCardHeader = ({
   // then useFetch() will keep on being called.
 
   // fetch category
-  console.log("HELLO", post);
   const fetchCategory = useCallback(
     () => categoryClient.getById(post.category_id),
     [post]
   );
   const { data } = useFetch(fetchCategory);
   const category = data;
-  console.log("BELLO", category);
 
   // fetch username
   const fetchUser = useCallback(() => userClient.getById(post.user_id), []);
@@ -142,7 +140,12 @@ const PostCardHeader = ({
           {fetchUserResponse.loading ? (
             <Loading />
           ) : (
-            <>{fetchUserResponse.data?.username}</>
+                <Typography 
+                variant='subtitle2'
+                sx={{ fontWeight: 'bold', }}
+                >
+                    {fetchUserResponse.data?.username ?? 'Unknown Author'}
+                </Typography>
           )}
         </Stack>
       }
