@@ -101,6 +101,8 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 * [![React][React.js]][React-url]
 * [![Gin][Gin-Gonic.com]][Gin-url]
+* [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
+* [![Docker][Docker.com]][Docker-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -254,7 +256,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React.js]: https://shields.io/badge/react-black?logo=react&style=for-the-badge
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
@@ -271,6 +273,13 @@ Use this space to list resources you find helpful and would like to give credit 
 
 [Gin-Gonic.com]: https://img.shields.io/badge/Gin_Gonic-008080?style=for-the-badge&logo=gin&logoColor=white
 [Gin-url]: https://gin-gonic.com/
+
+[PostgreSQL.com]: https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white
+[PostgreSQL-url]: https://www.postgresql.org/
+
+[Docker.com]: https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
+
 <!-- Product screenshots -->
 [homepage-darkmode-screenshot]: images/homepage-darkmode-screenshot.png
 [post-detail-darkmode-screenshot]: images/post-detail-darkmode-screenshot.png
