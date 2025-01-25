@@ -61,9 +61,9 @@ import { useNavigate } from "react-router-dom";
 const PostCardHeader = ({
   post,
   linkUrl,
-  editButton,
-  deleteButton,
-}: {
+}: // editButton,
+// deleteButton,
+{
   post: Post;
   linkUrl?: string;
   editButton?: React.ReactNode;
@@ -91,7 +91,7 @@ const PostCardHeader = ({
   // For title link
   const navigate = useNavigate();
 
-  const { isAuthor } = useUtils();
+  // const { isAuthor } = useUtils();
 
   return (
     <CardHeader
@@ -132,10 +132,10 @@ const PostCardHeader = ({
             </Stack>
 
             {/* Edit and delete button */}
-            <Stack direction="row">
+            {/* <Stack direction="row">
               {editButton && isAuthor(post) ? editButton : <></>}
               {deleteButton && isAuthor(post) ? deleteButton : <></>}
-            </Stack>
+            </Stack> */}
           </Stack>
 
           {/* username */}
@@ -166,6 +166,8 @@ const GenericPostCard = ({
   editButton?: React.ReactNode;
   deleteButton?: React.ReactNode;
 }) => {
+  const { isAuthor } = useUtils();
+
   return (
     <Card sx={{ mt: 1, ml: 2, mr: 2 }}>
       <Stack direction="row" alignItems="center">
@@ -186,8 +188,13 @@ const GenericPostCard = ({
         </Stack>
 
         {/* Left side with date and edited status */}
-        <Stack alignItems="center" width="20%">
+        <Stack alignItems="center" width="20%" mr={2}>
           {/* Created date */}
+
+          <Stack direction="row">
+            {editButton && isAuthor(post) ? editButton : <></>}
+            {deleteButton && isAuthor(post) ? deleteButton : <></>}
+          </Stack>
           <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
             {post.created_at}
           </Typography>
