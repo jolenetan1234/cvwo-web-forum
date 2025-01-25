@@ -273,4 +273,4 @@ Use this space to list resources you find helpful and would like to give credit 
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
 <!-- Product screenshots -->
-[homepage-screenshot]: images/homepage-screenshot.png
+[homepage-screenshot]: ./images/homepage-screenshot.png
