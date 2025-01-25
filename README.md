@@ -100,6 +100,7 @@ This web forum is a simple and user-friendly platform for discussions, built to 
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 * [![React][React.js]][React-url]
+* [![Redux][Redux.js]][Redux=url]
 * [![Gin][Gin-Gonic.com]][Gin-url]
 * [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
 * [![Docker][Docker.com]][Docker-url]
@@ -272,6 +273,9 @@ Use this space to list resources you find helpful and would like to give credit 
 
 [React.js]: https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=000&style=for-the-badge
 [React-url]: https://react.dev/
+
+[Redux.js]: https://img.shields.io/badge/Redux-764ABC?logo=redux&logoColor=fff&style=for-the-badge
+[Redux-url]: https://redux.js.org/
 
 [Gin-Gonic.com]: https://img.shields.io/badge/Gin-008ECF?logo=gin&logoColor=fff&style=for-the-badge
 [Gin-url]: https://gin-gonic.com/
