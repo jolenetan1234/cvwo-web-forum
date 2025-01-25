@@ -97,8 +97,6 @@ This web forum is a simple and user-friendly platform for discussions, built to 
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
 * [![React][React.js]][React-url]
 * [![Redux][Redux.js]][Redux-url]
 * [![Gin][Gin-Gonic.com]][Gin-url]
