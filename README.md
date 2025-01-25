@@ -129,7 +129,7 @@ Make sure you have the following installed on your system:
 
 #### Database set up
 1. **Install PostgreSQL**:
-  - Download and install PostgreSQL from [](postgresql.org), or run the official Docker image as stated in the prerequisites.
+  - Download and install PostgreSQL from <postgresql.org>, or run the official Docker image as stated in the prerequisites.
   - Start the PostgreSQL service.
 2.  
 
