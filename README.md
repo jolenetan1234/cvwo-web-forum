@@ -127,11 +127,18 @@ Make sure you have the following installed on your system:
 - **Docker** (optional, for containerized deployment): [Get Docker](https://www.docker.com/)
 - **PostgreSQL**: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Postgres Docker image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
 
+#### Database set up
+1. **Install PostgreSQL**:
+  - Download and install PostgreSQL from (postgresql.org), or run the official Docker image as stated in the prerequisites.
+  - Start the PostgreSQL service.
+2.  
+
 #### Installation
-1. Clone the repo:
+1. Clone the repo
     ```sh
     git clone https://jolenetan1234/cvwo-web-forum
     ```
+
 
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
