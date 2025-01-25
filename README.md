@@ -111,10 +111,15 @@ This web forum is a simple and user-friendly platform for discussions, built to 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get started with the Web Forum, you can either access the hosted instance or set it up and run it locally. Follow the instructions below:
 
-### Prerequisites
+### Access the Hosted Instance
+The Web Forum is live and accessible here: http://13.237.169.162/:3000.
+
+### Run Locally
+If you prefer to set up and run the project locally, follow these steps:
+
+#### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
 * npm
@@ -122,7 +127,7 @@ This is an example of how to list things you need to use the software and how to
   npm install npm@latest -g
   ```
 
-### Installation
+#### Installation
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
@@ -178,7 +183,7 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 
 
 <!-- CONTRIBUTING -->
-## Contributing
+<!-- ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -197,8 +202,7 @@ Don't forget to give the project a star! Thanks again!
   <img src="https://contrib.rocks/image?repo=othneildrew/Best-README-Template" alt="contrib.rocks image" />
 </a>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 <!-- LICENSE -->
