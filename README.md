@@ -113,7 +113,7 @@ To get started with the Web Forum, you can either access the hosted instance or 
 ### Access the Hosted Instance
 The Web Forum is live and accessible here: http://13.237.169.162:3000.
 
-**NOTE**:
+>[!note]
 There is a bug in the deployed app where nginx fails to fetch the page for certain routes aside from the home route, particularly upon refresh. This is an issue I am currently trying to fix, but it should not hinder the performance of the app as long as the user doesn't refresh the app when it is in a route other than `/`. 
 
 Should you encounter this bug, simply navigate back to the home route by editing the URL back to `http://13.237.169.162:3000/`.
