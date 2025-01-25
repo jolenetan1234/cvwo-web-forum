@@ -177,6 +177,7 @@ Make sure you have the following installed on your system:
   ```
 2. Start the frontend server:
   ```sh
+  cd frontend
   npm run dev
   ```
 3. Access the application locally at http://localhost:3000.
