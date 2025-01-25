@@ -124,12 +124,14 @@ If you prefer to set up and run the project locally, follow these steps:
 Make sure you have the following installed on your system:
 - **Node.js** (v16+): [Download Node.js](https://nodejs.org/en)
 - **Go**  (v1.20+): [Download Go](https://go.dev/dl/)
-- Docker (optional, for containerized deployment): [Get Docker](https://www.docker.com/)
-- PostgreSQL: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Postgres Docker image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
+- **Docker** (optional, for containerized deployment): [Get Docker](https://www.docker.com/)
+- **PostgreSQL**: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Postgres Docker image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
 
 #### Installation
-
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+1. Clone the repo:
+```sh
+git clone https://jolenetan1234/cvwo-web-forum
+```
 
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
