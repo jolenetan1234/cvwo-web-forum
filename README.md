@@ -129,9 +129,9 @@ Make sure you have the following installed on your system:
 
 #### Installation
 1. Clone the repo:
-```sh
-git clone https://jolenetan1234/cvwo-web-forum
-```
+| |```sh
+| |git clone https://jolenetan1234/cvwo-web-forum
+| |```
 
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
