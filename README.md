@@ -114,7 +114,7 @@ This web forum is a simple and user-friendly platform for discussions, built to 
 To get started with the Web Forum, you can either access the hosted instance or set it up and run it locally. Follow the instructions below:
 
 ### Access the Hosted Instance
-The Web Forum is live and accessible here: http://13.237.169.162/:3000.
+The Web Forum is live and accessible here: http://13.237.169.162:3000.
 
 ### Run Locally
 If you prefer to set up and run the project locally, follow these steps:
