@@ -83,7 +83,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Home Page][homepage-screenshot]](http://13.237.169.162:3000/)
+[![Home Page Dark Mode][homepage-darkmode-screenshot]](http://13.237.169.162:3000/)
+[![Post Detail Dark Mode][post-detail-darkmode-screenshot]]
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
@@ -273,4 +274,5 @@ Use this space to list resources you find helpful and would like to give credit 
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
 <!-- Product screenshots -->
-[homepage-screenshot]: images/homepage-screenshot.png
+[homepage-darkmode-screenshot]: images/homepage-darkmode-screenshot.png
+[post-detail-darkmode-screenshot]: images/post-detail-darkmode-screenshot.png
