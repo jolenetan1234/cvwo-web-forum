@@ -18,12 +18,12 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
+<!-- [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![Unlicense License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![LinkedIn][linkedin-shield]][linkedin-url] -->
 
 
 
@@ -34,19 +34,19 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">CVWO Web Forum</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <!-- <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
     &middot;
     <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a> -->
   </p>
 </div>
 
@@ -69,12 +69,12 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
+    <!-- <li><a href="#usage">Usage</a></li> -->
+    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
+    <!-- <li><a href="#contributing">Contributing</a></li> -->
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <!-- <li><a href="#acknowledgments">Acknowledgments</a></li> -->
   </ol>
 </details>
 
@@ -127,34 +127,26 @@ Make sure you have the following installed on your system:
 - **Docker** (optional, for containerized deployment): [Get Docker](https://www.docker.com/)
 - **PostgreSQL**: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Postgres Docker image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
 
-#### Database set up
-1. **Install PostgreSQL**:
-  - Download and install PostgreSQL from [postgresql.org](http://postgresql.org), or run the official Docker image as stated in the prerequisites.
-  - Start the PostgreSQL service.
-2. **Create the database**:
-  - Open your terminal and connect to PostgreSQL using the `psql` command-line tool:
-    ```sh
-    psql -U postgres
-    ```
-  - Create a new database:
-    ```sql
-    CREATE DATABASE cvwo_web_forum;
-    ```
-3. **Configure environment variables**:
-  - Set up the database connection in your `.env` file (or another configuration file).
-    ```.env
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_USER=your_username
-    DB_PASSWORD=your_password
-    DB_NAME=cvwo-web-forum
-    ```
 
 #### Installation
 1. Clone the repo
     ```sh
     git clone https://github.com/jolenetan1234/cvwo-web-forum.git
     ```
+2. Set up database: See [database set up](DB_SETUP.md).
+
+2. Set up environment variables using the example below:
+
+2. Set up the backend
+  - Navigate to the `backend` directory:
+    ```sh
+    cd backend
+    ```
+  - Install Go dependencies:
+    ```sh
+    go mod download
+    ```
+3. Set up the frontend
 
 
 1. Get a free API Key at [https://example.com](https://example.com)
@@ -181,18 +173,18 @@ Make sure you have the following installed on your system:
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+<!-- ## Usage
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
 <!-- ROADMAP -->
-## Roadmap
+<!-- ## Roadmap
 
 - [x] Add Changelog
 - [x] Add back to top links
@@ -204,7 +196,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
