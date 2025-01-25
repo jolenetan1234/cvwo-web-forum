@@ -121,11 +121,11 @@ If you prefer to set up and run the project locally, follow these steps:
 
 #### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+Make sure you have the following installed on your system:
+- **Node.js** (v16+): [Download Node.js](https://nodejs.org/en)
+- **Go**  (v1.20+): [Download Go](https://go.dev/dl/)
+- Docker (optional, for containerized deployment): [Get Docker](https://www.docker.com/)
+- PostgreSQL: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Postgres Docker image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
 
 #### Installation
 
