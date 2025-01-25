@@ -3,7 +3,7 @@ This file contains basic instructions to set up a PostgreSQL database in order f
 
 ## Database set up
 1. **Install PostgreSQL**:
-  - Download and install PostgreSQL from [postgresql.org](http://postgresql.org), or [run the official Docker Postgres image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
+  - Download and install PostgreSQL from [postgresql.org](http://postgresql.org), or [pull the official Docker Postgres image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
   - Start the PostgreSQL service.
 2. **Create the database**:
   - Open your terminal and connect to PostgreSQL using the `psql` command-line tool:

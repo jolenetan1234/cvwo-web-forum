@@ -134,39 +134,63 @@ Make sure you have the following installed on your system:
     git clone https://github.com/jolenetan1234/cvwo-web-forum.git
     ```
 2. Set up database: See [database set up](DB_SETUP.md).
-
-2. Set up environment variables using the example below:
-
-2. Set up the backend
+3. Set up the backend
   - Navigate to the `backend` directory:
     ```sh
     cd backend
+    ```
+  - Create a `.env` file with your environment variables. You may use the example below:
+    ```.env
+    # Env variables for backend
+    PORT=8080
+    # Database
+    DB_DSN="host=localhost user=postgres password=password dbname=cvwo-web-forum port=5432"
+    JWT_SECRET=my_jwt_secret
+    ALLOWED_CORS="http://localhost:3000,http://127.0.0.1:3000,http://0.0.0.0:3000"
     ```
   - Install Go dependencies:
     ```sh
     go mod download
     ```
-3. Set up the frontend
+4. Set up the frontend
+  - Navigate to the `frontend` directory:
+    ```sh
+    cd frontend
+    ```
+  - Create a `.env` file with your environment variables. You may use the example below:
+    ```.env
+    VITE_APP_URL=http://localhost:3000
+    VITE_API_URL=http://localhost:8080
+    ```
+  - Install dependencies:
+    ```
+    npm install
+    ```
 
+#### Running the Project
+1. Start the backend server:
+  ```sh
+  cd backend
+  go run .
+  ```
+2. Start the frontend server:
+  ```sh
+  npm run dev
+  ```
+3. Access the application locally at http://localhost:3000.
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
+#### Running with Docker (Optional)
+To run the project with Docker, use the provided `docker-compose.yml` file:
+  ```sh
+  docker-compose up
+  ```
+Note that the arguments (particularly `VITE_API_URL`) passed into the build for `frontend` uses the URLs of the deployed app. If you wish to use your local backend, you can replace those arguments with your local backend server URL (Eg. `http://localhost:8080`).
+
+<!-- 5. Change git remote url to avoid accidental pushes to base project
    ```sh
    git remote set-url origin github_username/repo_name
    git remote -v # confirm the changes
-   ```
+   ``` -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
