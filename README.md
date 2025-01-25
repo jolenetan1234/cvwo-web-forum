@@ -82,6 +82,8 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+This web forum is a simple and user-friendly platform for discussions, built to facilitate meaningful conversations. Users can create posts, comment, and engage with others in a structured environment. It was built not only with the intention to improve my web dev skills, but also to provide a simple an intuitive platform for users to share their ideas and communicate. Built with React, Gin, and PostgreSQL, it combines modern technologies to deliver a seamless experience.
+
 **Home page (dark mode)**
 ![Home Page Dark Mode](images/homepage-darkmode-screenshot.png)
 **Post details with comment section (dark mode)**
@@ -90,8 +92,6 @@
 ![Home Page Light Mode](images/homepage-lightmode-screenshot.png)
 **Post details with comment section (light mode)**
 ![Post Detail Light Mode](images/post-detail-lightmode-screenshot.png)
-
-This web forum is a simple and user-friendly platform for discussions, built to facilitate meaningful conversations. Users can create posts, comment, and engage with others in a structured environment. Featuring categories for easy organization, fixed tags for filtering, and an intuitive design, the forum is optimized for both functionality and scalability. Built with React, Gin, and PostgreSQL, it combines modern technologies to deliver a seamless experience.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -105,8 +105,6 @@ This web forum is a simple and user-friendly platform for discussions, built to 
 * [![AWS EC2][AWS-EC2.com]][AWS-EC2-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -125,7 +123,7 @@ Make sure you have the following installed on your system:
 - **Node.js** (v16+): [Download Node.js](https://nodejs.org/en)
 - **Go**  (v1.20+): [Download Go](https://go.dev/dl/)
 - **Docker** (optional, for containerized deployment): [Get Docker](https://www.docker.com/)
-- **PostgreSQL**: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Postgres Docker image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
+- **PostgreSQL**: [Install and set up PostgreSQL locally](https://www.postgresql.org/download/), or [use the official Docker Postgres image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/).
 
 
 #### Installation
@@ -250,24 +248,22 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the Unlicense License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Jolene Tan
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: https://github.com/jolenetan1234/cvwo-web-forum
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- ACKNOWLEDGMENTS -->
+<!-- ACKNOWLEDGMENTS
 ## Acknowledgments
 
 Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
@@ -281,7 +277,7 @@ Use this space to list resources you find helpful and would like to give credit 
 * [Font Awesome](https://fontawesome.com)
 * [React Icons](https://react-icons.github.io/react-icons/search)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
