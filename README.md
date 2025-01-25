@@ -82,9 +82,8 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-[![Home Page Dark Mode][homepage-darkmode-screenshot]](http://13.237.169.162:3000/)
-![Post Detail Dark Mode]([post-detail-darkmode-screenshot])
+![Home Page Dark Mode](images/homepage-darkmode-screenshot.png)
+![Post Detail Dark Mode](images/post-detail-darkmode-screenshot.png)
 
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
