@@ -103,6 +103,7 @@ This section should list any major frameworks/libraries used to bootstrap your p
 * [![Gin][Gin-Gonic.com]][Gin-url]
 * [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
 * [![Docker][Docker.com]][Docker-url]
+* [![AWS EC2][AWS-EC2.com]][AWS-EC2-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -256,8 +257,6 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
-[React.js]: https://shields.io/badge/react-black?logo=react&style=for-the-badge
-[React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
@@ -271,7 +270,10 @@ Use this space to list resources you find helpful and would like to give credit 
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
 
-[Gin-Gonic.com]: https://img.shields.io/badge/Gin_Gonic-008080?style=for-the-badge&logo=gin&logoColor=white
+[React.js]: https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=000&style=for-the-badge
+[React-url]: https://react.dev/
+
+[Gin-Gonic.com]: https://img.shields.io/badge/Gin-008ECF?logo=gin&logoColor=fff&style=for-the-badge
 [Gin-url]: https://gin-gonic.com/
 
 [PostgreSQL.com]: https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white
@@ -279,6 +281,9 @@ Use this space to list resources you find helpful and would like to give credit 
 
 [Docker.com]: https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com/
+
+[AWS-EC2.com]: https://img.shields.io/badge/Amazon%20EC2-F90?logo=amazonec2&logoColor=fff&style=for-the-badge
+[AWS-EC2-url]: https://aws.amazon.com/ec2/ 
 
 <!-- Product screenshots -->
 [homepage-darkmode-screenshot]: images/homepage-darkmode-screenshot.png
