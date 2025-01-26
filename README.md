@@ -81,7 +81,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-This web forum is a simple and user-friendly platform for discussions, built to facilitate meaningful conversations. Users can create posts, comment, and engage with others in a structured environment. It was built not only with the intention to improve my web dev skills, but also to provide a simple an intuitive platform for users to share their ideas and communicate. Built with React, Gin, and PostgreSQL, it combines modern technologies to deliver a seamless experience.
+This web forum is a simple and user-friendly platform for discussions, built to facilitate meaningful conversations. Users can create posts, comment, and engage with others in a structured environment. It was built not only with the intention to improve my web dev skills, but also to provide a simple and intuitive platform for users to share their ideas and communicate. Built with React, Gin, and PostgreSQL, it combines modern technologies to deliver a seamless experience.
 
 **Home page (dark mode)**
 ![Home Page Dark Mode](images/homepage-darkmode-screenshot.png)
